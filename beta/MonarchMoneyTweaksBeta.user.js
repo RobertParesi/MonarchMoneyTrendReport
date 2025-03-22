@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.01
+// @version      3.02.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.01';
+const version = '3.02.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -730,10 +730,10 @@ async function MenuReportsAccountsGo() {
     MTFlex.SortSeq = ['1','1','1','1','1','1','1','2','3','4','5'];
     MTFlex.TriggerEvent = true;
     MTFlex.TriggerEvents = false;
-    MF_GridOptions(1,['Hide subtotals','Show subtotals']);
+    MF_GridOptions(1,['Hide subtotals','Subtotal on Type','Subtotal on Group']);
     MF_GridOptions(2,['This month','3 months', '6 months', 'This year', '1 year', '2 years', '3 years','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years with average']);
     MF_GridOptions(4,getAccountGroupNames());
-    MTFlex.Subtotals = MTFlex.Button1;
+    if(MTFlex.Button1 > 0) MTFlex.Subtotals = true;
     MTP = [];
     MTP.Column = 0; MTP.Title = 'Group';MTP.isSortable = 1; MTP.Format = 0; MF_QueueAddTitle(MTP);
     MTP.Column = 1; MTP.Title = 'Type'; MF_QueueAddTitle(MTP);
@@ -751,7 +751,7 @@ async function MenuReportsAccountsGoExt(){
 
     MTFlex.Title2 = 'Last ' + NumMonths + ' Months as of ' + getDates('s_FullDate');
     MTFlex.Title3 = '(Based on beginning of each month)';
-    MTP.Column = 2; MTP.Title = 'Account Group';MTP.Format = 0;MF_QueueAddTitle(MTP);
+    MTP.Column = 2; MTP.Title = 'Group';MTP.Format = 0;MF_QueueAddTitle(MTP);
 
     if(MTFlex.Button2 == 9) { NumMonths = CurMonth;MTFlex.Title2 = 'This year as of ' + getDates('s_FullDate'); }
     if (MTFlex.Button2 == 10) {
@@ -776,7 +776,6 @@ async function MenuReportsAccountsGoExt(){
     MTP.Column = 15; MTP.Title = 'Current';MF_QueueAddTitle(MTP);
     MTP.Column = 16; MTP.Title = 'Average';MF_QueueAddTitle(MTP);
     snapshotData = await getAccountsData();
-    if(debug == 1) console.log('MenuReportsAccountsGoExt',snapshotData,MTFlex.Subtotals);
     for (let i = 0; i < snapshotData.accounts.length; i += 1) {
         if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + snapshotData.accounts[i].id,false)) {
             MTP = [];
@@ -787,19 +786,24 @@ async function MenuReportsAccountsGoExt(){
             } else {
                 MTP.BasedOn = 2; MTP.Section = 4;
             }
-            if(MTFlex.Subtotals == 1) {
-                MTP.PK = snapshotData.accounts[i].type.display;
-            } else {
-                MTP.PK = MTP.BasedOn.toString();
-            }
             MTP.SKHRef = '/accounts/details/' + MTP.UID;
+            let accountName = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
+            switch(Number(MTFlex.Button1)) {
+                case 1:
+                    MTP.PK = snapshotData.accounts[i].type.display; break;
+                case 2:
+                    MTP.PK = accountName;break;
+                default:
+                    MTP.PK = MTP.BasedOn.toString();
+            }
             MF_QueueAddRow(MTP);
             MTFlexRow[MTFlexCR][MTFields] = snapshotData.accounts[i].displayName;
             MTFlexRow[MTFlexCR][MTFields+1] = snapshotData.accounts[i].subtype.display;
-            MTFlexRow[MTFlexCR][MTFields+2] = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
+            MTFlexRow[MTFlexCR][MTFields+2] = accountName;
             MTFlexRow[MTFlexCR][MTFields+15] = Number(snapshotData.accounts[i].displayBalance);
         }
     }
+    if(debug == 1) console.log('MenuReportsAccountsGoExt',snapshotData,MTFlexRow,MTFlex);
     for (let i = 0; i < 12; i += 1) {
         let used = false;
         snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(useDate));
@@ -845,9 +849,8 @@ async function MenuReportsAccountsGoStd(){
     let cards = 0,acard=[0,0,0,0,0];
 
     MTFlex.Title2 = getDates('s_FullDate',useDate) + ' - ' + getDates('s_FullDate',useDate2);
-
-    MTP.Column = 2; MTP.Title = 'Updated';MTP.Format = -1;MF_QueueAddTitle(MTP);
-    MTP.Column = 3; MTP.Title = 'Group';MTP.Format = 0;MF_QueueAddTitle(MTP);
+    MTP.Column = 2; MTP.Title = 'Group';MTP.Format = 0;MF_QueueAddTitle(MTP);
+    MTP.Column = 3; MTP.Title = 'Updated';MTP.Format = -1;MF_QueueAddTitle(MTP);
     MTP.Column = 4; MTP.Title = 'Beg Balance'; MTP.isSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];MF_QueueAddTitle(MTP);
     if(MTFlex.Button2 > 0) { MTP.isHidden = true; }
     MTP.Column = 5; MTP.Title = 'Income'; MF_QueueAddTitle(MTP);
@@ -904,8 +907,8 @@ async function MenuReportsAccountsGoStd(){
                     MF_QueueAddRow(MTP);
                     MTFlexRow[MTFlexCR][MTFields] = snapshotData.accounts[i].displayName;
                     MTFlexRow[MTFlexCR][MTFields+1] = snapshotData.accounts[i].subtype.display;
-                    MTFlexRow[MTFlexCR][MTFields+2] = snapshotData.accounts[i].displayLastUpdatedAt.substring(0, 10);
-                    MTFlexRow[MTFlexCR][MTFields+3] = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
+                    MTFlexRow[MTFlexCR][MTFields+2] = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
+                    MTFlexRow[MTFlexCR][MTFields+3] = snapshotData.accounts[i].displayLastUpdatedAt.substring(0, 10);
                     MTFlexRow[MTFlexCR][MTFields+8] = useBalance;
 
                     if(snapshotData.accounts[i].hideTransactionsFromReports == false) {
