@@ -789,12 +789,9 @@ async function MenuReportsAccountsGoExt(){
             MTP.SKHRef = '/accounts/details/' + MTP.UID;
             let accountName = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
             switch(Number(MTFlex.Button1)) {
-                case 1:
-                    MTP.PK = snapshotData.accounts[i].type.display; break;
-                case 2:
-                    MTP.PK = accountName;break;
-                default:
-                    MTP.PK = MTP.BasedOn.toString();
+                case 1:MTP.PK = snapshotData.accounts[i].type.display; break;
+                case 2:MTP.PK = accountName;break;
+                default:MTP.PK = MTP.BasedOn.toString();
             }
             MF_QueueAddRow(MTP);
             MTFlexRow[MTFlexCR][MTFields] = snapshotData.accounts[i].displayName;
@@ -898,16 +895,17 @@ async function MenuReportsAccountsGoStd(){
                     } else {
                         MTP.BasedOn = 2; MTP.Section = 4;
                     }
-                    if(MTFlex.Subtotals == 1) {
-                        MTP.PK = snapshotData.accounts[i].type.display;
-                    } else {
-                        MTP.PK = MTP.BasedOn.toString();
+                    let accountName = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
+                    switch(Number(MTFlex.Button1)) {
+                        case 1:MTP.PK = snapshotData.accounts[i].type.display; break;
+                        case 2:MTP.PK = accountName;break;
+                        default:MTP.PK = MTP.BasedOn.toString();
                     }
                     MTP.SKHRef = '/accounts/details/' + MTP.UID;
                     MF_QueueAddRow(MTP);
                     MTFlexRow[MTFlexCR][MTFields] = snapshotData.accounts[i].displayName;
                     MTFlexRow[MTFlexCR][MTFields+1] = snapshotData.accounts[i].subtype.display;
-                    MTFlexRow[MTFlexCR][MTFields+2] = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
+                    MTFlexRow[MTFlexCR][MTFields+2] = accountName;
                     MTFlexRow[MTFlexCR][MTFields+3] = snapshotData.accounts[i].displayLastUpdatedAt.substring(0, 10);
                     MTFlexRow[MTFlexCR][MTFields+8] = useBalance;
 
