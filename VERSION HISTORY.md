@@ -3,6 +3,10 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.03 (beta):** 
+
+• CHANGE: Better tooltip image and positioning.
+
 **Version 3.02:** 
 
 • FIX: Script could fail to load or work properly on Safari browser.
