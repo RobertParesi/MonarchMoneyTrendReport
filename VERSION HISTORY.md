@@ -3,11 +3,13 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.02 (beta):** 
+
+• FIX: Script could fail to load or work properly on Safari browser.
+
 **Version 3.01:** 
 
 • NEW: Added "Lowest", "Highest" and "Average" to Trends Monthly History side panel
-
-• NEW: Added Tooltip to > on Trends & Accounts reports.
 
 • NEW: Added Tooltip on Accounts / Assets & Liabilities to show account breakdown.
 
