@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.02.06
+// @version      3.02.07
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.02.06';
+const version = '3.02.07';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2321,17 +2321,12 @@ function onClickGridSort() {
 // Monarch Money needed
 function isDarkMode() {
 
-    let i =0,rObj=null,cssObj=null,bgColor=null;
-
-    rObj = document.querySelector('[class*=Page__Root]');
+    const rObj = document.querySelector('[class*=Page__Root]');
     if(rObj == null) {return null;}
-
-    cssObj = window.getComputedStyle(rObj, null);
+    const cssObj = window.getComputedStyle(rObj, null);
     if(cssObj == null) {return null;}
-
-    bgColor = cssObj.getPropertyValue('background-color');
+    const bgColor = cssObj.getPropertyValue('background-color');
     if(bgColor == null || bgColor == '') {return null;}
-
     if (bgColor === 'rgb(25, 25, 24)') { return 1; } else { return 0; }
 
 }
