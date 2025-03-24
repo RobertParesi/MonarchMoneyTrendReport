@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.02.04
+// @version      3.02.05
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.02.04';
+const version = '3.02.05';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2319,17 +2319,19 @@ function onClickGridSort() {
 
 // Monarch Money needed
 function isDarkMode() {
-    let i =0,rObj=null,cssObj=null;
+    let i =0,rObj=null,cssObj=null,bgColor=null;
     do {
         rObj = document.querySelector('[class*=Page__Root]');
         cssObj = window.getComputedStyle(rObj, null);
-        if(cssObj != null){break;}
+        if(cssObj != null ){
+            bgColor = cssObj.getPropertyValue('background-color');
+            if(bgColor != null) {
+                if (bgColor === 'rgb(25, 25, 24)') { return 1; } else { return 0; }
+            }
+        }
         i++;} while (i < 2000);
-    if(cssObj) {
-        const bgColor = cssObj.getPropertyValue('background-color');
-        if (bgColor === 'rgb(25, 25, 24)') { return 1; } else { return 0; }
-    }
-    return 1;
+    alert('Could not load style after ' + i + ' tries!');
+    return 0;
 }
 function addStyle(aCss) {
     if(r_headStyle == null) { r_headStyle = document.getElementsByTagName('head')[0]; }
