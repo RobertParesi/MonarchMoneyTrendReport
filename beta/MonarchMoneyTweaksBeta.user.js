@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.02.02
+// @version      3.02.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.02.02';
+const version = '3.02.03';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -313,17 +313,13 @@ function MT_GridDrawDetails() {
         if(MTFlex.TriggerEvents) {
             if(isSubTotal == true && useRow.PKTriggerEvent) {
                 elx = cec('td','',el,'','',ArrowSpacing + 'vertical-align: top;');
-                elx = cec('button','MTFlexCellArrow tooltip',elx);
+                elx = cec('button','MTFlexCellArrow',elx);
                 cec('span','MTFlexCellArrow',elx,'','','','triggers',useRow.PKTriggerEvent + '/');
-                let tt = cec('div','tooltip',elx,'');
-                cec('span','tooltiptext',tt,useRow.PK);
             }
             else if(isSubTotal == false && useRow.SKTriggerEvent) {
                 elx = cec('td','',el,'','',ArrowSpacing);
-                elx = cec('button','MTFlexCellArrow tooltip',elx);
+                elx = cec('button','MTFlexCellArrow',elx);
                 cec('span','MTFlexCellArrow',elx,'','','','triggers',useRow.SKTriggerEvent + '/');
-                let tt = cec('div','tooltip',elx,'');
-                cec('span','tooltiptext',tt,useRow[MTFields]);
             } else {
                 elx = cec('td','',el,'','',ArrowSpacing );
             }
