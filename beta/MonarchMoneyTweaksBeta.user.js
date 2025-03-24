@@ -1,18 +1,18 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.02.05
+// @version      3.02.06
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.02.05';
+const version = '3.02.06';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
-let SaveLocationPathName = '';
+let SaveLocationPathName = '',css_reload = false;
 let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=0, debug=0;
 let accountGroups = [];
 let AccountsTodayIs = new Date(), TrendTodayIs = new Date();
@@ -27,6 +27,7 @@ let MTFlexSum = [0,0];
 function MM_Init() {
 
     const a = isDarkMode();
+    if(a == null) {css_reload = true;return;}
     const panelBackground = 'background-color: ' + ['#FFFFFF;','#222221;'][a];
     const panelText = 'color: ' + ['#777573;','#989691;'][a];
     const standardText = 'color: ' + ['#22201d;','#FFFFFF;'][a];
@@ -2319,19 +2320,20 @@ function onClickGridSort() {
 
 // Monarch Money needed
 function isDarkMode() {
+
     let i =0,rObj=null,cssObj=null,bgColor=null;
-    do {
-        rObj = document.querySelector('[class*=Page__Root]');
-        cssObj = window.getComputedStyle(rObj, null);
-        if(cssObj != null ){
-            bgColor = cssObj.getPropertyValue('background-color');
-            if(bgColor != null) {
-                if (bgColor === 'rgb(25, 25, 24)') { return 1; } else { return 0; }
-            }
-        }
-        i++;} while (i < 2000);
-    alert('Could not load style after ' + i + ' tries!');
-    return 0;
+
+    rObj = document.querySelector('[class*=Page__Root]');
+    if(rObj == null) {return null;}
+
+    cssObj = window.getComputedStyle(rObj, null);
+    if(cssObj == null) {return null;}
+
+    bgColor = cssObj.getPropertyValue('background-color');
+    if(bgColor == null || bgColor == '') {return null;}
+
+    if (bgColor === 'rgb(25, 25, 24)') { return 1; } else { return 0; }
+
 }
 function addStyle(aCss) {
     if(r_headStyle == null) { r_headStyle = document.getElementsByTagName('head')[0]; }
@@ -2574,6 +2576,7 @@ function getChecked(InA,InB) {
 (function() {
     MM_Init();
     setInterval(() => {
+        if(css_reload == true) {css_reload = false;MM_Init();}
         if(window.location.pathname != SaveLocationPathName) {
             if(SaveLocationPathName) {MM_MenuRun(false);}
             SaveLocationPathName = window.location.pathname;
