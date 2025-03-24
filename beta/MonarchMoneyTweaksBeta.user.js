@@ -2325,10 +2325,9 @@ function onClickGridSort() {
 function isDarkMode() {
     let i =0,rObj=null;
     do {
-        const rObj = document.querySelector('[class*=Page__Root]');
+        rObj = document.querySelector('[class*=Page__Root]');
         if(rObj) break;
-        i++;
-    } while (i < 25);
+        i++;} while (i < 25);
     if(rObj) {
         const cssObj = window.getComputedStyle(rObj, null);
         const bgColor = cssObj.getPropertyValue('background-color');
