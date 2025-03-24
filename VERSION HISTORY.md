@@ -7,6 +7,8 @@ Email any issues directly:  robert @ paresi.net
 
 • FIX: Script could fail to load or work properly on Safari browser.
 
+• NEW: Reports / Accounts can now be sub-totaled by either Account Group or by Account Type.
+
 **Version 3.01:** 
 
 • NEW: Added "Lowest", "Highest" and "Average" to Trends Monthly History side panel
