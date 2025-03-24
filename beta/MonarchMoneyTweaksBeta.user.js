@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.02
+// @version      3.03.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.02';
+const version = '3.03.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -102,9 +102,10 @@ function MM_Init() {
     addStyle('.Toast__Root-sc-1mbc5m5-0 {display: ' + getDisplay(getCookie("MT_HideToaster",false),'block;') + '}');
     addStyle('.ReportsTooltipRow__Diff-k9pa1b-3 {display: ' + getDisplay(getCookie("MT_HideTipDiff",false),'block;') + '}');
     addStyle('.AccountNetWorthCharts__Root-sc-14tj3z2-0 {display: ' + getDisplay(getCookie("MT_HideAccountsGraph",false),'block;') + '}');
-    addStyle('.tooltip {position: relative;display: inline-block;}');
-    addStyle('.tooltip .tooltiptext {visibility: hidden; width: 120px; background-color: black; color: #fff; text-align: center; font-size: 14px; padding: 12px 0; border-radius: 6px; position: absolute; z-index: 1; margin-bottom: 16px;bottom: 125%; left: 50%; margin-left: -60px;}');
-    addStyle('.tooltip:hover .tooltiptext {visibility: visible;opacity: 1;}');
+    addStyle('.tooltip {position: relative; display: inline-block;}');
+    addStyle('.tooltip .tooltiptext {  visibility: hidden;  width: 120px;  background-color: black;  color: #fff;  text-align: center;  border-radius: 6px;  padding: 5px 0;  position: absolute;  z-index: 1;  bottom: 1.5em;  margin-left: -150px;}');
+    addStyle('.tooltip .tooltiptext::after {  content: "";  position: absolute;  top: 100%;  left: 50%;   margin-left: -5px;  border-width: 5px;  border-style: solid;  border-color: black transparent transparent transparent;}');
+    addStyle('.tooltip:hover .tooltiptext {visibility: visible; opacity: 1;}');
 }
 
 function MM_MenuFix() {
