@@ -5,7 +5,10 @@ Email any issues directly:  robert @ paresi.net
 
 **Version 3.03 (beta):** 
 
+• NEW: Reports / Trends can now be run at the Account Group level. (Display your finances by household members or other account groups!)
+
 • CHANGE: Better tooltip image and positioning.
+
 
 **Version 3.02:** 
 
