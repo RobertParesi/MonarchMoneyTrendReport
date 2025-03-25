@@ -5,7 +5,7 @@ Email any issues directly:  robert @ paresi.net
 
 **Version 3.04:** 
 
-• NEW: Reports / Trends can now be run at the Account Group level. (Display your finances by household members or other account groups such as "Business" vs "Personal")
+• NEW: Reports / Trends can now be run at the Account Group level. (Display your Income & Spending by household members or other account groups such as "Business" vs "Personal")
 
 • CHANGE: Better tooltip image and positioning on Accounts Summary
 
