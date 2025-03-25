@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.03.02
+// @version      3.03.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.03.02';
+const version = '3.03.03';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1539,7 +1539,16 @@ function MenuTrendsHistory(inType,inID) {
         if(inType == 'category-groups') {
             div2 = cec('button','MTTrendCellArrow2',div,['',''][getCookie('MT_div.TrendHistoryDetail',true)],'','float:right;margin-right: 16px;');
         }
-        div2 = cec('div','MTFlexCardBig',div,'Monthly Summary');
+        let CurrentFilter = '';
+        let CurrentFilterObj = [];
+        if(MTFlex.Name) {
+            if(MTFlex.Button4 > 0) {
+                CurrentFilter = getAccountGroupFilter();
+                CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
+            }
+        }
+        if(CurrentFilter) {CurrentFilter = 'Monthly Summary - ' + CurrentFilter} else {CurrentFilter = 'Monthly Summary';}
+        div2 = cec('div','MTFlexCardBig',div,CurrentFilter);
         div = cec('span','MTSideDrawerHeader',div4);
         div2 = cec('div','MTFlexSmall',div, retGroups.TYPE,'','float:right;');
         if(retGroups.TYPE == 'expense') {useURL = '#|spending|';} else {useURL = '#|income|';}
@@ -1550,9 +1559,7 @@ function MenuTrendsHistory(inType,inID) {
             div2 = cec('a','MTFlexGridDCell',div,retGroups.ICON + ' ' + retGroups.GROUPNAME + ' / ' + retGroups.NAME,useURL + retGroups.ID + '|');
         }
         TrendQueue2 = [];
-        let CurrentFilter = [];
-        if(MTFlex.Name) { if(MTFlex.Button4 > 0) {CurrentFilter = getAccountGroupInfo(getAccountGroupFilter());} }
-        BuildTrendData('hs',inGroup,'month',lowerDate,higherDate,inID,CurrentFilter);
+        BuildTrendData('hs',inGroup,'month',lowerDate,higherDate,inID,CurrentFilterObj);
     }
 }
 
