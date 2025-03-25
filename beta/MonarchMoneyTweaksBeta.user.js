@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.03.03
+// @version      3.03.04
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.03.03';
+const version = '3.03.04';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -384,7 +384,7 @@ function MT_GridDrawContainer() {
 
         div2 = cec('div','MTdropdown',tbs);
         div2 = cec('button','MTFlexButtonExport',div2,'Export ');
-        if(MTFlex.Button4Options) {
+        if(MTFlex.Button4Options.length > 0) {
             div2 = cec('div','MTdropdown',tbs);
             div2 = cec('button','MTFlexButton4',div2,MTFlex.Button4Options[MTFlex.Button4] + ' ');
             let divContent = cec('div','MTFlexdown-content',div2,'','','','id','MTDropdown4');
@@ -392,7 +392,7 @@ function MT_GridDrawContainer() {
                  div2 = cec('a','MTButton4',divContent,MTFlex.Button4Options[i],'','','MTOption',i);
             }
         }
-        if(MTFlex.Button1Options) {
+        if(MTFlex.Button1Options.length > 0) {
             div2 = cec('div','MTdropdown',tbs);
             div2 = cec('button','MTFlexButton1',div2,MTFlex.Button1Options[MTFlex.Button1] + ' ');
             let divContent = cec('div','MTFlexdown-content',div2,'','','','id','MTDropdown1');
@@ -400,7 +400,7 @@ function MT_GridDrawContainer() {
                  div2 = cec('a','MTButton1',divContent,MTFlex.Button1Options[i],'','','MTOption',i);
             }
         }
-        if(MTFlex.Button2Options) {
+        if(MTFlex.Button2Options.length > 0) {
             div2 = cec('div','MTdropdown',tbs);
             div2 = cec('button','MTFlexButton2',div2,MTFlex.Button2Options[MTFlex.Button2] + ' ');
             let divContent = cec('div','MTFlexdown-content',div2,'','','','id','MTDropdown2');
@@ -1026,7 +1026,7 @@ function getAccountGroupInfo(inName) {
 }
 
 function getAccountGroupFilter() {
-    if(MTFlex.Button4 > 0) {
+    if(MTFlex.Button4Options.length > 0) {
         const p = getAccountGroupInfo();
         if(p.length >= MTFlex.Button4) {return p[MTFlex.Button4];}
     }
@@ -1128,7 +1128,7 @@ async function MenuReportsTrendsGo() {
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
 
     let CurrentFilter = [];
-    if(MTFlex.Button4 > 0) {CurrentFilter = getAccountGroupInfo(getAccountGroupFilter());}
+    if(MTFlex.Button4Options.length > 0) {CurrentFilter = getAccountGroupInfo(getAccountGroupFilter());}
 
     MTP = [];
     MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
@@ -1542,7 +1542,7 @@ function MenuTrendsHistory(inType,inID) {
         let CurrentFilter = '';
         let CurrentFilterObj = [];
         if(MTFlex.Name) {
-            if(MTFlex.Button4 > 0) {
+            if(MTFlex.Button4Options.length > 0) {
                 CurrentFilter = getAccountGroupFilter();
                 CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
             }
