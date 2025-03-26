@@ -35,7 +35,8 @@ Having been available for over a year to members of the Monarch Money community,
 ![Settings](/images/MM_Chrome1.png)
 
 
-## Account Groups (Field found when editing an Account in Moonarch Money):
+## Account Groups 
+**(Field found when editing an Account in Moonarch Money)**
 
 Account Groups allow you to break out your transactions (Income & Expenses) as well as your Accounts (Assets & Liabilities).
 
