@@ -3,7 +3,7 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.03-3.05:** 
+**Version 3.03-3.06:** 
 
 • NEW: Reports / Trends can now be run at the Account Group level. (Display your Income & Spending by household members or other account groups such as "Business" vs "Personal")
 
