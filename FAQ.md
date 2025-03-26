@@ -19,7 +19,7 @@ Having been available for over a year to members of the Monarch Money community,
 > [!IMPORTANT]
 > Only install or update the Monarch Money Tweaks extension from **this GitHub location only**. Do not install from other locations including direct links in Reddit or other websites.  This GitHub page is the only **official location** that should be used to get the extension.
 
-> [!TIP]
+## Auto-Updating Monarch Money Tweaks
 > If you want the script to update automatically:
 
 1. Go to Extensions / Manage Extensions for Tampermoney / Extension options. (In Safari and Firefox, just click on the Tampermoney icon in the browser toolbar & then **Dashboard**).
@@ -36,7 +36,7 @@ Having been available for over a year to members of the Monarch Money community,
 
 
 ## Account Groups 
-**(Field found when editing an Account in Moonarch Money)**
+**(Field found when editing an Account in Monarch Money)**
 
 Account Groups allow you to break out your transactions (Income & Expenses) as well as your Accounts (Assets & Liabilities).
 
