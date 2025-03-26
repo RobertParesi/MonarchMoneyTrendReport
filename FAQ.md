@@ -36,7 +36,7 @@ Having been available for over a year to members of the Monarch Money community,
 
 
 ## Account Groups 
-**(Field found when editing an Account in Monarch Money)**
+> Field found when editing an Account in Monarch Money
 
 Account Groups allow you to break out your transactions (Income & Expenses) as well as your Accounts (Assets & Liabilities).
 
