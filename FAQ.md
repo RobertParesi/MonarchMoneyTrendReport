@@ -1,6 +1,9 @@
 
 ![Settings](/images/MM_SettingsDeveloper.png)
 
+## About Monarch Money Tweaks Extension
+> Safety, Security and Transparency of this extension
+
 **Monarch Money Tweaks** is a 100% raw JavaScript program and open-source.   
 
 Anyone with coding knowledge can easily read and understand this extension’s functionality. It utilizes the Monarch Money GraphQL API, which is integral to the Monarch Money ecosystem. 
