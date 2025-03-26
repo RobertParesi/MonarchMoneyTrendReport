@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.07
+// @version      3.08
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.07';
+const version = '3.08';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1549,7 +1549,7 @@ function MenuTrendsHistory(inType,inID) {
         let CurrentFilter = '';
         let CurrentFilterObj = [];
         if(MTFlex.Name) {
-            if(MTFlex.Button4Options.length > 1) {
+            if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
                 CurrentFilter = getAccountGroupFilter();
                 CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
             }
