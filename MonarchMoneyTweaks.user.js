@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.05
+// @version      3.06
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.05';
+const version = '3.06';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1012,16 +1012,19 @@ function getAccountGroupInfo(inName) {
         key = localStorage.key(i);
         if(key.startsWith('MTAccounts:')) {
             value = localStorage.getItem(key);
-            if(inName) {
-                if(inName == value) {
-                    keyid = localStorage.key(i).slice(11);items.push(keyid);
+            value = value.trim();
+            if(value != '') {
+                if(inName) {
+                    if(inName == value) {
+                        keyid = localStorage.key(i).slice(11);items.push(keyid);
+                    }
+                } else {
+                    if(!items.includes(value)) {items.push(value);}
                 }
-            } else {
-                if(!items.includes(value)) {items.push(value);}
             }
         }
     }
-    if(inName == null && items.length > 0) {
+    if(inName == undefined && items.length > 0) {
         items.sort();
         items.unshift('All Groups');
     }
