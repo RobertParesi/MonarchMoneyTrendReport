@@ -2,7 +2,7 @@
 ![Settings](/images/MM_SettingsDeveloper.png)
 
 ## About Monarch Money Tweaks Extension
-> Safety, Security and Transparency of this extension
+> Safety, Security and Transparency of this extension:
 
 **Monarch Money Tweaks** is a 100% raw JavaScript program and open-source.   
 
@@ -39,7 +39,7 @@ Having been available for over a year to members of the Monarch Money community,
 
 
 ## Account Groups 
-> Field found when editing an Account in Monarch Money
+> Extension added field found when editing an Account in Monarch Money:
 
 Account Groups allow you to break out your transactions (Income & Expenses) as well as your Accounts (Assets & Liabilities).
 
