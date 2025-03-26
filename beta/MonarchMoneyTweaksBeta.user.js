@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.06
+// @version      3.07
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.06';
+const version = '3.07';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -747,7 +747,6 @@ async function MenuReportsAccountsGoExt(){
     let NumMonths = (MTFlex.Button2 === 7) ? 6 : 12;
     let useDate = getDates('d_Minus1Year');
     let AccountGroupFilter = getAccountGroupFilter();
-    if(AccountGroupFilter == 'All Groups') AccountGroupFilter = '';
 
     MTFlex.Title2 = 'Last ' + NumMonths + ' Months as of ' + getDates('s_FullDate');
     MTFlex.Title3 = '(Based on beginning of each month)';
@@ -866,7 +865,6 @@ async function MenuReportsAccountsGoStd(){
     let skipTxs = getCookie('MT_AccountsBalance',true);
     let skipHidden = getCookie('MT_AccountsHidden',true);
     let AccountGroupFilter = getAccountGroupFilter();
-    if(AccountGroupFilter == 'All Groups') AccountGroupFilter = '';
 
     snapshotData = await getAccountsData();
     snapshotData2 = await GetTransactions(formatQueryDate(useDate),formatQueryDate(useDate2),0,false);
@@ -1007,12 +1005,11 @@ async function MenuReportsAccountsGoStd(){
 }
 
 function getAccountGroupInfo(inName) {
-    let items = [],value = '',keyid = '',key='';
+    let items = [],value = '',key='',keyid='';
     for (let i = 0; i < localStorage.length; i++) {
         key = localStorage.key(i);
         if(key.startsWith('MTAccounts:')) {
             value = localStorage.getItem(key);
-            value = value.trim();
             if(value != '') {
                 if(inName) {
                     if(inName == value) {
@@ -1032,7 +1029,7 @@ function getAccountGroupInfo(inName) {
 }
 
 function getAccountGroupFilter() {
-    if(MTFlex.Button4Options.length > 0) {
+    if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
         const p = getAccountGroupInfo();
         if(p.length >= MTFlex.Button4) {return p[MTFlex.Button4];}
     }
@@ -1133,8 +1130,12 @@ async function MenuReportsTrendsGo() {
     MTFlex.SortSeq = ['1','1','1','2','2','2','2','2','2'];
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
 
-    let CurrentFilter = [];
-    if(MTFlex.Button4Options.length > 0) {CurrentFilter = getAccountGroupInfo(getAccountGroupFilter());}
+    let CurrentFilter = '';
+    let CurrentFilterObj = [];
+    if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
+        CurrentFilter = getAccountGroupFilter();
+        CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
+    }
 
     MTP = [];
     MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
@@ -1196,9 +1197,9 @@ async function MenuReportsTrendsGo() {
 
         MTFlex.Title2 = getDates('s_FullDate',lowerDate) + ' - ' + getDates('s_FullDate',higherDate);
         if(MTFlex.Button2 == 8) {
-            await BuildTrendData('oy',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilter);
+            await BuildTrendData('oy',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
         } else {
-            await BuildTrendData('ot',MTFlex.Button1,'month',lowerDate,higherDate,'',CurrentFilter);
+            await BuildTrendData('ot',MTFlex.Button1,'month',lowerDate,higherDate,'',CurrentFilterObj);
         }
         await WriteByMonthData();
     } else {
@@ -1213,7 +1214,7 @@ async function MenuReportsTrendsGo() {
         MTP.Column = 5; MTP.Title = 'YTD ' + year; MTP.isSortable = 2; MTP.Width = '14%'; MTP.Format = useFormat; MTP.ShowPercentShade = false;
         if(getCookie('MT_TrendHidePer1',true) != true) {MTP.ShowPercent = 2;}
         MF_QueueAddTitle(MTP);
-        await BuildTrendData('cp',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilter);
+        await BuildTrendData('cp',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
 
         // last year
         year-=1;
@@ -1226,7 +1227,7 @@ async function MenuReportsTrendsGo() {
         MTP.Column = 6; MTP.Title = 'Difference'; MTP.Format = useFormat; MTP.Width = '14%';MTP.ShowPercentShade = true;
         if(getCookie('MT_TrendHidePer2',true) != true) {MTP.ShowPercent = 1;}
         MF_QueueAddTitle(MTP);
-        await BuildTrendData('lp',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilter);
+        await BuildTrendData('lp',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
 
         // This Period
         let useTitle = '';
@@ -1253,7 +1254,7 @@ async function MenuReportsTrendsGo() {
         MTP.Column = 2; MTP.Title = useTitle; MTP.isSortable = 2; MTP.Width = '14%'; MTP.Format = useFormat; MTP.ShowPercentShade = false;
         if(getCookie('MT_TrendHidePer1',true) != true) {MTP.ShowPercent = 2;}
         MF_QueueAddTitle(MTP);
-        await BuildTrendData('cm',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilter);
+        await BuildTrendData('cm',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
 
         // Last Period
         let forceEOM = false;
@@ -1308,7 +1309,7 @@ async function MenuReportsTrendsGo() {
         if(getCookie('MT_TrendHidePer2',true) != true) {MTP.ShowPercent = 1;}
         MF_QueueAddTitle(MTP);
 
-        await BuildTrendData('lm',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilter);
+        await BuildTrendData('lm',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
         await WriteCompareData();
     }
     MTSpawnProcess = 1;
@@ -1548,7 +1549,7 @@ function MenuTrendsHistory(inType,inID) {
         let CurrentFilter = '';
         let CurrentFilterObj = [];
         if(MTFlex.Name) {
-            if(MTFlex.Button4Options.length > 0) {
+            if(MTFlex.Button4Options.length > 1) {
                 CurrentFilter = getAccountGroupFilter();
                 CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
             }
@@ -2248,9 +2249,9 @@ window.onclick = function(event) {
             if(event.target.className.includes('EditAccountForm__StyledSubmitButton')) {
                 const li = document.querySelector('input.MTInputClass');
                 if(li) {
-                    const inputValue = li.value;
+                    let inputValue = li.value;
                     let p = SaveLocationPathName.split('/');
-                    if(p) {setCookie('MTAccounts:' + p[3],inputValue);}
+                    if(p) {setCookie('MTAccounts:' + p[3],inputValue.trim());}
                 }
             }
         }
