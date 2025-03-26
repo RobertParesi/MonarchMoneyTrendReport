@@ -15,6 +15,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Customize comparisons and averages to include the current month if desired.
     - Highlight spending based on thresholds: 25%, 50%, 100%
     - Drill down to view monthly and year-to-date totals to identify trends in your groups and categories.
+    - Filter Accounts by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
     - Sort history data by any column and export it to Excel or Numbers.
 
 * **Reports / Accounts**
