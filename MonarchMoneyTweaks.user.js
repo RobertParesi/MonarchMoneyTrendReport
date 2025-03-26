@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.04
+// @version      3.05
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.04';
+const version = '3.05';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -747,6 +747,7 @@ async function MenuReportsAccountsGoExt(){
     let NumMonths = (MTFlex.Button2 === 7) ? 6 : 12;
     let useDate = getDates('d_Minus1Year');
     let AccountGroupFilter = getAccountGroupFilter();
+    if(AccountGroupFilter == 'All Groups') AccountGroupFilter = '';
 
     MTFlex.Title2 = 'Last ' + NumMonths + ' Months as of ' + getDates('s_FullDate');
     MTFlex.Title3 = '(Based on beginning of each month)';
@@ -775,6 +776,7 @@ async function MenuReportsAccountsGoExt(){
     MTP.Column = 15; MTP.Title = 'Current';MF_QueueAddTitle(MTP);
     MTP.Column = 16; MTP.Title = 'Average';MF_QueueAddTitle(MTP);
     snapshotData = await getAccountsData();
+
     for (let i = 0; i < snapshotData.accounts.length; i += 1) {
         if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + snapshotData.accounts[i].id,false)) {
             MTP = [];
@@ -864,6 +866,7 @@ async function MenuReportsAccountsGoStd(){
     let skipTxs = getCookie('MT_AccountsBalance',true);
     let skipHidden = getCookie('MT_AccountsHidden',true);
     let AccountGroupFilter = getAccountGroupFilter();
+    if(AccountGroupFilter == 'All Groups') AccountGroupFilter = '';
 
     snapshotData = await getAccountsData();
     snapshotData2 = await GetTransactions(formatQueryDate(useDate),formatQueryDate(useDate2),0,false);
