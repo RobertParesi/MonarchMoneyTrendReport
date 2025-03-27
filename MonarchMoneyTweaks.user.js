@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.08
+// @version      3.09
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.08';
+const version = '3.09';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -80,7 +80,7 @@ function MM_Init() {
     addStyle('.MTFlexBig {font-size: 18px; ' + standardText + 'font-weight: 500; padding-top: 8px;}');
     addStyle('.MTFlexSmall {font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 8px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
     addStyle('.MTFlexLittle {font-size: 10px;' + panelText + 'font-weight: 600; padding-top: 8px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
-    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 24px; height:24px; font-size: 18px; font-family: MonarchIcons, sans-serif; transition: 0.1s ease-out; cursor: pointer; border-radius: 100%; border-style: none;}');
+    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 30px; height: 30px; font-size: 18px; font-family: MonarchIcons, sans-serif; transition: 0.1s ease-out; cursor: pointer; border-radius: 100%; border-style: none;}');
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 640px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
@@ -1554,7 +1554,7 @@ function MenuTrendsHistory(inType,inID) {
                 CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
             }
         }
-        if(CurrentFilter) {CurrentFilter = 'Monthly Summary - ' + CurrentFilter} else {CurrentFilter = 'Monthly Summary';}
+        if(CurrentFilter) {CurrentFilter = 'Monthly Summary - ' + CurrentFilter;} else {CurrentFilter = 'Monthly Summary';}
         div2 = cec('div','MTFlexCardBig',div,CurrentFilter);
         div = cec('span','MTSideDrawerHeader',div4);
         div2 = cec('div','MTFlexSmall',div, retGroups.TYPE,'','float:right;');
@@ -2115,7 +2115,7 @@ function MenuDisplay_Input(inValue,inCookie,inType,inStyle,defaultValue) {
                     e2.addEventListener('change', (e) => {
                         const inputVal = Math.max(0, Math.min(99, parseInt(e2.value) || 0));
                         value[idx] = inputVal;
-                        e.target.value = inputVal;
+                        e2.target.value = inputVal;
                         setCookie(inCookie, JSON.stringify(value));
                     });
                 });
