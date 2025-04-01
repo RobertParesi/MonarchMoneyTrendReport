@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.09
+// @version      3.10.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.09';
+const version = '3.10.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -51,25 +51,26 @@ function MM_Init() {
     addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, sans-serif, "Oracle" !important; font-size: 15px; font-weight: 200;}');
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; color: rgb(50, 170, 240); font-weight: 500; font-size: 14px; cursor: pointer;}');
     addStyle('.MTCheckboxClass, .MTFlexCheckbox {width: 19px; height: 19px; margin-right: 10px;float: inline-start; color: #FFFFFF; accent-color: ' + accentColor + '}');
-    addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; border-bottom: 1px solid ' + lineForground +';}');
+    addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; height: 8px; border-bottom: 1px solid ' + lineForground +';}');
     addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; border: solid 1px ' + borderColor + '; ' + standardText +'}');
-    addStyle('.MTSpacerClassTR {padding: 0px 0px 0px 0px;}');
+    addStyle('.MTSpacerClassTR { height: 4px; }');
     addStyle('.MTTrend:hover, .MTAccounts:hover {cursor:pointer;}');
     addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTHistoryButton {font-family: MonarchIcons, "Oracle", sans-serif;' + panelBackground + standardText + 'margin-left: 20px; font-weight: 500; border: 1px solid ' + borderColor + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px; font-size: 14px; padding: 7.5px 12px;cursor: pointer;border-radius: 4px;line-height: 150%;}');
     addStyle('.MTFlexContainer {display:block; padding: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 20px;  display: flex; }');
     addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + 'border-radius: 8px; box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;}');
     addStyle('.MTFlexContainerCard {  display: flex; flex: 1 1 0%; justify-content: space-between; padding: 16px 24px; align-items: center;' + panelBackground + 'border-radius: 8px; box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;}');
-    addStyle('.MTFlexGrid {' + panelBackground + 'padding: 20px;border-spacing: 8px;}');
+    addStyle('.MTFlexGrid {' + panelBackground + 'padding: 20px;border-spacing: 0px;}');
     addStyle('.MTFlexGrid th, td { padding-right: 8px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
     addStyle('.MTFlexGridTitleRow { font-size: 16px; font-weight: 500; height: 56px; position: sticky; top: 0; ' + panelBackground + '}');
     addStyle('.MTFlexGridTitleCell { border-bottom: 1px solid ' + borderColor + ';}');
     addStyle('.MTFlexGridTitleCell2 { text-align: right; border-bottom: 1px solid ' + borderColor + ';}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass:hover,  .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTFlexGridRow { font-size: 14px; font-weight: 500; height: 40px; vertical-align: bottom;}');
-    addStyle('.MTFlexSpacer {width: 100%; margin-bottom: 0px;border-bottom: 1px solid ' + borderColor +';}');
-    addStyle('.MTFlexGridItem { font-size: 14px; ; height: 26px }');
+    addStyle('.MTFlexGridRow { font-size: 14px; font-weight: 500; height: 44px; vertical-align: bottom;}');
+    addStyle('.MTFlexSpacer {width: 100%; margin-top: 3px; margin-bottom: 3px; border-bottom: 1px solid ' + borderColor +';}');
+    addStyle('.MTFlexGridItem { font-size: 14px;height: 32px;}');
+    addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
     addStyle('.MTFlexGridHCell { font-size: 15px;}');
     addStyle('.MTFlexGridHCell2 { text-align: right; font-size: 15px;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass {' + standardText +' }');
@@ -238,9 +239,9 @@ function MT_GridDrawDetails() {
                 Subtotals[SubtotalsNdx] = RowI;
                 SubtotalsNdx+=1;
             } else {
-                let el2 = cec('tr','MTSpacerClassTR',Header,'','',hide);
-                let el3 = cec('td','MTSpacerClassTR',el2,'','','','colspan',MTFlexTitle.length);
-                cec('div','MTFlexSpacer',el3);
+                let el2 = cec('tr','MTSpacerClassTR',Header,'','');
+                let el3 = cec('td','',el2,'','','','colspan',MTFlexTitle.length);
+                cec('div','MTFlexSpacer',el3,'','',hide);
                 el = cec('tr','MTFlexGridItem',Header);
                 useStyle = 'MTFlexGridDCell';
             }
@@ -2213,7 +2214,7 @@ window.onclick = function(event) {
             case 'MTFlexCheckbox':
                 MTFlex.Button3 = event.target.checked;
                 setCookie(MTFlex.Name + 'Button3',MTFlex.Button3);
-                if(MTFlex.Button3 == true) {MM_hideElement('tr.MTSpacerClassTR',1);} else {MM_hideElement('tr.MTSpacerClassTR',0);}
+                if(MTFlex.Button3 == true) {MM_hideElement('div.MTFlexSpacer',1);} else {MM_hideElement('div.MTFlexSpacer',0);}
                 return;
             case 'MTFlexButtonExport':
                 MT_GridExport();
