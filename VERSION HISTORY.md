@@ -7,6 +7,9 @@ Email any issues directly:  robert @ paresi.net
 
 • NEW: Reports / Trends & Reports / Accounts automatic line hovering
 
+• NEW: Reports / Trends & Reports / Accounts can use Monospace font (Settings)
+
+
 **Version 3.03-3.09:** 
 
 • NEW: Reports / Trends can now be run at the Account Group level. (Display your Income & Spending by household members or other account groups such as "Business" vs "Personal")
