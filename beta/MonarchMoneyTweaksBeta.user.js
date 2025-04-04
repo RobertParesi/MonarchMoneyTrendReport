@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.10.01
+// @version      3.10.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.10.01';
+const version = '3.10.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -63,11 +63,11 @@ function MM_Init() {
     addStyle('.MTFlexGrid {' + panelBackground + 'padding: 20px;border-spacing: 0px;}');
     addStyle('.MTFlexGrid th, td { padding-right: 8px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
-    addStyle('.MTFlexGridTitleRow { font-size: 16px; font-weight: 500; height: 56px; position: sticky; top: 0; ' + panelBackground + '}');
+    addStyle('.MTFlexGridTitleRow { font-size: 16px; font-weight: 600; height: 56px; position: sticky; top: 0; ' + panelBackground + '}');
     addStyle('.MTFlexGridTitleCell { border-bottom: 1px solid ' + borderColor + ';}');
     addStyle('.MTFlexGridTitleCell2 { text-align: right; border-bottom: 1px solid ' + borderColor + ';}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass:hover,  .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTFlexGridRow { font-size: 14px; font-weight: 500; height: 44px; vertical-align: bottom;}');
+    addStyle('.MTFlexGridRow { font-size: 14px; font-weight: 600; height: 44px; vertical-align: bottom;}');
     addStyle('.MTFlexSpacer {width: 100%; margin-top: 3px; margin-bottom: 3px; border-bottom: 1px solid ' + borderColor +';}');
     addStyle('.MTFlexGridItem { font-size: 14px;height: 32px;}');
     addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
@@ -81,7 +81,7 @@ function MM_Init() {
     addStyle('.MTFlexBig {font-size: 18px; ' + standardText + 'font-weight: 500; padding-top: 8px;}');
     addStyle('.MTFlexSmall {font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 8px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
     addStyle('.MTFlexLittle {font-size: 10px;' + panelText + 'font-weight: 600; padding-top: 8px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
-    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 30px; height: 30px; font-size: 18px; font-family: MonarchIcons, sans-serif; transition: 0.1s ease-out; cursor: pointer; border-radius: 100%; border-style: none;}');
+    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 28px; height: 24px; font-size: 18px; font-family: MonarchIcons, sans-serif; transition: 0.1s ease-out; cursor: pointer; border-radius: 100%; border-style: none;}');
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 640px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
@@ -197,7 +197,7 @@ function MT_GridDrawDetails() {
     let useValue = 0, useValue2 = '', workValue = 0;
     let rowNdx = 0, RowI = 0;
     let Subtotals = [], Grouptotals = [], SubtotalsNdx = 0;
-    let ArrowSpacing = 'width: 34px; padding-left: 0px;';
+    let ArrowSpacing = 'width: 34px; padding-left: 4px;';
     let hide = getChecked(MTFlex.Button3,'');
 
     MT_GridDrawClear();
@@ -217,7 +217,7 @@ function MT_GridDrawDetails() {
 
     function MT_GridDrawTitles() {
 
-        Header = cec('table','MTFlexGrid',MTFlexDetails);
+        Header = cec('table','MTFlexGrid',MTFlexDetails,'','',getCookie('MT_MonoMT',true) == 1 ? 'font-family: monospace;' : '');
         el = cec('tr','MTFlexGridTitleRow',Header);
         for (RowI = 0; RowI < MTFlexTitle.length; RowI += 1) {
             if(MTFlexTitle[RowI].isHidden != true) {
@@ -1591,7 +1591,7 @@ function MenuTrendsHistoryDraw() {
     if(topDiv) {
         if(topDiv.getAttribute("grouptype") == 'category-groups') { inGroup = 2;}
         if(topDiv.getAttribute("cattype") == 'income') { c_g = 'red'; c_r = 'green'; }
-        div = cec('div','MTSideDrawerHeader',topDiv);
+        div = cec('div','MTSideDrawerHeader',topDiv,'','',getCookie('MT_MonoMT',true) == 1 ? 'font-family: monospace;' : '');
 
         for (let i = 0; i < 12; i++) {
             sumQue.push({"MONTH": i,"YR1": MTHistoryDraw(i+1,startYear),"YR2": MTHistoryDraw(i+1,startYear + 1),"YR3": MTHistoryDraw(i+1,startYear + 2)});
@@ -2040,8 +2040,9 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Ignore Budget Income remaining in "Left to Spend"','MT_PlanLTBII','checkbox','margin-left: 22px;');
             MenuDisplay_Input('Ignore Budget Expenses remaining in "Left to Spend"','MT_PlanLTBIE','checkbox','margin-left: 22px;');
             MenuDisplay_Input('Ignore Rollover budgets, always use actual Budget minus actual Spent for “Left to Spend”','MT_PlanLTBIR','checkbox','margin-left: 22px;');
-            MenuDisplay_Input('Reorder budget categories (Income, Expenses, Contributions)','MT_BudgetOrder','number-array','',[0,1,2]);
+            MenuDisplay_Input('Reorder Budget Categories','MT_BudgetOrder','number-array','',[0,1,2]);
             MenuDisplay_Input('System','','spacer');
+            MenuDisplay_Input('Monospace Monarch Money Tweaks reports','MT_MonoMT','checkbox');
             MenuDisplay_Input('Debug data to console log (Only turn on if asked)','MT_Debug','checkbox');
         }
     }
@@ -2054,7 +2055,7 @@ function MenuDisplay_Input(inValue,inCookie,inType,inStyle,defaultValue) {
         qs = qs.firstChild.lastChild;
 
         let e1 = document.createElement('div');
-        let e2=null;
+        let e2 = null;
         if(inType == 'spacer') {
             e1.className = 'MTSpacerClass';
             qs.after(e1);
@@ -2093,6 +2094,7 @@ function MenuDisplay_Input(inValue,inCookie,inType,inStyle,defaultValue) {
         }
         if(inType == 'number-array') {
             cec('div','',e1,inValue,'','font-size: 16px; font-weight: 500; margin-bottom: 6px;');
+            e2 = cec('div','',e1,'','','display: flex; padding-top: 10px; column-gap: 12px; align-items: baseline;');
 
             let value = [...defaultValue];
             if(!OldValue) {
@@ -2108,15 +2110,14 @@ function MenuDisplay_Input(inValue,inCookie,inType,inStyle,defaultValue) {
                 const budgetCategories = ["Income", "Expenses", "Contributions"];
 
                 budgetCategories.map((label, idx) => {
-                    cec('div','',e1,label,'','font-size: 14px; font-weight: 500;');
-                    e2 = cec('input','MTInputClass',e1,'','','margin-bottom: 10px;','type','number');
-                    e2.min = 0;
-                    e2.max = 99;
-                    e2.value = value[idx];
-                    e2.addEventListener('change', (e) => {
-                        const inputVal = Math.max(0, Math.min(99, parseInt(e2.value) || 0));
+                    cec('div','',e2,label + ':','','font-size: 14px; font-weight: 500;');
+                    let e3 = cec('input','MTInputClass',e2,'','','margin-bottom: 10px;','type','number');
+                    e3.min = 0;
+                    e3.max = 99;
+                    e3.value = value[idx];
+                    e3.addEventListener('change', (e) => {
+                        let inputVal = Math.max(0, Math.min(99, parseInt(e3.value) || 0));
                         value[idx] = inputVal;
-                        e2.target.value = inputVal;
                         setCookie(inCookie, JSON.stringify(value));
                     });
                 });
