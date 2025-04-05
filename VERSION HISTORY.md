@@ -9,6 +9,8 @@ Email any issues directly:  robert @ paresi.net
 
 • NEW: Reports / Trends & Reports / Accounts can use a user selected font (Settings / Display)
 
+• NEW: Easier assisting in assigning merchants in transaction process. (Work in Progress)
+
 
 **Version 3.03-3.09:** 
 
