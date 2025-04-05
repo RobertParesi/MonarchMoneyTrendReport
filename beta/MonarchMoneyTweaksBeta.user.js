@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.10.03
+// @version      3.10.04
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.10.03';
+const version = '3.10.04';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -95,7 +95,7 @@ function MM_Init() {
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
     addStyle('.MTFlexdown-content div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
-    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto; border-radius: 8px; border: 1px solid ' + borderColor + '; box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px; right: 0; z-index: 1;}');
+    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto; border-radius: 8px; border: 1px solid ' + borderColor + '; box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px; z-index: 1;}');
     addStyle('.MTFlexdown-content a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 8px; font-weight: 200; padding: 10px 10px; display: block;}');
     addStyle('.show {display: block;}');
     addStyle('.MTBudget {margin-top: 20px;font-size: 14px;');
@@ -198,6 +198,8 @@ function MT_GridDrawDetails() {
     let rowNdx = 0, RowI = 0;
     let Subtotals = [], Grouptotals = [], SubtotalsNdx = 0;
     let ArrowSpacing = 'width: 34px; padding-left: 4px;';
+    let FontFamily = getCookie('MT_MonoMT',false);
+    if(FontFamily && FontFamily != 'System') {FontFamily = 'font-family: ' + FontFamily + ';';}
     let hide = getChecked(MTFlex.Button3,'');
 
     MT_GridDrawClear();
@@ -217,7 +219,7 @@ function MT_GridDrawDetails() {
 
     function MT_GridDrawTitles() {
 
-        Header = cec('table','MTFlexGrid',MTFlexDetails,'','',getCookie('MT_MonoMT',true) == 1 ? 'font-family: monospace;' : '');
+        Header = cec('table','MTFlexGrid',MTFlexDetails,'','',FontFamily);
         el = cec('tr','MTFlexGridTitleRow',Header);
         for (RowI = 0; RowI < MTFlexTitle.length; RowI += 1) {
             if(MTFlexTitle[RowI].isHidden != true) {
@@ -1587,11 +1589,13 @@ function MenuTrendsHistoryDraw() {
     let T = ['Total',0,0,0,0];
     let curSubTotal = 0;
     let div=null,div2 = null,div3=null;
+    let FontFamily = getCookie('MT_MonoMT',false);
+    if(FontFamily && FontFamily != 'System') {FontFamily = 'font-family: ' + FontFamily + ';';}
 
     if(topDiv) {
         if(topDiv.getAttribute("grouptype") == 'category-groups') { inGroup = 2;}
         if(topDiv.getAttribute("cattype") == 'income') { c_g = 'red'; c_r = 'green'; }
-        div = cec('div','MTSideDrawerHeader',topDiv,'','',getCookie('MT_MonoMT',true) == 1 ? 'font-family: monospace;' : '');
+        div = cec('div','MTSideDrawerHeader',topDiv,'','',FontFamily);
 
         for (let i = 0; i < 12; i++) {
             sumQue.push({"MONTH": i,"YR1": MTHistoryDraw(i+1,startYear),"YR2": MTHistoryDraw(i+1,startYear + 1),"YR3": MTHistoryDraw(i+1,startYear + 2)});
@@ -2017,7 +2021,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Hide Create Rule pop-up','MT_HideToaster','checkbox');
             MenuDisplay_Input('Reports','','spacer');
             MenuDisplay_Input('Hide chart tooltip Difference amount','MT_HideTipDiff','checkbox');
-            MenuDisplay_Input('Monospace Monarch Money Tweaks reports','MT_MonoMT','checkbox');
+            MenuDisplay_Input('Monarch Money Tweaks font for reports','MT_MonoMT','dropdown','',['System','Monospace','Andalé Mono','Courier','Monaco','Lucinda Console','Arial', 'Verdana']);
             MenuDisplay_Input('Reports / Trends','','spacer');
             MenuDisplay_Input('Always compare to End of Month','MT_TrendFullPeriod','checkbox');
             MenuDisplay_Input('By Month "Avg" ignores Current Month','MT_TrendIgnoreCurrent','checkbox');
@@ -2067,11 +2071,17 @@ function MenuDisplay_Input(inValue,inCookie,inType,inStyle,defaultValue) {
             qs.after(e1);
             return;
         }
-
-        if(inType == 'header') {
-            e1.innerText = inValue;
-            e1.style = 'font-size: 18px; font-weight: 500; margin-left:24px;padding-bottom:12px;';
-        } else { e1.style = 'margin: 11px 25px;';}
+        switch(inType) {
+            case 'header':
+                e1.innerText = inValue;
+                e1.style = 'font-size: 18px; font-weight: 500; margin-left:24px;padding-bottom:12px;';
+                break
+            case 'dropdown':
+                e1.style = 'margin: 11px 25px;display:grid;';
+                break;
+            default:
+                e1.style = 'margin: 11px 25px;';
+        }
         qs.after(e1);
         const OldValue = getCookie(inCookie,false);
         if(inType == 'checkbox') {
@@ -2092,8 +2102,17 @@ function MenuDisplay_Input(inValue,inCookie,inType,inStyle,defaultValue) {
             e2.value = OldValue;
             e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
         }
+        if(inType == 'dropdown') {
+            cec('div','',e1,inValue,'','font-size: 15px; font-weight: 500; margin-bottom: 6px;');
+            e2 = cec('div','MTdropdown',e1);
+            e2 = cec('button','MTFlexButton2',e2,OldValue + ' ');
+            let e3 = cec('div','MTFlexdown-content',e2,'','','','id','MTDropdown2');
+            for (let i = 0; i < defaultValue.length; i++) {
+                 cec('a','MTSetupButton',e3,defaultValue[i],'','','MTSetupOption',inCookie);
+            }
+        }
         if(inType == 'number-array') {
-            cec('div','',e1,inValue,'','font-size: 16px; font-weight: 500; margin-bottom: 6px;');
+            cec('div','',e1,inValue,'','font-size: 15px; font-weight: 500; margin-bottom: 6px;');
             e2 = cec('div','',e1,'','','display: flex; padding-top: 10px; column-gap: 12px; align-items: baseline;');
 
             let value = [...defaultValue];
@@ -2220,6 +2239,9 @@ window.onclick = function(event) {
             case 'MTFlexButtonExport':
                 MT_GridExport();
                 break;
+            case 'MTSetupButton':
+                onClickSetupDropdown(event.target);
+                break;
             case 'MTBub1':
                 switch (startsInList(event.target.textContent,['SUM','AVG','CNT'])) {
                     case 1: navigator.clipboard.writeText(MTFlexSum[1]);return;
@@ -2268,6 +2290,13 @@ window.onclick = function(event) {
     }
     onClickMTDropdownRelease();
 };
+
+function onClickSetupDropdown(et) {
+    let cn = et.getAttribute("mtsetupoption");
+    setCookie(cn,et.innerText);
+    const pDiv = et.parentNode.parentNode;
+    pDiv.childNodes[0].textContent = et.innerText + ' ';
+}
 
 function onClickLastNumber() {
 
