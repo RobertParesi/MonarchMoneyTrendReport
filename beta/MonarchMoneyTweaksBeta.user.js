@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.10.06
+// @version      3.10.07
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.10.06';
+const version = '3.10.07';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2181,6 +2181,8 @@ window.onclick = function(event) {
     if(typeof cn === 'string') {
         if(debug == 1) console.log(cn,event.target);
         switch (cn) {
+            case '':
+                onClickContainer(event.target);return;
             case 'Menu__MenuItem-nvthxu-1':
             case 'Flex-sc-165659u-0':
                 if(event.target.innerText == 'Last') {onClickLastNumber();}
@@ -2291,6 +2293,42 @@ window.onclick = function(event) {
     onClickMTDropdownRelease();
 };
 
+function MT_SearchMerchants(inDiv) {
+
+    let merEntry = inDiv.childNodes[0].childNodes[0];
+    if(merEntry) {
+        let merText = inDiv.childNodes[0].childNodes[1].childNodes[1].innerText;
+        if(merText) {
+
+            //const merPulls = getCookie('MT_MerchantRemoves',false).split('|');
+
+            const merPulls = ['AplPay','TST*', 'THE'];
+            for (let i = 0; i < merPulls.length; ++i) {
+                if(merText.toLowerCase().startsWith(merPulls[i].toLowerCase())) {
+                    let j = merPulls[i].length;
+                    merText = merText.slice(j);
+                    merText = merText.trim();
+                }
+            }
+            merText = merText.trim();
+            merText = getLeftOf(merText,' ');
+            merEntry.focus();
+            merEntry.value = '';
+            document.execCommand('insertText', false, merText + ' ');
+        }
+    }
+}
+
+function onClickContainer(et) {
+
+    const divsWithLtrDir = document.querySelectorAll('div[dir="ltr"]');
+    if(divsWithLtrDir.length > 0) {
+        for (let i = 0; i < divsWithLtrDir.length; ++i) {
+            let cn = divsWithLtrDir[i].className;
+            if(cn != 'osano-cm-window') {MT_SearchMerchants(divsWithLtrDir[i]);return;}
+        };
+    }
+}
 function onClickSetupDropdown(et) {
     let cn = et.getAttribute("mtsetupoption");
     setCookie(cn,et.innerText);
@@ -2551,7 +2589,7 @@ function getLeftOf(InValue,InRep) {
 
     if(InRep) {
         const si = InValue.indexOf(InRep);
-        if (si > 0) { return InValue.slice(0,si);}
+        if (si > 0) { return InValue.substring(0,si);}
         return InValue;
     } else {return '';}
 }
