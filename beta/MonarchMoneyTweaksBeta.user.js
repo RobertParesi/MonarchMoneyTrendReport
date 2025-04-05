@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.10.04
+// @version      3.10.05
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.10.04';
+const version = '3.10.05';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -95,7 +95,7 @@ function MM_Init() {
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
     addStyle('.MTFlexdown-content div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
-    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto; border-radius: 8px; border: 1px solid ' + borderColor + '; box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px; z-index: 1;}');
+    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto; border-radius: 8px; border: 1px solid ' + borderColor + '; box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px; right: 0; z-index: 1;}');
     addStyle('.MTFlexdown-content a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 8px; font-weight: 200; padding: 10px 10px; display: block;}');
     addStyle('.show {display: block;}');
     addStyle('.MTBudget {margin-top: 20px;font-size: 14px;');
@@ -2021,7 +2021,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Hide Create Rule pop-up','MT_HideToaster','checkbox');
             MenuDisplay_Input('Reports','','spacer');
             MenuDisplay_Input('Hide chart tooltip Difference amount','MT_HideTipDiff','checkbox');
-            MenuDisplay_Input('Monarch Money Tweaks font for reports','MT_MonoMT','dropdown','',['System','Monospace','Andalé Mono','Courier','Monaco','Lucinda Console','Arial', 'Verdana']);
+            MenuDisplay_Input('Monarch Money Tweaks report font','MT_MonoMT','dropdown','',['System','Monospace','Andalé Mono','Courier','Monaco','Lucinda Console','Arial', 'Verdana']);
             MenuDisplay_Input('Reports / Trends','','spacer');
             MenuDisplay_Input('Always compare to End of Month','MT_TrendFullPeriod','checkbox');
             MenuDisplay_Input('By Month "Avg" ignores Current Month','MT_TrendIgnoreCurrent','checkbox');
@@ -2077,7 +2077,7 @@ function MenuDisplay_Input(inValue,inCookie,inType,inStyle,defaultValue) {
                 e1.style = 'font-size: 18px; font-weight: 500; margin-left:24px;padding-bottom:12px;';
                 break
             case 'dropdown':
-                e1.style = 'margin: 11px 25px;display:grid;';
+                e1.style = 'margin: 11px 25px; display:flex;column-gap: 10px;';
                 break;
             default:
                 e1.style = 'margin: 11px 25px;';
@@ -2103,9 +2103,9 @@ function MenuDisplay_Input(inValue,inCookie,inType,inStyle,defaultValue) {
             e2.addEventListener('change', () => { setCookie(inCookie,e2.value);});
         }
         if(inType == 'dropdown') {
-            cec('div','',e1,inValue,'','font-size: 15px; font-weight: 500; margin-bottom: 6px;');
-            e2 = cec('div','MTdropdown',e1);
-            e2 = cec('button','MTFlexButton2',e2,OldValue + ' ');
+            cec('div','',e1,inValue + ':','','margin-top: 10px;');
+            e2 = cec('div','MTdropdown',e1,'','','width: 270px;');
+            e2 = cec('button','MTFlexButton2',e2,OldValue + ' ','','width: 270px; margin-left: 0px !important;');
             let e3 = cec('div','MTFlexdown-content',e2,'','','','id','MTDropdown2');
             for (let i = 0; i < defaultValue.length; i++) {
                  cec('a','MTSetupButton',e3,defaultValue[i],'','','MTSetupOption',inCookie);
