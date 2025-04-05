@@ -7,7 +7,7 @@ Email any issues directly:  robert @ paresi.net
 
 • NEW: Reports / Trends & Reports / Accounts automatic line hovering
 
-• NEW: Reports / Trends & Reports / Accounts can use Monospace font (Settings)
+• NEW: Reports / Trends & Reports / Accounts can use a user selected font (Settings / Display)
 
 
 **Version 3.03-3.09:** 
