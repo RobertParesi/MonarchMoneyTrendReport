@@ -28,6 +28,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
      - Sort accounts data by any column and export it to Excel or Numbers.
     
        
+* Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant.
 * Breakdown Assets & Liabilities Account Summary by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
 * Apply a compressed and smaller font in the Transactions grid to display more items.
 * Apply a compressed and smaller font in the Budget grid to show additional items.
