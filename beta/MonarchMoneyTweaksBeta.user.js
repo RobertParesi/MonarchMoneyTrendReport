@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.10.08
+// @version      3.10.09
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.10.08';
+const version = '3.10.09';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1966,7 +1966,7 @@ function MM_SearchMerchants(inDiv) {
 
             //const merPulls = getCookie('MT_MerchantRemoves',false).split('|');
 
-            const merPulls = ['AplPay','TST*', 'THE'];
+            const merPulls = ['AplPay','TST*', 'THE ', 'PAYPAL','TCB*'];
             for (let i = 0; i < merPulls.length; ++i) {
                 if(merText.toLowerCase().startsWith(merPulls[i].toLowerCase())) {
                     let j = merPulls[i].length;
@@ -1975,13 +1975,13 @@ function MM_SearchMerchants(inDiv) {
                 }
             }
             merText = merText.trim();
-            merText = getLeftOf(merText,' ');
-            merText = getLeftOf(merText,'.');
-            merText = getLeftOf(merText,'-');
-            merText = getLeftOf(merText,'*');
-            merText = getLeftOf(merText,',');
+            let objs = [' ','.','-','+','*',','];
+            for (let i = 0; i < objs.length; ++i) {
+                if(merText[0] == objs[i]) {merText = merText.slice(1);}
+                merText = getLeftOf(merText,objs[i]);
+            }
             merText = merText.substring(0, 9);
-            merEntry.focus();
+            merEntry.focus({ focusVisible: true });
             merEntry.value = '';
             document.execCommand('insertText', false, merText );
         }
@@ -2051,6 +2051,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Transactions panel has smaller font & compressed grid','MT_CompressedTx','checkbox');
             MenuDisplay_Input('Highlight Pending Transactions (Preferences / "Allow Pending Edits" must be off)','MT_PendingIsRed','checkbox');
             MenuDisplay_Input('Hide Create Rule pop-up','MT_HideToaster','checkbox');
+            MenuDisplay_Input('Assist and populate when Searching Merchants','MT_MerAssist','checkbox');
             MenuDisplay_Input('Reports','','spacer');
             MenuDisplay_Input('Hide chart tooltip Difference amount','MT_HideTipDiff','checkbox');
             MenuDisplay_Input('Monarch Money Tweaks report font','MT_MonoMT','dropdown','',['System','Monospace','Courier','Courier New','Arial','Trebuchet MS','Verdana']);
@@ -2205,7 +2206,8 @@ function MenuCheckSpawnProcess() {
                 break;
             case 6:
                 MTSpawnProcess = 0;
-                onClickContainer();break;
+                if(getCookie('MT_MerAssist',true)) {onClickContainer()}
+                break;
         }
     }
 }
@@ -2599,9 +2601,9 @@ function inList(v,p,sW) {
 
 function getLeftOf(InValue,InRep) {
 
-    if(InRep) {
+    if(InRep != '') {
         const si = InValue.indexOf(InRep);
-        if (si > 0) { return InValue.substring(0,si);}
+        if (si > -1) { return InValue.substring(0,si);}
         return InValue;
     } else {return '';}
 }
