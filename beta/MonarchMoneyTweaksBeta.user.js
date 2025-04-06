@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.10.07
+// @version      3.10.08
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.10.07';
+const version = '3.10.08';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1956,6 +1956,38 @@ function MM_SplitTransaction() {
         }
     }
 }
+// [ Fix Merchant Popper ]
+function MM_SearchMerchants(inDiv) {
+
+    let merEntry = inDiv.childNodes[0].childNodes[0];
+    if(merEntry) {
+        let merText = inDiv.childNodes[0].childNodes[1].childNodes[1].innerText;
+        if(merText) {
+
+            //const merPulls = getCookie('MT_MerchantRemoves',false).split('|');
+
+            const merPulls = ['AplPay','TST*', 'THE'];
+            for (let i = 0; i < merPulls.length; ++i) {
+                if(merText.toLowerCase().startsWith(merPulls[i].toLowerCase())) {
+                    let j = merPulls[i].length;
+                    merText = merText.slice(j);
+                    merText = merText.trim();
+                }
+            }
+            merText = merText.trim();
+            merText = getLeftOf(merText,' ');
+            merText = getLeftOf(merText,'.');
+            merText = getLeftOf(merText,'-');
+            merText = getLeftOf(merText,'*');
+            merText = getLeftOf(merText,',');
+            merText = merText.substring(0, 9);
+            merEntry.focus();
+            merEntry.value = '';
+            document.execCommand('insertText', false, merText );
+        }
+    }
+}
+
 // Menu Page Functions
 function MenuHistory(OnFocus) {
 
@@ -2171,6 +2203,9 @@ function MenuCheckSpawnProcess() {
                 MTSpawnProcess = 0;
                 MenuAccountsSummary();
                 break;
+            case 6:
+                MTSpawnProcess = 0;
+                onClickContainer();break;
         }
     }
 }
@@ -2182,7 +2217,7 @@ window.onclick = function(event) {
         if(debug == 1) console.log(cn,event.target);
         switch (cn) {
             case '':
-                onClickContainer(event.target);return;
+                MTSpawnProcess=6;return;
             case 'Menu__MenuItem-nvthxu-1':
             case 'Flex-sc-165659u-0':
                 if(event.target.innerText == 'Last') {onClickLastNumber();}
@@ -2293,42 +2328,19 @@ window.onclick = function(event) {
     onClickMTDropdownRelease();
 };
 
-function MT_SearchMerchants(inDiv) {
-
-    let merEntry = inDiv.childNodes[0].childNodes[0];
-    if(merEntry) {
-        let merText = inDiv.childNodes[0].childNodes[1].childNodes[1].innerText;
-        if(merText) {
-
-            //const merPulls = getCookie('MT_MerchantRemoves',false).split('|');
-
-            const merPulls = ['AplPay','TST*', 'THE'];
-            for (let i = 0; i < merPulls.length; ++i) {
-                if(merText.toLowerCase().startsWith(merPulls[i].toLowerCase())) {
-                    let j = merPulls[i].length;
-                    merText = merText.slice(j);
-                    merText = merText.trim();
-                }
-            }
-            merText = merText.trim();
-            merText = getLeftOf(merText,' ');
-            merEntry.focus();
-            merEntry.value = '';
-            document.execCommand('insertText', false, merText + ' ');
-        }
-    }
-}
-
-function onClickContainer(et) {
+function onClickContainer() {
 
     const divsWithLtrDir = document.querySelectorAll('div[dir="ltr"]');
+    let cn = '',it = '';
     if(divsWithLtrDir.length > 0) {
         for (let i = 0; i < divsWithLtrDir.length; ++i) {
-            let cn = divsWithLtrDir[i].className;
-            if(cn != 'osano-cm-window') {MT_SearchMerchants(divsWithLtrDir[i]);return;}
+            cn = divsWithLtrDir[i].className;
+            it = divsWithLtrDir[i].innerText;
+            if(cn != 'osano-cm-window' && it.startsWith('Original')) {MM_SearchMerchants(divsWithLtrDir[i]);return;}
         };
     }
 }
+
 function onClickSetupDropdown(et) {
     let cn = et.getAttribute("mtsetupoption");
     setCookie(cn,et.innerText);
