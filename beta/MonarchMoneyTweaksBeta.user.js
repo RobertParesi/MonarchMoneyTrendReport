@@ -2186,9 +2186,10 @@ function MenuCheckSpawnProcess() {
 // Generic on-click event handler ...
 window.onclick = function(event) {
 
-    let cn = getLeftOf(event.target.className,' ');
+    let cn = event.target.className;
     if(typeof cn === 'string') {
         if(debug == 1) console.log(cn,event.target);
+        cn = getLeftOf(cn,' ');
         switch (cn) {
             case '':
                 MTSpawnProcess=6;return;
