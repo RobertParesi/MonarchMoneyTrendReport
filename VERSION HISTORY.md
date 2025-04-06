@@ -3,11 +3,11 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.10 (beta):** 
+**Version 3.10:** 
 
 • NEW: Reports / Trends & Reports / Accounts automatic line hovering
 
-• NEW: Reports / Trends & Reports / Accounts can use a user selected font (Settings / Display)
+• NEW: Reports / Trends & Reports / Accounts can use a user selected font (Settings / Display / Reports)
 
 • NEW: Assist and populate when Searching Merchants. (Settings / Display / Transactions)  
 
