@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.10.09
+// @version      3.10
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.10.09';
+const version = '3.10';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1963,9 +1963,6 @@ function MM_SearchMerchants(inDiv) {
     if(merEntry) {
         let merText = inDiv.childNodes[0].childNodes[1].childNodes[1].innerText;
         if(merText) {
-
-            //const merPulls = getCookie('MT_MerchantRemoves',false).split('|');
-
             const merPulls = ['AplPay','TST*', 'THE ', 'PAYPAL','TCB*'];
             for (let i = 0; i < merPulls.length; ++i) {
                 if(merText.toLowerCase().startsWith(merPulls[i].toLowerCase())) {
