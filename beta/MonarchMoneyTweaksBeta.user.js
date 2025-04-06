@@ -1963,7 +1963,7 @@ function MM_SearchMerchants(inDiv) {
     if(merEntry) {
         let merText = inDiv.childNodes[0].childNodes[1].childNodes[1].innerText;
         if(merText) {
-            const merPulls = ['AplPay','TST*', 'THE ', 'PAYPAL','TCB*'];
+            const merPulls = ['AplPay','TST*', 'THE ', 'PAYPAL','TCB*','www.'];
             for (let i = 0; i < merPulls.length; ++i) {
                 if(merText.toLowerCase().startsWith(merPulls[i].toLowerCase())) {
                     let j = merPulls[i].length;
