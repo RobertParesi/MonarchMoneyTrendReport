@@ -2226,7 +2226,6 @@ window.onclick = function(event) {
             case 'MTFlexButton1':
             case 'MTFlexButton2':
             case 'MTFlexButton4':
-                onClickMTDropdown(cn.slice(12));return;
             case 'MTSettButton1':
             case 'MTSettButton2':
             case 'MTSettButton3':
@@ -2570,11 +2569,11 @@ function inList(v,p,sW) {
 }
 
 function getLeftOf(InValue,InRep) {
-
-    const si = InValue.indexOf(InRep);
-    if (si > -1) {return InValue.substring(0,si);}
+    if(InValue) {
+        const si = InValue.indexOf(InRep);
+        if (si > -1) {return InValue.substring(0,si);}
+    }
     return InValue;
-
 }
 
 function replaceBetweenWith(InValue,InStart,InEnd,InReplaceWith) {
