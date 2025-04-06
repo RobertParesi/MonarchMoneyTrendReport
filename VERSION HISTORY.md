@@ -3,7 +3,7 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.10:** 
+**Version 3.10-3.11:** 
 
 • NEW: Reports / Trends & Reports / Accounts automatic line hovering
 
