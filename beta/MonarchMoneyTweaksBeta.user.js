@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.11
+// @version      3.12
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.11';
+const version = '3.12';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1963,21 +1963,26 @@ function MM_SearchMerchants(inDiv) {
     if(merEntry) {
         let merText = inDiv.childNodes[0].childNodes[1].childNodes[1].innerText;
         if(merText) {
-            const merPulls = ['AplPay','TST*', 'THE ', 'PAYPAL','TCB*','www.'];
-            for (let i = 0; i < merPulls.length; ++i) {
-                if(merText.toLowerCase().startsWith(merPulls[i].toLowerCase())) {
-                    let j = merPulls[i].length;
+            const ii = merText.indexOf('*');
+            if(ii < 16) {merText = getStringPart(merText,'*','right');}
+            merText = merText.trim();
+            let merObjs = ['aplpay', 'the ', 'paypal','www.'];
+            for (let i = 0; i < merObjs.length; ++i) {
+                if(merText.toLowerCase().startsWith(merObjs[i].toLowerCase())) {
+                    let j = merObjs[i].length;
                     merText = merText.slice(j);
                     merText = merText.trim();
                 }
             }
-            merText = merText.trim();
-            let objs = [' ','.','-','+','*',','];
-            for (let i = 0; i < objs.length; ++i) {
-                if(merText[0] == objs[i]) {merText = merText.slice(1);}
-                merText = getLeftOf(merText,objs[i]);
+            merObjs = ['.','-','+',',','='];
+            for (let i = 0; i < merObjs.length; ++i) {
+                if(merText[0] == merObjs[i]) {merText = merText.slice(1);}
+                merText = getStringPart(merText,merObjs[i],'left');
             }
-            merText = merText.substring(0, 9);
+
+            merText = getStringPart(merText,' ','left');
+            merText = merText.substring(0, 9).toLowerCase();
+            merText = merText[0].toUpperCase() + merText.slice(1);
             merEntry.focus({ focusVisible: true });
             merEntry.value = '';
             document.execCommand('insertText', false, merText );
@@ -2189,7 +2194,7 @@ window.onclick = function(event) {
     let cn = event.target.className;
     if(typeof cn === 'string') {
         if(debug == 1) console.log(cn,event.target);
-        cn = getLeftOf(cn,' ');
+        cn = getStringPart(cn,' ','left');
         switch (cn) {
             case '':
                 MTSpawnProcess=6;return;
@@ -2569,12 +2574,10 @@ function inList(v,p,sW) {
     return 0;
 }
 
-function getLeftOf(InValue,InRep) {
-    if(InValue) {
-        const si = InValue.indexOf(InRep);
-        if (si > -1) {return InValue.substring(0,si);}
-    }
-    return InValue;
+function getStringPart(inValue, inChr, inDirection) {
+    const idx = inValue.indexOf(inChr);
+    if (idx === -1) {return inValue;}
+    if (inDirection === 'right') { return inValue.slice(idx + 1); } else {return inValue.slice(0, idx);}
 }
 
 function replaceBetweenWith(InValue,InStart,InEnd,InReplaceWith) {
