@@ -54,7 +54,9 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 - _I just want to say how much I appreciate the work done on this, it's really helpful._
 
-- _Great work as always!_ 
+- _Great work as always!_
+
+- _Monarch Money on Steriods!_  
 
 
 # Installing MONARCH MONEY TWEAKS:
