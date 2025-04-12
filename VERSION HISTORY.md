@@ -3,6 +3,10 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.13:**
+
+• REGRESSION: Split 50/50 button when splitting transaction
+
 **Version 3.11-3.12:**
 
 • CHANGE: Better merchant maching logic.
