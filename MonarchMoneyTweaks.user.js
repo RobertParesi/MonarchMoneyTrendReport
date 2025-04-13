@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.12
+// @version      3.13
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.12';
+const version = '3.13';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -55,7 +55,7 @@ function MM_Init() {
     addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; border: solid 1px ' + borderColor + '; ' + standardText +'}');
     addStyle('.MTSpacerClassTR { height: 4px; }');
     addStyle('.MTTrend:hover, .MTAccounts:hover {cursor:pointer;}');
-    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton {font-family: MonarchIcons, "Oracle", sans-serif;' + panelBackground + standardText + 'margin-left: 20px; font-weight: 500; border: 1px solid ' + borderColor + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px; font-size: 14px; padding: 7.5px 12px;cursor: pointer;border-radius: 4px;line-height: 150%;}');
+    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton {font-family: MonarchIcons, "Oracle", sans-serif;' + panelBackground + standardText + 'margin-left: 20px; font-weight: 500; border: 1px solid ' + borderColor + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px; font-size: 14px; padding: 7.5px 12px;cursor: pointer;border-radius: 4px;line-height: 150%;}');
     addStyle('.MTFlexContainer {display:block; padding: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 20px;  display: flex; }');
     addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + 'border-radius: 8px; box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;}');
@@ -1930,30 +1930,18 @@ function MM_FixCalendarDropdown(calItems) {
 // [ Splits ]
 function MM_SplitTransaction() {
 
-    let li = document.querySelector('[class*="TransactionSplitOriginalTransactionContainer__Amount"]');
+    let li = document.querySelector('[class*="TransactionSplitOriginalTransactionContainer__OriginalAmountColumn"]');
     if(li) {
-        if(li.getAttribute('hacked') != 'true') {
-            li.setAttribute('hacked','true');
-            let AmtA = getCleanValue(li.innerText,2);
-            li = document.querySelectorAll('[class*="TransactionSplitModal__SplitSectionHeader"]');
-            if(li[1]) {
-                let AmtB = AmtA / 2;
-                AmtB = parseFloat(AmtB).toFixed(2);
-                AmtA = AmtA - AmtB;
-                AmtA = parseFloat(AmtA).toFixed(2);
-                let Splitby2 = getDollarValue(AmtA) + ' / ' + getDollarValue(AmtB);
-                let div = cec('div','',li[1],'','','float: right;');
-
-                let div2 = document.createElement('button');
-                let sb = findButton('Date');
-                if(sb) { div2.className = sb.className; }
-                div2.innerText = 'Split 50/50  (' + Splitby2 + ') ';
-                div2.addEventListener('click', () => {
-                    inputTwoFields('input.CurrencyInput__Input-ay6xtd-0',AmtA,AmtB);
-                });
-                div.appendChild(div2);
-            }
-        }
+        let AmtA = getCleanValue(li.innerText,2);
+        li = document.querySelector('[class*="TransactionSplitModal__TabsContainer-sc"]');
+        let div = cec('button','MTSplitButton',li,'Split 50%','','margin-left: 0px;');
+        let AmtB = AmtA / 2;
+        AmtB = parseFloat(AmtB).toFixed(2);
+        AmtA = AmtA - AmtB;
+        AmtA = parseFloat(AmtA).toFixed(2);
+        div.addEventListener('click', () => {
+            inputTwoFields('input.CurrencyInput__Input-ay6xtd-0',AmtA,AmtB);
+        });
     }
 }
 // [ Fix Merchant Popper ]
@@ -2185,6 +2173,9 @@ function MenuCheckSpawnProcess() {
             case 6:
                 if(getCookie('MT_MerAssist',true)) {onClickContainer();}
                 break;
+            case 7:
+                MM_SplitTransaction();
+                break;
         }
     }
 }
@@ -2204,7 +2195,7 @@ window.onclick = function(event) {
                 if(startsInList(event.target.innerText,['\uf183','\uf13e','Light','Dark', 'System preference'])) {MTSpawnProcess = 5;return;}
                 break;
             case 'Text-qcxgyd-0':
-                if(event.target.innerText == 'Split') { MM_SplitTransaction();}
+                if(event.target.innerText == 'Split') { MTSpawnProcess = 7;}
                 break;
             case 'DateInput_input':
                 MM_FixCalendarYears();return;
@@ -2423,14 +2414,16 @@ function addStyle(aCss) {
 }
 
 // Create Element Child (element,className,parentNode,innerText,href,style,[extra])
-function cec(e, c, p, it, hr, st, a1, a2) {
+function cec(e, c, p, it, hr, st, a1, a2,isAfter) {
     const div = document.createElement(e);
     if (c) div.className = c;
     if (it) div.innerText = it;
     if (hr) div.href = hr;
     if (st) div.style = st;
     if (a1) div.setAttribute(a1, a2);
-    return p.appendChild(div);
+    if(isAfter == true) {
+        return p.after(div);
+    } else { return p.appendChild(div);}
 }
 // Generic Functions
 function removeAllSections(inDiv) {
@@ -2659,7 +2652,7 @@ function getChecked(InA,InB) {
             MM_MenuRun(true);
         }
         MenuCheckSpawnProcess();
-    },330);
+    },400);
 }());
 // Run when leaving & entering a page
 function MM_MenuRun(onFocus) {
