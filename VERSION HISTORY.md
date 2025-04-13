@@ -5,7 +5,7 @@ Email any issues directly:  robert @ paresi.net
 
 **Version 3.13:**
 
-• REGRESSION: Split 50/50 button when splitting transaction
+• REGRESSION: Split 50/50 button when splitting transaction because of MM changes.
 
 **Version 3.11-3.12:**
 
