@@ -5,7 +5,10 @@ Email any issues directly:  robert @ paresi.net
 
 **Version 3.14 (beta):**
 
-• NEW: Net Income by Tags report (Work in Progress)
+• NEW: Net Income by Tags report - _Work in Progress_ 
+  - Can toggle Date range to be This Month or Last Month
+  - Will add options in future to Ignore Non Tagged items and have a date range
+    
 
 **Version 3.13:**
 
