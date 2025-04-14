@@ -3,6 +3,10 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.14 (beta):**
+
+• NEW: Net Income by Tags report (Work in Progress)
+
 **Version 3.13:**
 
 • REGRESSION: Split 50/50 button when splitting transaction because of MM changes.
