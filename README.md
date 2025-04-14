@@ -60,7 +60,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 - _Great work as always!_
 
-- _Monarch Money on Steriods!_  
+- _Monarch Money on Steroids!_  
 
 
 # Installing MONARCH MONEY TWEAKS:
