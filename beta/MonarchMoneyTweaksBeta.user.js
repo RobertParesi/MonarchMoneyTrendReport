@@ -1,29 +1,28 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.14.04
+// @version      3.14
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.14.04';
+const version = '3.14';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
-const FlexOptions = ['Trends','Accounts','Tags'];
-let FlexLowerDate = new Date(), FlexHigherDate = new Date();
 let SaveLocationPathName = '',css_reload = false;
 let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=0, debug=0;
-let accountGroups = [];
-let TrendQueue = [], TrendQueue2 = [];
+let accountGroups = [],TrendQueue = [], TrendQueue2 = [];
 
 // flex container
+const FlexOptions = ['Trends','Accounts','Tags'];
 const MTFields = 13;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexCR = 0, MTFlexDetails = null, MTP = null;
 let MTFlexSum = [0,0];
+let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
 
 function MM_Init() {
 
@@ -41,8 +40,8 @@ function MM_Init() {
 
     MM_MenuFix();
     MM_RefreshAll();
-    FlexLowerDate = getDates('d_StartofMonth');
-    FlexHigherDate = getDates('d_Today');
+    MTFlexDate1 = getDates('d_StartofMonth');
+    MTFlexDate2 = getDates('d_Today');
 
     if(getCookie('MT_PlanCompressed',true) == 1) {addStyle('.joBqTh, .jsBiA-d {padding-bottom: 0px; padding-top: 0px; !important;}'); addStyle('.earyfo, .fxLfmT {height: 42px;}'); addStyle('.dVgTYt, .exoRCJ, .bgDnMb, .zoivW {font-size: 15px;}');}
     if(getCookie('MT_CompressedTx',true) == 1) {addStyle('.dnAUzj {font-size: 14px !important; padding-top: 1px; padding-bottom: 1px;}');addStyle('.oRgik, .bVcoEc, .erRzVO, .dEMbMu {font-size: 14px !important;');}
@@ -743,43 +742,55 @@ async function MenuReportsTagsGo() {
     let snapshotData4 = null,rec = null;
     let TagQueue = [],TagCols = [];
     let useID = '',useAmt = 0, useTitle='',ii = 0, multiple = false;
-    let useURL = '';
+    let useURL = '',useOrder = '';
+    let CurrentFilter = '', CurrentFilterObj = [];
 
-    await MF_GridInit('MTTags', 'Tags');
+    MF_GridInit('MTTags', 'Tags');
     MTFlex.Title1 = 'Net Income Report by Tags';
     MTFlex.TriggerEvent = true;
     MTFlex.TriggerEvents = false;
     MF_GridOptions(1,['By group','By category','By both']);
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
-    MTFlex.Title2 = getDates('s_FullDate',FlexLowerDate) + ' - ' + getDates('s_FullDate',FlexHigherDate);
+    MF_GridOptions(4,getAccountGroupInfo());
+    MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTFlex.Title3 = '';
     MTP = [];
     MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(MTP);
-
-    snapshotData4 = await GetTransactions(formatQueryDate(FlexLowerDate),formatQueryDate(FlexHigherDate),0,false);
-    for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
-        rec = snapshotData4.allTransactions.results[j];
-        if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
-        useAmt = rec.amount;
-        if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
-        ii = rec.tags.length;
-        if(ii == 0) { TagsUpdateQueue(useID,useAmt,'');}
-        else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*');multiple = true;}
-        else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name);}
+    if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
+        CurrentFilter = getAccountGroupFilter();
+        CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
     }
-    TagCols.sort();
+
+    let recIdx = 0, recCnt = 0;
+    do {
+        recCnt = 0;
+        snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj);
+        for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
+            rec = snapshotData4.allTransactions.results[j];
+            recCnt+=1;recIdx+=1;
+            if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
+            useAmt = rec.amount;
+            if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
+            ii = rec.tags.length;
+            if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000');}
+            else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*','000');multiple = true;}
+            else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order).padStart(3, '0'));}
+        }
+    } while (recCnt > 999);
+
+    TagCols.sort((a, b) => a.ORDER - b.ORDER);
+
     let totalCol = 0;
     for (let i = 0; i < TagCols.length; i += 1) {
-        switch(TagCols[i]) {
+        switch(TagCols[i].NAME) {
             case '':
                 useTitle = 'Untagged';break;
             case '*':
                 useTitle = 'Multiple'
-                if(multiple == false) continue;
                 break;
             default:
-                useTitle = TagCols[i];
+                useTitle = TagCols[i].NAME;
         }
         totalCol+=1;
         MTP.Column = totalCol; MTP.Title = useTitle; MTP.isSortable = 2; MTP.Format = 1; MF_QueueAddTitle(MTP);
@@ -788,7 +799,7 @@ async function MenuReportsTagsGo() {
     MTP.Column = totalCol; MTP.Title = 'Total'; MTP.isSortable = 2; MTP.Format = 1; MF_QueueAddTitle(MTP);
 
     for (let i = 0; i < TagQueue.length; i += 1) {
-        ii = TagCols.indexOf(TagQueue[i].TagName);
+        ii = TagsIndexQueue(TagQueue[i].TagName);
         useID = TagQueue[i].ID;
         if(MF_GridUpdateUID(useID,ii+1,TagQueue[i].Amt,false) == false) {
             let retGroup = await getCategoryGroup(useID);
@@ -836,9 +847,10 @@ async function MenuReportsTagsGo() {
     MF_GridRollup(3,4,2,'Spending');
     MF_GridRollDifference(5,1,3,1,'Savings','Sub');
     MF_GridCalcRange( totalCol,1, totalCol-1,'Add');
+    console.log(MTFlexRow);
     MTSpawnProcess = 1;
 
-    function TagsUpdateQueue(inID,inAmt,inTag) {
+    function TagsUpdateQueue(inID,inAmt,inTag, inOrder) {
          for (let i = 0; i < TagQueue.length; i += 1) {
              if(TagQueue[i].ID == inID && TagQueue[i].TagName == inTag) {
                  TagQueue[i].Amt += inAmt;
@@ -846,7 +858,12 @@ async function MenuReportsTagsGo() {
              }
          }
         TagQueue.push({"ID": inID, "TagName": inTag ,"Amt": inAmt });
-        if(TagCols.includes(inTag) == false) {TagCols.push(inTag);}
+        if(TagsIndexQueue(inTag) === -1) {TagCols.push({"NAME": inTag, "ORDER": inOrder});}
+    }
+
+    function TagsIndexQueue(inTag) {
+        for (let k = 0; k < TagCols.length; k += 1) {if(TagCols[k].NAME == inTag) return k;}
+        return -1;
     }
 }
 
@@ -965,13 +982,13 @@ async function MenuReportsAccountsGoExt(){
 
 async function MenuReportsAccountsGoStd(){
 
-    let isToday = getDates('isToday',FlexHigherDate);
+    let isToday = getDates('isToday',MTFlexDate2);
 
     let snapshotData = null, snapshotData2 = null, snapshotData3 = null,snapshotData4 = null,snapshotData5 = null;
     let useDateRange = ['d_StartofMonth','d_Minus3Months','d_Minus6Months','d_StartOfYear','d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][MTFlex.Button2];
     let cards = 0,acard=[0,0,0,0,0];
 
-    MTFlex.Title2 = getDates('s_FullDate',FlexLowerDate) + ' - ' + getDates('s_FullDate',FlexHigherDate);
+    MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTP.Column = 2; MTP.Title = 'Group';MTP.Format = 0;MF_QueueAddTitle(MTP);
     MTP.Column = 3; MTP.Title = 'Updated';MTP.Format = -1;MF_QueueAddTitle(MTP);
     MTP.Column = 4; MTP.Title = 'Beg Balance'; MTP.isSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];MF_QueueAddTitle(MTP);
@@ -993,10 +1010,10 @@ async function MenuReportsAccountsGoStd(){
     let AccountGroupFilter = getAccountGroupFilter();
 
     snapshotData = await getAccountsData();
-    snapshotData2 = await GetTransactions(formatQueryDate(FlexLowerDate),formatQueryDate(FlexHigherDate),0,false);
-    snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(FlexLowerDate));
-    snapshotData4 = await GetTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(FlexHigherDate),0,true);
-    if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(FlexHigherDate));}
+    snapshotData2 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false);
+    snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate1));
+    snapshotData4 = await GetTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(MTFlexDate2),0,true);
+    if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
 
     for (let i = 0; i < 5; i += 1) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards+=1;}}
     if(debug == 1) console.log('MenuReportsAccountsGoStd',snapshotData,snapshotData2,AccountGroupFilter);
@@ -1237,8 +1254,9 @@ async function MenuReportsTrendsGo() {
     TrendQueue = [];
     await MF_GridInit('MTTrends', 'Trends');
     let TrendFullPeriod = getCookie('MT_TrendFullPeriod',true);
-    let lowerDate = new Date(FlexLowerDate);
-    let higherDate = new Date(FlexHigherDate);
+    let lowerDate = new Date(MTFlexDate1);
+    let higherDate = new Date(MTFlexDate2);
+    let CurrentFilter = '', CurrentFilterObj = [];
     lowerDate.setDate(1);
     lowerDate.setMonth(0);
     let month = lowerDate.getMonth();
@@ -1255,9 +1273,6 @@ async function MenuReportsTrendsGo() {
     MF_GridOptions(4,getAccountGroupInfo());
     MTFlex.SortSeq = ['1','1','1','2','2','2','2','2','2'];
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
-
-    let CurrentFilter = '';
-    let CurrentFilterObj = [];
     if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
         CurrentFilter = getAccountGroupFilter();
         CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
@@ -1363,7 +1378,7 @@ async function MenuReportsTrendsGo() {
         higherDate.setFullYear(year2,month2,day2);
 
         if(MTFlex.Button2 == 2) {
-            const QtrDate = getDates('i_ThisQTRs',FlexLowerDate);
+            const QtrDate = getDates('i_ThisQTRs',MTFlexDate1);
             month = parseInt(QtrDate.substring(0,2)) - 1;
             lowerDate.setMonth(month);
             if(month != month2) {useTitle = getMonthName(month,true) + ' - ';}
@@ -1660,6 +1675,7 @@ function MenuTrendsHistory(inType,inID) {
 
         const lowerDate = new Date("2023-01-01"),higherDate = new Date();
         let retGroups = getCategoryGroup(inID),inGroup = 1,useURL = '';
+        let CurrentFilter = '', CurrentFilterObj = [];
 
         topDiv = topDiv.childNodes[0];
         let div = cec('div','MTHistoryPanel',topDiv);
@@ -1672,8 +1688,6 @@ function MenuTrendsHistory(inType,inID) {
         if(inType == 'category-groups') {
             div2 = cec('button','MTTrendCellArrow2',div,['',''][getCookie('MT_div.TrendHistoryDetail',true)],'','float:right;margin-right: 16px;');
         }
-        let CurrentFilter = '';
-        let CurrentFilterObj = [];
         if(MTFlex.Name) {
             if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
                 CurrentFilter = getAccountGroupFilter();
@@ -2485,12 +2499,12 @@ function onClickMTDropdownRelease() {
 
 function onClickMTFlexBig() {
 
-    if(getDates('isToday',FlexHigherDate)) {
-        FlexLowerDate = getDates('d_StartofLastMonth');
-        FlexHigherDate = getDates('d_EndofLastMonth');
+    if(getDates('isToday',MTFlexDate2)) {
+        MTFlexDate1 = getDates('d_StartofLastMonth');
+        MTFlexDate2 = getDates('d_EndofLastMonth');
     } else {
-        FlexLowerDate = getDates('d_StartofMonth');
-        FlexHigherDate = getDates('d_Today');
+        MTFlexDate1 = getDates('d_StartofMonth');
+        MTFlexDate2 = getDates('d_Today');
     }
     MenuReportsGo(MTFlex.Name);
 }
@@ -2806,6 +2820,7 @@ function callGraphQL(data) {
 }
 
 async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccounts) {
+    if(inAccounts == undefined) inAccounts = [];
     let filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({operationName: 'GetAggregatesGraph', variables: {filters: filters },
           query: "query GetAggregatesGraph($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"category\", \"" + groupingType + "\"]\n  fillEmptyValues: false\n ) {\n groupBy {\n category {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
@@ -2816,6 +2831,7 @@ async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccou
 }
 
 async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccounts) {
+    if(inAccounts == undefined) inAccounts = [];
     let filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({ operationName: 'GetAggregatesGraphCategoryGroup',variables: {filters: filters },
           query: "query GetAggregatesGraphCategoryGroup($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"categoryGroup\", \"" + groupingType + "\"]\n fillEmptyValues: false\n ) {\n groupBy {\n categoryGroup {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
@@ -2825,9 +2841,10 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
     .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
 }
 
-async function GetTransactions(startDate,endDate, offset, isPending) {
+async function GetTransactions(startDate,endDate, offset, isPending, inAccounts) {
     const limit = 1000;
-    const filters = {startDate: startDate, endDate: endDate, isPending: isPending};
+    if(inAccounts == undefined) inAccounts = [];
+    const filters = {startDate: startDate, endDate: endDate, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
           query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n tags {\n id\n name\n color\n order\n } \n account {\n id }  \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
