@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.14.03
+// @version      3.14.04
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.14.03';
+const version = '3.14.04';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -340,7 +340,7 @@ function MT_GridDrawSort() {
 
     let cn = MTFlex.Name + 'Sort' + (MTFlex.SortSeq ? MTFlex.SortSeq[MTFlex.Button2] : '');
     let useSort = getCookie(cn, true);
-    useSort = Math.abs(useSort) > MTFlexTitle.length ? 0 : useSort;
+    useSort = Math.abs(useSort) >= MTFlexTitle.length ? 0 : useSort;
     const useCol = MTFields + Math.abs(useSort);
 
     MTFlexRow.forEach(row => {row.SK = row[useCol]; });
@@ -743,9 +743,10 @@ async function MenuReportsTagsGo() {
     let snapshotData4 = null,rec = null;
     let TagQueue = [],TagCols = [];
     let useID = '',useAmt = 0, useTitle='',ii = 0, multiple = false;
+    let useURL = '';
 
     await MF_GridInit('MTTags', 'Tags');
-    MTFlex.Title1 = 'Net Income Trend Report by Tags';
+    MTFlex.Title1 = 'Net Income Report by Tags';
     MTFlex.TriggerEvent = true;
     MTFlex.TriggerEvents = false;
     MF_GridOptions(1,['By group','By category','By both']);
@@ -772,7 +773,7 @@ async function MenuReportsTagsGo() {
     for (let i = 0; i < TagCols.length; i += 1) {
         switch(TagCols[i]) {
             case '':
-                useTitle = 'No Tag';break;
+                useTitle = 'Untagged';break;
             case '*':
                 useTitle = 'Multiple'
                 if(multiple == false) continue;
@@ -800,16 +801,29 @@ async function MenuReportsTagsGo() {
                 if(retGroup.TYPE == 'expense') {
                     MTP.BasedOn = 2;
                     MTP.Section = 4;
+                    useURL = '#|spending|';
                 } else {
                     MTP.BasedOn = 1;
                     MTP.Section = 2;
+                    useURL = '#|income|';
                 }
+
                 if(MTFlex.Button1 > 0) {
-                    if(MTFlex.Button1 == 2) {MTP.PK = retGroup.GROUPNAME;}
+                    if(MTFlex.Button1 == 2) {
+                        MTP.PK = retGroup.GROUPNAME;
+                        MTP.PKHRef = useURL + '|' + retGroup.GROUP + '|';
+                        MTP.PKTriggerEvent = 'category-groups/' + retGroup.GROUP;
+                    }
+                    MTP.SKHRef = useURL + retGroup.ID + '|';
+                    MTP.SKTriggerEvent = 'categories/' + retGroup.ID;
                     useTitle = retGroup.NAME;
                 } else {
                     useTitle = retGroup.GROUPNAME;
+                    MTP.SKHRef = useURL + '|' + retGroup.GROUP + '|';
+                    MTP.PKTriggerEvent = '';
+                    MTP.SKTriggerEvent = 'category-groups/' + retGroup.GROUP;
                 }
+
                 MTP.Icon = retGroup.ICON;
                 MTP.SKExpand = '';
                 MF_QueueAddRow(MTP);
