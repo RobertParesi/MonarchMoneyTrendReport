@@ -16,7 +16,7 @@ const FlexOptions = ['Trends','Accounts','Tags'];
 let SaveLocationPathName = '',css_reload = false;
 let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=0, debug=0;
 let accountGroups = [];
-let AccountsTodayIs = new Date(), TrendTodayIs = new Date();
+let FlexLowerDate = new Date(), FlexHigherDate = new Date();
 let TrendQueue = [], TrendQueue2 = [];
 
 // flex container
@@ -41,6 +41,8 @@ function MM_Init() {
 
     MM_MenuFix();
     MM_RefreshAll();
+    FlexLowerDate = getDates('d_StartofMonth');
+    FlexHigherDate = getDates('d_Today');
 
     if(getCookie('MT_PlanCompressed',true) == 1) {addStyle('.joBqTh, .jsBiA-d {padding-bottom: 0px; padding-top: 0px; !important;}'); addStyle('.earyfo, .fxLfmT {height: 42px;}'); addStyle('.dVgTYt, .exoRCJ, .bgDnMb, .zoivW {font-size: 15px;}');}
     if(getCookie('MT_CompressedTx',true) == 1) {addStyle('.dnAUzj {font-size: 14px !important; padding-top: 1px; padding-bottom: 1px;}');addStyle('.oRgik, .bVcoEc, .erRzVO, .dEMbMu {font-size: 14px !important;');}
@@ -740,40 +742,21 @@ async function MenuReportsTagsGo() {
 
     let snapshotData4 = null,rec = null;
     let TagQueue = [],TagCols = [];
-    let lowerDate = null,higherDate=null;
     let useID = '',useAmt = 0, useTitle='',ii = 0;
 
     await MF_GridInit('MTTags', 'Tags');
     MTFlex.Title1 = 'Net Income Trend Report by Tags';
-    MTFlex.TriggerEvent = false;
+    MTFlex.TriggerEvent = true;
     MTFlex.TriggerEvents = false;
     MF_GridOptions(1,['By group','By category','By both']);
-    MF_GridOptions(2,['This Month','Last Month']);
-    //MF_GridOptions(4,getAccountGroupInfo());
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
-    let CurrentFilter = '';
-    let CurrentFilterObj = [];
-   // if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
-   //     CurrentFilter = getAccountGroupFilter();
-   //     CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
-    //}
-
-    switch(MTFlex.Button2) {
-        case '1':
-            lowerDate = getDates('d_StartofLastMonth');
-            higherDate = getDates('d_EndofLastMonth');
-            break;
-        default:
-            lowerDate = getDates('d_StartofMonth');
-            higherDate = getDates('d_Today');
-    }
-    MTFlex.Title2 = getDates('s_FullDate',lowerDate) + ' - ' + getDates('s_FullDate',higherDate);
+    MTFlex.Title2 = getDates('s_FullDate',FlexLowerDate) + ' - ' + getDates('s_FullDate',FlexHigherDate);
     MTFlex.Title3 = '';
     MTP = [];
     MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(MTP);
 
-    snapshotData4 = await GetTransactions(formatQueryDate(lowerDate),formatQueryDate(higherDate),0,false);
+    snapshotData4 = await GetTransactions(formatQueryDate(FlexLowerDate),formatQueryDate(FlexHigherDate),0,false);
     for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
         rec = snapshotData4.allTransactions.results[j];
         if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
@@ -967,15 +950,13 @@ async function MenuReportsAccountsGoExt(){
 
 async function MenuReportsAccountsGoStd(){
 
-    let isToday = getDates('isToday',AccountsTodayIs);
+    let isToday = getDates('isToday',FlexHigherDate);
 
     let snapshotData = null, snapshotData2 = null, snapshotData3 = null,snapshotData4 = null,snapshotData5 = null;
     let useDateRange = ['d_StartofMonth','d_Minus3Months','d_Minus6Months','d_StartOfYear','d_Minus1Year','d_Minus2Years','d_Minus3Years','d_Minus4Years','d_Minus5Years'][MTFlex.Button2];
-    let useDate = getDates(useDateRange,AccountsTodayIs);
-    let useDate2 = AccountsTodayIs;
     let cards = 0,acard=[0,0,0,0,0];
 
-    MTFlex.Title2 = getDates('s_FullDate',useDate) + ' - ' + getDates('s_FullDate',useDate2);
+    MTFlex.Title2 = getDates('s_FullDate',FlexLowerDate) + ' - ' + getDates('s_FullDate',FlexHigherDate);
     MTP.Column = 2; MTP.Title = 'Group';MTP.Format = 0;MF_QueueAddTitle(MTP);
     MTP.Column = 3; MTP.Title = 'Updated';MTP.Format = -1;MF_QueueAddTitle(MTP);
     MTP.Column = 4; MTP.Title = 'Beg Balance'; MTP.isSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];MF_QueueAddTitle(MTP);
@@ -997,10 +978,10 @@ async function MenuReportsAccountsGoStd(){
     let AccountGroupFilter = getAccountGroupFilter();
 
     snapshotData = await getAccountsData();
-    snapshotData2 = await GetTransactions(formatQueryDate(useDate),formatQueryDate(useDate2),0,false);
-    snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(useDate));
-    snapshotData4 = await GetTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(useDate2),0,true);
-    if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(useDate2));}
+    snapshotData2 = await GetTransactions(formatQueryDate(FlexLowerDate),formatQueryDate(FlexHigherDate),0,false);
+    snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(FlexLowerDate));
+    snapshotData4 = await GetTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(FlexHigherDate),0,true);
+    if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(FlexHigherDate));}
 
     for (let i = 0; i < 5; i += 1) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards+=1;}}
     if(debug == 1) console.log('MenuReportsAccountsGoStd',snapshotData,snapshotData2,AccountGroupFilter);
@@ -1241,8 +1222,8 @@ async function MenuReportsTrendsGo() {
     TrendQueue = [];
     await MF_GridInit('MTTrends', 'Trends');
     let TrendFullPeriod = getCookie('MT_TrendFullPeriod',true);
-    let lowerDate = new Date(TrendTodayIs);
-    let higherDate = new Date(TrendTodayIs);
+    let lowerDate = new Date(FlexLowerDate);
+    let higherDate = new Date(FlexHigherDate);
     lowerDate.setDate(1);
     lowerDate.setMonth(0);
     let month = lowerDate.getMonth();
@@ -1367,7 +1348,7 @@ async function MenuReportsTrendsGo() {
         higherDate.setFullYear(year2,month2,day2);
 
         if(MTFlex.Button2 == 2) {
-            const QtrDate = getDates('i_ThisQTRs',TrendTodayIs);
+            const QtrDate = getDates('i_ThisQTRs',FlexLowerDate);
             month = parseInt(QtrDate.substring(0,2)) - 1;
             lowerDate.setMonth(month);
             if(month != month2) {useTitle = getMonthName(month,true) + ' - ';}
@@ -2489,13 +2470,12 @@ function onClickMTDropdownRelease() {
 
 function onClickMTFlexBig() {
 
-    if(MTFlex.Name == 'MTTrends') {
-        if(getDates('isToday',TrendTodayIs)) {
-            TrendTodayIs = getDates('d_EndofLastMonth');} else { TrendTodayIs = getDates('d_Today');}
-    }
-    if(MTFlex.Name == 'MTAccounts') {
-        if(getDates('isToday',AccountsTodayIs)) {
-            AccountsTodayIs = getDates('d_EndofLastMonth');} else {AccountsTodayIs = getDates('d_Today');}
+    if(getDates('isToday',FlexHigherDate)) {
+        FlexLowerDate = getDates('d_StartofLastMonth');
+        FlexHigherDate = getDates('d_EndofLastMonth');
+    } else {
+        FlexLowerDate = getDates('d_StartofMonth');
+        FlexHigherDate = getDates('d_Today');
     }
     MenuReportsGo(MTFlex.Name);
 }
