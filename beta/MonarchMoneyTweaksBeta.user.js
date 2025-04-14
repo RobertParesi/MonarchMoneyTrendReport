@@ -1,22 +1,22 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.14.01
+// @version      3.14.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.14.01';
+const version = '3.14.03';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
 const FlexOptions = ['Trends','Accounts','Tags'];
+let FlexLowerDate = new Date(), FlexHigherDate = new Date();
 let SaveLocationPathName = '',css_reload = false;
 let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=0, debug=0;
 let accountGroups = [];
-let FlexLowerDate = new Date(), FlexHigherDate = new Date();
 let TrendQueue = [], TrendQueue2 = [];
 
 // flex container
@@ -67,8 +67,8 @@ function MM_Init() {
     addStyle('.MTFlexGrid th, td { padding-right: 8px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
     addStyle('.MTFlexGridTitleRow { font-size: 16px; font-weight: 600; height: 56px; position: sticky; top: 0; ' + panelBackground + '}');
-    addStyle('.MTFlexGridTitleCell { border-bottom: 1px solid ' + borderColor + ';}');
-    addStyle('.MTFlexGridTitleCell2 { text-align: right; border-bottom: 1px solid ' + borderColor + ';}');
+    addStyle('.MTFlexGridTitleCell, .MTFlexGridTitleCell2 { border-bottom: 1px solid ' + borderColor + ';}');
+    addStyle('.MTFlexGridTitleCell2 { text-align: right;}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
     addStyle('.MTFlexGridRow { font-size: 14px; font-weight: 600; height: 44px; vertical-align: bottom;}');
     addStyle('.MTFlexSpacer {width: 100%; margin-top: 3px; margin-bottom: 3px; border-bottom: 1px solid ' + borderColor +';}');
@@ -742,7 +742,7 @@ async function MenuReportsTagsGo() {
 
     let snapshotData4 = null,rec = null;
     let TagQueue = [],TagCols = [];
-    let useID = '',useAmt = 0, useTitle='',ii = 0;
+    let useID = '',useAmt = 0, useTitle='',ii = 0, multiple = false;
 
     await MF_GridInit('MTTags', 'Tags');
     MTFlex.Title1 = 'Net Income Trend Report by Tags';
@@ -761,12 +761,11 @@ async function MenuReportsTagsGo() {
         rec = snapshotData4.allTransactions.results[j];
         if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
         useAmt = rec.amount;
-        if(rec.category.group.type = 'expense') {useAmt = useAmt * -1;}
+        if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
         ii = rec.tags.length;
-        if(ii == 0) { TagsUpdateQueue(useID,useAmt,'');} else if (ii > 1) {
-            TagsUpdateQueue(useID,useAmt,'*');} else {
-            TagsUpdateQueue(useID,useAmt,rec.tags[0].name);
-        }
+        if(ii == 0) { TagsUpdateQueue(useID,useAmt,'');}
+        else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*');multiple = true;}
+        else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name);}
     }
     TagCols.sort();
     let totalCol = 0;
@@ -775,7 +774,9 @@ async function MenuReportsTagsGo() {
             case '':
                 useTitle = 'No Tag';break;
             case '*':
-                useTitle = 'Multiple';break;
+                useTitle = 'Multiple'
+                if(multiple == false) continue;
+                break;
             default:
                 useTitle = TagCols[i];
         }
