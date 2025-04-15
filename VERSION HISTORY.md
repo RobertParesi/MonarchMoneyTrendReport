@@ -3,12 +3,15 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.14 (beta):**
+**Version 3.15 (beta):**
+
+• NEW: More enhancements to the Income by Tags report (Added Cards)
+
+• CHANGE: Reports / Accounts Extended Report (Last x Months / Last x Years) will look at the "Is Account Hidden Flag"
+
+**Version 3.14:**
 
 • NEW: Net Income by Tags report - _Work in Progress_ 
-  - Can toggle Date range to be This Month or Last Month
-  - Will add options in future to Ignore Non Tagged items and have a date range
-    
 
 **Version 3.13:**
 
