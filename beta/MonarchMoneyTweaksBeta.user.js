@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.15.01
+// @version      3.15.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.15.01';
+const version = '3.15.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -169,6 +169,7 @@ async function MF_GridInit(inName, inDesc) {
     MTFlex.Button2 = getCookie(inName + 'Button2',true);
     MTFlex.Button3 = getCookie(inName + 'Button3',false);
     MTFlex.Button4 = getCookie(inName + 'Button4',true);
+    MTFlex.RequiredCols = [];
     await buildCategoryGroups();
 }
 
@@ -236,6 +237,18 @@ function MT_GridDrawDetails() {
     function MT_GridDrawRow(isSubTotal) {
 
         let useRow = Object.assign({}, MTFlexRow[RowI]);
+        if (MTFlex.RequiredCols.length > 0) {
+           let allow = false;
+           for (const cI of MTFlex.RequiredCols) {
+               const value = useRow[cI + MTFields];
+               if (value != null) {
+                   const format = MTFlexTitle[cI].Format;
+                   if ((format > 0 && value !== 0) || (format <= 0 && value !== '')) {allow = true; break;}
+               }
+           }
+           if (!allow) return;
+        }
+
         if(isSubTotal == false) {
             if(useRow.isHeader == true) {
                 el = cec('tr','MTFlexGridRow',Header);
@@ -933,11 +946,12 @@ async function MenuReportsAccountsGoExt(){
             CurMonth+=1; if(CurMonth == 12) {CurMonth = 0;}
         }
     }
+    MTFlex.RequiredCols = [3,4,5,6,7,8,9,10,11,12,13,14,15];
+
     MTP.isHidden = false;
     MTP.Column = 15; MTP.Title = 'Current';MF_QueueAddTitle(MTP);
     MTP.Column = 16; MTP.Title = 'Average';MF_QueueAddTitle(MTP);
     snapshotData = await getAccountsData();
-
     for (let i = 0; i < snapshotData.accounts.length; i += 1) {
         if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + snapshotData.accounts[i].id,false)) {
             if(snapshotData.accounts[i].hideFromList == false || skipHidden == 0) {
@@ -1022,6 +1036,8 @@ async function MenuReportsAccountsGoStd(){
     if(getCookie('MT_AccountsHidePending',true) == 1) {MTP.isHidden = true;}
     MTP.Column = 10; MTP.Title = 'Pending'; MTP.ShowPercent = 0; MF_QueueAddTitle(MTP);
     MTP.Column = 11; MTP.Title = 'Proj Balance'; MTP.ShowPercent = 0; MF_QueueAddTitle(MTP);
+
+    MTFlex.RequiredCols = [4,8,10,11];
 
     let useBalance = 0, pastBalance = 0, useAmount = 0;
     let skipTxs = getCookie('MT_AccountsBalance',true);
