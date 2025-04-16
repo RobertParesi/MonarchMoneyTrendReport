@@ -7,7 +7,9 @@ Email any issues directly:  robert @ paresi.net
 
 • NEW: More enhancements to the Income by Tags report (Added Cards)
 
-• CHANGE: Reports / Accounts Extended Report (Last x Months / Last x Years) will look at the "Is Account Hidden Flag"
+• CHANGE: Reports / Accounts report will suppress detail lines that are all NULL and/or $zero.
+
+• CHANGE: Reports / Accounts Extended report (Last Months / Last Years) will look at the Monarch's "Is Account Hidden Flag"
 
 **Version 3.14:**
 
