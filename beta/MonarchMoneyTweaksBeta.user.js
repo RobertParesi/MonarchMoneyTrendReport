@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.16.01
+// @version      3.16.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.16.01';
+const version = '3.16.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -57,7 +57,7 @@ function MM_Init() {
     addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; border: solid 1px ' + borderColor + '; ' + standardText +'}');
     addStyle('.MTSpacerClassTR { height: 4px; }');
     addStyle('.MT' + FlexOptions.join(':hover, .MT') + ':hover {cursor:pointer;}');
-    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton {font-family: MonarchIcons, "Oracle", sans-serif;' + panelBackground + standardText + 'margin-left: 20px; font-weight: 500; border: 1px solid ' + borderColor + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px; font-size: 14px; padding: 7.5px 12px;cursor: pointer;border-radius: 4px;line-height: 150%;}');
+    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton {font-family: MonarchIcons, "Oracle", sans-serif;' + panelBackground + standardText + 'margin-left: 12px; font-weight: 500; border: 1px solid ' + borderColor + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px; font-size: 14px; padding: 7.5px 12px;cursor: pointer;border-radius: 4px;line-height: 150%;}');
     addStyle('.MTFlexContainer {display:block; padding: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 20px;  display: flex; }');
     addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + 'border-radius: 8px; box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;}');
@@ -552,11 +552,13 @@ function MT_GetInput(inputs) {
         div = cec('span','MTSideDrawerHeader',TopDiv,'','');
         for (let i = 0; i < inputs.length; i += 1) {
             div2 = cec('div','MTInputDesc',div);
-            cec('div','',div2,inputs[i].NAME,'','font-weight: 600;');
-            cec('input','MTInputClass',div2,'','','','type',inputs[i].TYPE);
+            cec('div','',div2,inputs[i].NAME,'','font-weight: 600;padding: 6px;');
+            div2 = cec('input','MTInputClass',div2,'','','','type',inputs[i].TYPE);
+            div2.value = inputs[i].VALUE;
         }
-
         div = cec('span','MTSideDrawerHeader',TopDiv,'','');
+        div2 = cec('button','MTInputButton',div,'Last Month','','float:left;margin-left: 0px;');
+        div2 = cec('button','MTInputButton',div,'This Month','','float:left;');
         div2 = cec('button','MTInputButton',div,'Apply','','float:right;');
         div2 = cec('button','MTInputButton',div,'Cancel','','float:right;' );
     }
@@ -2422,8 +2424,7 @@ window.onclick = function(event) {
             case 'MTSideDrawerRoot':
             case 'MTTrendCellArrow':
             case 'MTInputButton':
-                onClickCloseDrawer()
-                if(event.target.innerText == 'Apply') {MenuReportsGo(MTFlex.Name);}
+                if(onClickCloseDrawer() == true) {MenuReportsGo(MTFlex.Name);}
                 return;
             case 'MTTrendCellArrow2':
                 MM_flipElement('div.TrendHistoryDetail');
@@ -2511,15 +2512,30 @@ window.onclick = function(event) {
 
 function onClickCloseDrawer() {
 
-    if(event.target.innerText == 'Apply') {
-        const divs = document.querySelectorAll('input.MTInputClass');
-        for (let i = 0; i < divs.length; ++i) {
-            let value = divs[i].value;
-            if(i == 0) MTFlexDate1 = unformatQueryDate(value);
-            if(i == 1) MTFlexDate2 = unformatQueryDate(value);
-        }
+    let divs = null,returnV=false;
+    switch(event.target.innerText) {
+        case 'Apply':
+            divs = document.querySelectorAll('input.MTInputClass');
+            for (let i = 0; i < divs.length; ++i) {
+                let value = divs[i].value;
+                if(i == 0) MTFlexDate1 = unformatQueryDate(value);
+                if(i == 1) MTFlexDate2 = unformatQueryDate(value);
+            }
+            returnV = true;
+            break;
+        case 'Last Month':
+            MTFlexDate1 = getDates('d_StartofLastMonth');
+            MTFlexDate2 = getDates('d_EndofLastMonth');
+            returnV = true;
+            break;
+        case 'This Month':
+            MTFlexDate1 = getDates('d_StartofMonth');
+            MTFlexDate2 = getDates('d_Today');
+            returnV = true;
+            break;
     }
     removeAllSections('div.MTHistoryPanel');
+    return returnV;
 }
 
 function onClickContainer() {
@@ -2590,8 +2606,8 @@ function onClickMTFlexBig() {
 
     if(MTFlex.TriggerEvent == 2) {
         let inputs = [];
-        inputs.push({'NAME': 'Lower Date', 'TYPE': 'date'});
-        inputs.push({'NAME': 'Higher Date', 'TYPE': 'date'});
+        inputs.push({'NAME': 'Lower Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate1)});
+        inputs.push({'NAME': 'Higher Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2)});
         MT_GetInput(inputs);
     } else {
         if(getDates('isToday',MTFlexDate2)) {
