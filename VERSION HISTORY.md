@@ -3,6 +3,13 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.16 (beta):**
+
+• NEW: More enhancements to the Income by Tags report (Date Range) 
+
+• CHANGE: Limit cards in Reports / Tags to 6  
+
+
 **Version 3.15:**
 
 • NEW: More enhancements to the Income by Tags report (Added Cards, Colors)
