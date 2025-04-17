@@ -3,9 +3,9 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.15 (beta):**
+**Version 3.15:**
 
-• NEW: More enhancements to the Income by Tags report (Added Cards)
+• NEW: More enhancements to the Income by Tags report (Added Cards, Colors)
 
 • CHANGE: Reports / Accounts report will suppress detail lines that are all NULL and/or $zero.
 
