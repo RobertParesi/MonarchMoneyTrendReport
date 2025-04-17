@@ -231,7 +231,7 @@ function MT_GridDrawDetails() {
                 if(MTFlexTitle[RowI].Indicator != null) {
                     elx = cec('td',useStyle,el,'','','','Column',RowI.toString());
                     cec('div','MTFlexGridTitleInd',elx,'','','background-color: ' + MTFlexTitle[RowI].Indicator + ';');
-                    cec('div',useStyle,elx,MTFlexTitle[RowI].Title + ' ' + MTFlexTitle[RowI].ShowSort,'','display: inline-block;','Column',RowI.toString());
+                    cec('div',useStyle,elx,MTFlexTitle[RowI].Title + ' ' + MTFlexTitle[RowI].ShowSort,'','display: inline-block;border-bottom: 0px;','Column',RowI.toString());
                 } else {
                     elx = cec('td',useStyle,el,MTFlexTitle[RowI].Title + ' ' + MTFlexTitle[RowI].ShowSort,'','','Column',RowI.toString());
                 }
@@ -791,8 +791,7 @@ async function MenuReportsTagsGo() {
     MF_GridOptions(4,getAccountGroupInfo());
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTFlex.Title3 = '';
-    MTP = [];
-    MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
+    MTP = [];MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(MTP);
     if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
         CurrentFilter = getAccountGroupFilter();
