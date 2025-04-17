@@ -38,8 +38,8 @@ function MM_Init() {
     const borderColor = ['#e4e1de','#62605D'][a];
     const accentColor = '#ff692d;';
 
-    MM_MenuFix();
     MM_RefreshAll();
+    MM_MenuFix();
     MTFlexDate1 = getDates('d_StartofMonth');
     MTFlexDate2 = getDates('d_Today');
 
@@ -111,15 +111,16 @@ function MM_Init() {
     addStyle('.tooltip .tooltiptext {  visibility: hidden;  width: 120px;  background-color: black;  color: #fff;  text-align: center; border-radius: 6px;  padding: 5px 0;  position: absolute;  z-index: 1;  bottom: 1.5em; margin-left: -150px;}');
     addStyle('.tooltip .tooltiptext::after {  content: "";  position: absolute; top:100%; left: 50%; margin-left: -5px;  border-width: 5px; border-style: solid; border-color: black transparent transparent transparent;}');
     addStyle('.tooltip:hover .tooltiptext {visibility: visible; opacity: 1;}');
+
 }
 
 function MM_MenuFix() {
-    MM_hideElement("[href~='/settings/referrals']",getCookie('MT_Ads',true));
     MM_hideElement("[href~='/advice']",getCookie('MT_Advice',true));
     MM_hideElement("[href~='/investments']",getCookie('MT_Investments',true));
     MM_hideElement("[href~='/objectives']",getCookie('MT_Goals',true));
     MM_hideElement("[href~='/recurring']",getCookie('MT_Recurring',true));
     MM_hideElement("[href~='/plan']",getCookie('MT_Budget',true));
+    MM_hideElement("[href~='/settings/referrals']",getCookie('MT_Ads',true));
     debug = getCookie('MT_Debug',true);
 }
 
@@ -2908,6 +2909,7 @@ function getChecked(InA,InB) {
             if(SaveLocationPathName) {MM_MenuRun(false);}
             SaveLocationPathName = window.location.pathname;
             MM_MenuRun(true);
+            MM_hideElement("[href~='/settings/referrals']",getCookie('MT_Ads',true));
         }
         MenuCheckSpawnProcess();
     },400);
