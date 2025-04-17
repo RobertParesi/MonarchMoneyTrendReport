@@ -810,8 +810,8 @@ async function MenuReportsTagsGo() {
             if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
             ii = rec.tags.length;
             if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','');}
-            else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*','000','');}
-            else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order).padStart(3, '0'),rec.tags[0].color);}
+            else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*','001','');}
+            else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order+2).padStart(3, '0'),rec.tags[0].color);}
         }
     } while (recCnt > 999);
 
