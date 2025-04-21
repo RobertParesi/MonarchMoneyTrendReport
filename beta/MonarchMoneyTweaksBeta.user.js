@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.16.02
+// @version      3.16.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.16.02';
+const version = '3.16.03';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -63,7 +63,7 @@ function MM_Init() {
     addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + 'border-radius: 8px; box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;}');
     addStyle('.MTFlexContainerCard {  display: flex; flex: 1 1 0%; justify-content: space-between; padding: 16px 24px; align-items: center;' + panelBackground + 'border-radius: 8px; box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;}');
     addStyle('.MTFlexGrid {' + panelBackground + 'padding: 20px;border-spacing: 0px;}');
-    addStyle('.MTFlexGrid th, td { padding-right: 8px;}');
+    addStyle('.MTFlexGrid th, td { padding-right: 4px; padding-left: 4px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
     addStyle('.MTFlexGridTitleRow { font-size: 16px; font-weight: 600; height: 56px; position: sticky; top: 0; ' + panelBackground + '}');
     addStyle('.MTFlexGridTitleCell, .MTFlexGridTitleCell2 { border-bottom: 1px solid ' + borderColor + ';}');
@@ -960,7 +960,7 @@ async function MenuReportsAccountsGoExt(){
 
     let snapshotData = null, snapshotData3 = null;
     let CurMonth = getDates('n_CurMonth'),CurYear = 0;
-    let NumMonths = (MTFlex.Button2 === 7) ? 6 : 12;
+    let NumMonths = (MTFlex.Button2 == 7) ? 6 : 12;
     let useDate = getDates('d_Minus1Year');
     let AccountGroupFilter = getAccountGroupFilter();
     let skipHidden = getCookie('MT_AccountsHidden',true);
@@ -1048,7 +1048,7 @@ async function MenuReportsAccountsGoExt(){
     MF_GridRollDifference(5,1,3,1,'Net Worth/Totals','Add');
     MF_GridCalcDifference(5,1,3,[3,4,5,6,7,8,9,10,11,12,13,14,15],'Sub');
     MF_GridCalcRange(16,3,14,'Avg');
-    (1,3,14,'HV','Highest Assets\nwere','',css_green,'','',' in ');
+    MF_GridAddCard(1,3,14,'HV','Highest Assets\nwere','',css_green,'','',' in ');
     MF_GridAddCard(3,3,14,'HV','Highest Liabilities\nwere','',css_red,'','', ' in ');
     MF_GridAddCard(2,3,14,'HV','Highest Asset','',css_green,'',' was with ', ' in ');
     MF_GridAddCard(4,3,14,'HV','Highest Liability','',css_red,'',' was with ', ' in ');
