@@ -7,7 +7,9 @@ Email any issues directly:  robert @ paresi.net
 
 • NEW: More enhancements to the Income by Tags report (Date Range) 
 
-• CHANGE: Limit cards in Reports / Tags to 6  
+• CHANGE: Limit cards in Reports / Tags to 6
+
+• FIX: Number of fixes to Reports / Accounts
 
 
 **Version 3.15:**
