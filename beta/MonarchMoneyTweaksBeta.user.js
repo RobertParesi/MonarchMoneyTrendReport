@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.17.03
+// @version      3.17.04
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.17.03';
+const version = '3.17.04';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -80,6 +80,7 @@ function MM_Init() {
     addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 { font-size: 15px;}');
     addStyle('.MTFlexGridHCell2 { text-align: right;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2 {' + standardText +' }');
+    addStyle('.MThRefClass2 {font-family: MonarchIcons, "Oracle", sans-serif;}');
     addStyle('.MTFlexGridDCell2 { text-align: right; }');
     addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {  height: 36px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexGridSCell2 { text-align: right !important;}');
@@ -237,7 +238,7 @@ function MT_GridDrawDetails() {
                 if(MTFlexTitle[RowI].Indicator != null) {
                     elx = cec('td',useStyle,el,'','','','Column',RowI.toString());
                     cec('div','MTFlexGridTitleInd',elx,'','','background-color: ' + MTFlexTitle[RowI].Indicator + ';');
-                    cec('div',useStyle,elx,MTFlexTitle[RowI].Title + ' ' + MTFlexTitle[RowI].ShowSort,'','display: inline-block;border-bottom: 0px;','Column',RowI.toString());
+                    cec('div',useStyle,elx,MTFlexTitle[RowI].Title + ' ' + MTFlexTitle[RowI].ShowSort,'','display: inline-block; border-bottom: 0px;','Column',RowI.toString());
                 } else {
                     elx = cec('td',useStyle,el,MTFlexTitle[RowI].Title + ' ' + MTFlexTitle[RowI].ShowSort,'','','Column',RowI.toString());
                 }
@@ -263,20 +264,21 @@ function MT_GridDrawDetails() {
         }
 
         if(isSubTotal == false) {
+            useDesc = useRow[MTFields];
             if(useRow.isHeader == true) {
                 el = cec('tr','MTFlexGridRow',Header,'','','','MTsection',useRow.Section);
                 useStyle = 'MTFlexGridHCell';
                 Subtotals[SubtotalsNdx] = RowI;
                 SubtotalsNdx+=1;
+                useDesc = ' ' + useDesc;
             } else {
                 let el2 = cec('tr','MTSpacerClassTR',Header,'','','','MTsection',useRow.Section);
                 el2 = cec('td','',el2,'','','','colspan',MTFlexTitle.length);
                 cec('div','MTFlexSpacer',el2,'','',hide);
                 el = cec('tr','MTFlexGridItem',Header,'','','','MTsection',useRow.Section);
                 useStyle = 'MTFlexGridDCell';
+                if(useRow.Icon) {useDesc = useRow.Icon + ' ' + useDesc;}
             }
-            useDesc = useRow[MTFields];
-            if(useRow.Icon) {useDesc = useRow.Icon + ' ' + useDesc;}
             if(useRow.SKHRef) {
                 elx = cec('td',useStyle,el);
                 elx = cec('a',useStyle,elx,useDesc,useRow.SKHRef);
@@ -364,7 +366,6 @@ function MT_GridDrawDetails() {
                 elx = cec('td','',el,'','',ArrowSpacing );
             }
         }
-        //if(isSubTotal == true) { cec('div','MTFlexSpacer2',Header);}
 
         function MT_GridDrawRowSub(inColumn,inStart,inEnd) {
             let useValue = 0,useCols = 0;
@@ -385,10 +386,18 @@ function MT_GridDrawExpand() {
     let x = null, xBefore = null, cv = null;
     trWithSection.forEach((tr) => {
         x = Number(tr.getAttribute('MTsection'));
-        if(x != xBefore) {
-            cv = getCookie('MT' + MTFlex.Name + 'Expand' + x,true);
+
+        if(tr.className == 'MTFlexGridRow') {
+            cv = getCookie('MT' + MTFlex.Name + 'Expand' + (x+1),true);
+            if(cv == 1) {tr.firstChild.innerText = ' ' + tr.firstChild.innerText.slice(2);} else {tr.firstChild.innerText = ' ' + tr.firstChild.innerText.slice(2);}
+        } else {
+            if(x != xBefore) {
+                cv = getCookie('MT' + MTFlex.Name + 'Expand' + x,true);
+                if(tr.previousSibling.className == 'MTFlexGridRow') {
+                }
+                cv == 1 ? tr.style.display = 'none' : tr.style.display = '';
+            }
         }
-        cv == 1 ? tr.style.display = 'none' : tr.style.display = '';
     });
 }
 
