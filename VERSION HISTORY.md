@@ -3,6 +3,12 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.17 (beta):**
+
+• NEW: Expand and Collaspe sections in Reports
+
+
+
 **Version 3.16:**
 
 • NEW: More enhancements to the Income by Tags report (Date Range) 
