@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.16
+// @version      3.17.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.16';
+const version = '3.17.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -35,8 +35,10 @@ function MM_Init() {
     const selectBackground = 'background-color: ' + ['#def7f9;','#082c36;'][a];
     const selectForground = 'color: ' + ['#107d98;','#4ccce6;'][a];
     const lineForground = ['#e4e1de','#363532'][a];
-    const borderColor = ['#e4e1de','#62605D'][a];
     const accentColor = '#ff692d;';
+    const bb = 'border: 1px solid ' + ['#e4e1de;','#62605D;'][a];
+    const bbb = 'border-bottom: 1px solid ' + ['#e4e1de;','#62605D;'][a];
+    const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px; border-radius:';
 
     MM_RefreshAll();
     MM_MenuFix();
@@ -47,37 +49,37 @@ function MM_Init() {
     if(getCookie('MT_CompressedTx',true) == 1) {addStyle('.dnAUzj {font-size: 14px !important; padding-top: 1px; padding-bottom: 1px;}');addStyle('.oRgik, .bVcoEc, .erRzVO, .dEMbMu {font-size: 14px !important;');}
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.cxLoFP {color:' + accentColor + '}');}
     addStyle('.MTBub {margin-bottom: 12px;}');
-    addStyle('.MTBub1 {cursor: pointer;float: right; margin-left: 12px;font-size: 13px; margin-bottom: 10px;padding: 2px;border: 1px solid #e4e1de; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;border-radius: 8px;width: 150px;text-align: center;font-weight: 500;}');
-    addStyle('.MTWait { width: 40%; margin-left: auto; margin-top: 100px;margin-right: auto;justify-content: center; align-items: center;}');
-    addStyle('.MTWait2 {font-size: 18px; font-weight: 500; font: "Oracle", sans-serif; ' + panelBackground + ' padding: 20px;border-radius: 5px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);text-align: center;}');
+    addStyle('.MTBub1 {cursor: pointer;float: right; margin-left: 12px;font-size: 13px; margin-bottom: 10px; padding: 2px; ' + bb + bs + ' 4px; width: 150px; text-align: center;font-weight: 500;}');
+    addStyle('.MTWait {width: 40%; margin-left: auto; margin-top: 100px;margin-right: auto;justify-content: center; align-items: center;}');
+    addStyle('.MTWait2 {font-size: 18px; font-weight: 500; font: "Oracle", sans-serif; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
     addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, sans-serif, "Oracle" !important; font-size: 15px; font-weight: 200;}');
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
     addStyle('.MTCheckboxClass, .MTFlexCheckbox {width: 19px; height: 19px; margin-right: 10px;float: inline-start; color: #FFFFFF; accent-color: ' + accentColor + '}');
     addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; height: 8px; border-bottom: 1px solid ' + lineForground +';}');
-    addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; border: solid 1px ' + borderColor + '; ' + standardText +'}');
+    addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bb + standardText +'}');
     addStyle('.MTSpacerClassTR { height: 4px; }');
     addStyle('.MT' + FlexOptions.join(':hover, .MT') + ':hover {cursor:pointer;}');
-    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton {font-family: MonarchIcons, "Oracle", sans-serif;' + panelBackground + standardText + 'margin-left: 12px; font-weight: 500; border: 1px solid ' + borderColor + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px; font-size: 14px; padding: 7.5px 12px;cursor: pointer;border-radius: 4px;line-height: 150%;}');
+    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton {font-family: MonarchIcons, "Oracle", sans-serif;' + panelBackground + standardText + 'margin-left: 12px; font-weight: 500; ' + bb + bs + ' 4px;font-size: 14px; padding: 7.5px 12px;cursor: pointer;}');
     addStyle('.MTFlexContainer {display:block; padding: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 20px;  display: flex; }');
-    addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + 'border-radius: 8px; box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;}');
-    addStyle('.MTFlexContainerCard {  display: flex; flex: 1 1 0%; justify-content: space-between; padding: 16px 24px; align-items: center;' + panelBackground + 'border-radius: 8px; box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px;}');
+    addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
+    addStyle('.MTFlexContainerCard {  display: flex; flex: 1 1 0%; justify-content: space-between; padding: 16px 24px; align-items: center;' + panelBackground + bs + ' 8px;}');
     addStyle('.MTFlexGrid {' + panelBackground + 'padding: 20px;border-spacing: 0px;}');
     addStyle('.MTFlexGrid th, td { padding-right: 4px; padding-left: 4px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
     addStyle('.MTFlexGridTitleRow { font-size: 16px; font-weight: 600; height: 56px; position: sticky; top: 0; ' + panelBackground + '}');
-    addStyle('.MTFlexGridTitleCell, .MTFlexGridTitleCell2 { border-bottom: 1px solid ' + borderColor + ';}');
+    addStyle('.MTFlexGridTitleCell, .MTFlexGridTitleCell2 { ' + bbb + '}');
     addStyle('.MTFlexGridTitleCell2 { text-align: right;}');
     addStyle('.MTFlexGridTitleInd {display: inline-block; width: 10px;height: 10px; margin-right: 8px;border-radius:100%;}');
-    addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTFlexGridRow { font-size: 14px; font-weight: 600; height: 44px; vertical-align: bottom;}');
-    addStyle('.MTFlexSpacer, .MTFlexSpacer3 {width: 100%; margin-top: 3px; margin-bottom: 3px; border-bottom: 1px solid ' + borderColor +';}');
+    addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
+    addStyle('.MTFlexGridRow { font-size: 16px; font-weight: 600; height: 44px; vertical-align: bottom;}');
+    addStyle('.MTFlexSpacer, .MTFlexSpacer3 {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bbb + '}');
     addStyle('.MTFlexSpacer2 {width: 100%; height: 20px;}');
     addStyle('.MTFlexGridItem { font-size: 14px;height: 32px;}');
     addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
     addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 { font-size: 15px;}');
     addStyle('.MTFlexGridHCell2 { text-align: right;}');
-    addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass {' + standardText +' }');
+    addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2 {' + standardText +' }');
     addStyle('.MTFlexGridDCell2 { text-align: right; }');
     addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {  height: 36px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexGridSCell2 { text-align: right !important;}');
@@ -85,7 +87,7 @@ function MM_Init() {
     addStyle('.MTFlexBig {font-size: 18px !important;}');
     addStyle('.MTFlexSmall, .MTFlexLittle {font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 8px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
     addStyle('.MTFlexLittle {font-size: 10px !important;}');
-    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 28px; height: 24px; font-size: 18px; font-family: MonarchIcons, sans-serif; transition: 0.1s ease-out; cursor: pointer; border-radius: 100%; border-style: none;}');
+    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 26px; height: 24px; font-size: 18px; font-family: MonarchIcons, sans-serif; transition: 0.1s ease-out; cursor: pointer; border-radius: 100%; border-style: none;}');
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 640px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
@@ -100,8 +102,8 @@ function MM_Init() {
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
     addStyle('.MTFlexdown-content div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
-    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto; border-radius: 8px; border: 1px solid ' + borderColor + '; box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px; right: 0; z-index: 1;}');
-    addStyle('.MTFlexdown-content a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 8px; font-weight: 200; padding: 10px 10px; display: block;}');
+    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto;' + bb + bs + '8px ; right: 0; z-index: 1;}');
+    addStyle('.MTFlexdown-content a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
     addStyle('.show {display: block;}');
     addStyle('.MTBudget {margin-top: 20px;font-size: 14px;');
     addStyle('.MTBudget2 {float: right;}');
@@ -112,7 +114,6 @@ function MM_Init() {
     addStyle('.tooltip .tooltiptext {  visibility: hidden;  width: 120px;  background-color: black;  color: #fff;  text-align: center; border-radius: 6px;  padding: 5px 0;  position: absolute;  z-index: 1;  bottom: 1.5em; margin-left: -150px;}');
     addStyle('.tooltip .tooltiptext::after {  content: "";  position: absolute; top:100%; left: 50%; margin-left: -5px;  border-width: 5px; border-style: solid; border-color: black transparent transparent transparent;}');
     addStyle('.tooltip:hover .tooltiptext {visibility: visible; opacity: 1;}');
-
 }
 
 function MM_MenuFix() {
@@ -137,9 +138,10 @@ function MM_hideElement(qList,InValue,inStartsWith) {
 }
 
 function MM_flipElement(inDiv) {
-    flipCookie('MT_' + inDiv,1);
-    const cv = getCookie('MT_' + inDiv,true);
-    MM_hideElement(inDiv,cv);
+    flipCookie(inDiv,1);
+    const cv = getCookie(inDiv,true);
+    MM_hideElement('div.TrendHistoryDetail',cv);
+    return cv;
 }
 
 // [ Flex Queue MF_ Called externally, MT_ used internally]
@@ -261,15 +263,15 @@ function MT_GridDrawDetails() {
 
         if(isSubTotal == false) {
             if(useRow.isHeader == true) {
-                el = cec('tr','MTFlexGridRow',Header);
+                el = cec('tr','MTFlexGridRow',Header,'','','','section',useRow.Section);
                 useStyle = 'MTFlexGridHCell';
                 Subtotals[SubtotalsNdx] = RowI;
                 SubtotalsNdx+=1;
             } else {
-                let el2 = cec('tr','MTSpacerClassTR',Header,'','');
-                let el3 = cec('td','',el2,'','','','colspan',MTFlexTitle.length);
-                cec('div','MTFlexSpacer',el3,'','',hide);
-                el = cec('tr','MTFlexGridItem',Header);
+                let el2 = cec('tr','MTSpacerClassTR',Header,'','','','section',useRow.Section);
+                el2 = cec('td','',el2,'','','','colspan',MTFlexTitle.length);
+                cec('div','MTFlexSpacer',el2,'','',hide);
+                el = cec('tr','MTFlexGridItem',Header,'','','','section',useRow.Section);
                 useStyle = 'MTFlexGridDCell';
             }
             useDesc = useRow[MTFields];
@@ -278,7 +280,7 @@ function MT_GridDrawDetails() {
                 elx = cec('td',useStyle,el);
                 elx = cec('a',useStyle,elx,useDesc,useRow.SKHRef);
             } else {
-                elx = cec('td',useStyle,el,useDesc);
+                cec('td', useRow.isHeader ? 'MThRefClass2' : useStyle, el, useDesc,'','');
             }
         } else {
             if(useRow.isHeader == true) {return;}
@@ -291,10 +293,10 @@ function MT_GridDrawDetails() {
             }
             useRow.IgnoreShade = true;
             useDesc = useRow.PK;
-            let el2 = cec('tr','MTSpacerClassTR',Header,'','');
-            let el3 = cec('td','',el2,'','','','colspan',MTFlexTitle.length);
-            cec('div','MTFlexSpacer3',el3);
-            el = cec('tr','MTFlexGridItem',Header);
+            let el2 = cec('tr','MTSpacerClassTR',Header,'','','','section',useRow.Section);
+            el2 = cec('td','',el2,'','','','colspan',MTFlexTitle.length);
+            cec('div','MTFlexSpacer3',el2);
+            el = cec('tr','MTFlexGridItem',Header,'','','','section',useRow.Section);
             if(useRow.PKHRef) {
                 elx = cec('td','MTFlexGridSCell',el);
                 elx = cec('a','MTFlexGridDCell',elx,useDesc,useRow.PKHRef);
@@ -319,11 +321,7 @@ function MT_GridDrawDetails() {
                         useValue2 = useValue;
                 }
                 if(MTFlexTitle[j].Format < 1) {
-                    if(isSubTotal == false) {
-                        cec('td','MTFlexGridD3Cell',el,useValue2);
-                    } else {
-                        cec('td',useStyle,el,useValue2);
-                    }
+                    cec('td', isSubTotal ? useStyle : 'MTFlexGridD3Cell', el, useValue2);
                 } else {
                     useStyle2 = '';
                     if((MTFlexTitle[j].ShowPercent) > 0) {
@@ -365,7 +363,7 @@ function MT_GridDrawDetails() {
                 elx = cec('td','',el,'','',ArrowSpacing );
             }
         }
-        if(isSubTotal == true) { cec('div','MTFlexSpacer2',Header);}
+        //if(isSubTotal == true) { cec('div','MTFlexSpacer2',Header);}
 
         function MT_GridDrawRowSub(inColumn,inStart,inEnd) {
             let useValue = 0,useCols = 0;
@@ -559,33 +557,40 @@ function MT_GridDrawEmbed(inSection,inCol,inValue, inDesc) {
 
 function MT_GetInput(inputs) {
 
+    let topDiv = MF_SidePanelOpen('','', false, MTFlex.Title1, '','','');
+    let div = cec('span','MTSideDrawerHeader',topDiv,'','');
+    for (let i = 0; i < inputs.length; i += 1) {
+        let div2 = cec('div','MTInputDesc',div);
+        cec('div','',div2,inputs[i].NAME,'','font-weight: 600;padding: 6px;');
+        div2 = cec('input','MTInputClass',div2,'','','','type',inputs[i].TYPE);
+        div2.value = inputs[i].VALUE;
+    }
+    div = cec('span','MTSideDrawerHeader',topDiv,'','');
+    cec('button','MTInputButton',div,'Last Month','','float:left;margin-left: 0px;');
+    cec('button','MTInputButton',div,'This Month','','float:left;');
+    cec('button','MTInputButton',div,'Apply','','float:right;');
+    cec('button','MTInputButton',div,'Cancel','','float:right;' );
+}
+
+function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, inURL ) {
+
     let topDiv = document.getElementById('root');
     if(topDiv) {
         topDiv = topDiv.childNodes[0];
         let div = cec('div','MTHistoryPanel',topDiv);
         let div2 = cec('div','MTSideDrawerRoot',div,'','','','tabindex','0');
-        let TopDiv = cec('div','MTSideDrawerContainer',div2,'','','');
-
-        div = cec('span','MTSideDrawerHeader',TopDiv);
-        div2 = cec('button','MTTrendCellArrow',div,'','','float:right;')
-
-        div = cec('span','MTSideDrawerHeader',TopDiv);
-        cec('div','MTFlexCardBig',div,MTFlex.Title1,'','margin-bottom:20px;');
-
-        div = cec('span','MTSideDrawerHeader',TopDiv,'','');
-        for (let i = 0; i < inputs.length; i += 1) {
-            div2 = cec('div','MTInputDesc',div);
-            cec('div','',div2,inputs[i].NAME,'','font-weight: 600;padding: 6px;');
-            div2 = cec('input','MTInputClass',div2,'','','','type',inputs[i].TYPE);
-            div2.value = inputs[i].VALUE;
-        }
-        div = cec('span','MTSideDrawerHeader',TopDiv,'','');
-        div2 = cec('button','MTInputButton',div,'Last Month','','float:left;margin-left: 0px;');
-        div2 = cec('button','MTInputButton',div,'This Month','','float:left;');
-        div2 = cec('button','MTInputButton',div,'Apply','','float:right;');
-        div2 = cec('button','MTInputButton',div,'Cancel','','float:right;' );
+        let div3 = cec('div','MTSideDrawerContainer',div2);
+        let div4 = cec('div','MTSideDrawerMotion',div3,'','','','grouptype',inType);
+        if(inType2) {div4.setAttribute('groupsubtype',inType2);}
+        div = cec('span','MTSideDrawerHeader',div4);
+        cec('button','MTTrendCellArrow',div,'','','float:right;')
+        if(inToggle == true) {cec('button','MTTrendCellArrow2',div,['',''][getCookie(MTFlex.Name + '_SidePanel',true)],'','float:right;margin-right: 16px;');}
+        cec('div','MTFlexCardBig',div,inBig);
+        div = cec('span','MTSideDrawerHeader',div4);
+        cec('div','MTFlexSmall',div, inSmall,'','float:right;');
+        cec('a','MTFlexGridDCell',div,inURLText,inURL);
+        return div4;
     }
-
 }
 
 function MF_GridUpdateUID(inUID,inCol,inValue,addMissing) {
@@ -1773,44 +1778,31 @@ function Trend_UpdateQueue(useID,useAmount,inCol) {
 
 function MenuTrendsHistory(inType,inID) {
 
-    let topDiv = document.getElementById('root');
-    if(topDiv) {
+    let lowerDate = new Date("2023-01-01"),higherDate = new Date();
+    let retGroups = getCategoryGroup(inID),inGroup = 1,useURL = '',useURLText = '';
+    let CurrentFilter = '', CurrentFilterObj = [];
+    let ExpandItems = false;
 
-        const lowerDate = new Date("2023-01-01"),higherDate = new Date();
-        let retGroups = getCategoryGroup(inID),inGroup = 1,useURL = '';
-        let CurrentFilter = '', CurrentFilterObj = [];
-
-        topDiv = topDiv.childNodes[0];
-        let div = cec('div','MTHistoryPanel',topDiv);
-        let div2 = cec('div','MTSideDrawerRoot',div,'','','','tabindex','0');
-        let div3 = cec('div','MTSideDrawerContainer',div2);
-        let div4 = cec('div','MTSideDrawerMotion',div3,'','','','grouptype',inType);
-        div4.setAttribute('cattype',retGroups.TYPE);
-        div = cec('span','MTSideDrawerHeader',div4);
-        div2 = cec('button','MTTrendCellArrow',div,'','','float:right;')
-        if(inType == 'category-groups') {
-            div2 = cec('button','MTTrendCellArrow2',div,['',''][getCookie('MT_div.TrendHistoryDetail',true)],'','float:right;margin-right: 16px;');
-        }
-        if(MTFlex.Name) {
-            if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
-                CurrentFilter = getAccountGroupFilter();
-                CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
-            }
-        }
-        if(CurrentFilter) {CurrentFilter = 'Monthly Summary - ' + CurrentFilter;} else {CurrentFilter = 'Monthly Summary';}
-        div2 = cec('div','MTFlexCardBig',div,CurrentFilter);
-        div = cec('span','MTSideDrawerHeader',div4);
-        div2 = cec('div','MTFlexSmall',div, retGroups.TYPE,'','float:right;');
-        if(retGroups.TYPE == 'expense') {useURL = '#|spending|';} else {useURL = '#|income|';}
-        if(inType == 'category-groups') {
-            div2 = cec('a','MTFlexGridDCell',div,retGroups.ICON + ' ' + retGroups.GROUPNAME ,useURL + '|' + retGroups.GROUP );
-            inGroup = 3;
-        } else {
-            div2 = cec('a','MTFlexGridDCell',div,retGroups.ICON + ' ' + retGroups.GROUPNAME + ' / ' + retGroups.NAME,useURL + retGroups.ID + '|');
-        }
-        TrendQueue2 = [];
-        BuildTrendData('hs',inGroup,'month',lowerDate,higherDate,inID,CurrentFilterObj);
+    if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
+        CurrentFilter = getAccountGroupFilter();
+        CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
     }
+    if(CurrentFilter) {CurrentFilter = 'Monthly Summary - ' + CurrentFilter;} else {CurrentFilter = 'Monthly Summary';}
+    if(inType == 'category-groups') {ExpandItems = true;}
+    if(retGroups.TYPE == 'expense') {useURL = '#|spending|';} else {useURL = '#|income|';}
+    if(inType == 'category-groups') {
+        useURLText = retGroups.ICON + ' ' + retGroups.GROUPNAME;
+        useURL = useURL + '|' + retGroups.GROUP;
+        inGroup = 3;
+    } else {
+        useURLText = retGroups.ICON + ' ' + retGroups.GROUPNAME + ' / ' + retGroups.NAME;
+        useURL = useURL + retGroups.ID + '|';
+    }
+
+    MF_SidePanelOpen(inType,retGroups.TYPE,ExpandItems,CurrentFilter, retGroups.TYPE,useURLText,useURL);
+    TrendQueue2 = [];
+    BuildTrendData('hs',inGroup,'month',lowerDate,higherDate,inID,CurrentFilterObj);
+
 }
 
 function MenuTrendsHistoryDraw() {
@@ -1819,7 +1811,7 @@ function MenuTrendsHistoryDraw() {
     const os = 'text-align:left; font-weight: 600;';
     const os2 = 'font-weight: 600;';
     const os3 = 'text-align:left; font-weight: 200; font-size: 12px;';
-    const os4 = 'display: ' + getDisplay(getCookie('MT_div.TrendHistoryDetail',true),'');
+    const os4 = 'display: ' + getDisplay(getCookie(MTFlex.Name + '_SidePanel',true),'');
     const startYear = getDates('n_CurYear') - 2;
     const curYear = getDates('n_CurYear');
     const curMonth = getDates('n_CurMonth');
@@ -1998,7 +1990,7 @@ function MenuTrendsHistoryExport() {
 
     const CRLF = String.fromCharCode(13,10),c = ',';
     let csvContent = '',j = 0,Cols = 0;
-    const spans = document.querySelectorAll('span.MTSideDrawerDetail' + [',span.MTSideDrawerDetail2',''][getCookie('MT_div.TrendHistoryDetail',true)]);
+    const spans = document.querySelectorAll('span.MTSideDrawerDetail' + [',span.MTSideDrawerDetail2,a.MTSideDrawerDetail4',''][getCookie(MTFlex.Name + '_SidePanel',true)]);
     spans.forEach(span => {
         j=j+1;
         if(Cols == 0) { if(span.innerText.startsWith('Average')) { Cols = j;}}
@@ -2454,14 +2446,15 @@ window.onclick = function(event) {
                 if(onClickCloseDrawer() == true) {MenuReportsGo(MTFlex.Name);}
                 return;
             case 'MTTrendCellArrow2':
-                MM_flipElement('div.TrendHistoryDetail');
-                event.target.innerText = ['',''][getCookie('MT_div.TrendHistoryDetail',true)];
+                event.target.innerText = ['',''][MM_flipElement(MTFlex.Name + '_SidePanel')];
                 return;
             case 'MTPanelLink':
                 MenuTrendsHistoryExport();
                 return;
             case 'MTFlexBig':
                 onClickMTFlexBig();return;
+            case 'MThRefClass2':
+                onClickMTFlexExpand();return;
             case 'MTFlexButton1':
             case 'MTFlexButton2':
             case 'MTFlexButton4':
@@ -2537,6 +2530,10 @@ window.onclick = function(event) {
     onClickMTDropdownRelease();
 };
 
+function onClickMTFlexExpand() {
+
+}
+
 function onClickCloseDrawer() {
 
     let divs = null,returnV=false;
@@ -2599,12 +2596,10 @@ function onClickSumCells() {
     let x = Number(getCleanValue(event.target.textContent,2));
     if(event.target.id != 'selected') {
         event.target.style = 'border: 2px solid green;';event.target.id = 'selected';
-        MTFlexSum[0] +=1;
-        MTFlexSum[1] += x;
+        MTFlexSum[0] +=1; MTFlexSum[1] += x;
     } else {
         event.target.style = '';event.target.id = '';
-        MTFlexSum[0] -=1;
-        MTFlexSum[1] -= x;
+        MTFlexSum[0] -=1; MTFlexSum[1] -= x;
     }
     if(MTFlexSum[0] < 2) {MTFlex.bub.setAttribute('style','display:none;');} else {
         MTFlex.bub.setAttribute('style','display:block;');
