@@ -28,7 +28,7 @@ Email any issues directly:  robert @ paresi.net
 
 **Version 3.14:**
 
-• NEW: Net Income by Tags report - _Work in Progress_ 
+• NEW: Net Income by Tags report  
 
 **Version 3.13:**
 
