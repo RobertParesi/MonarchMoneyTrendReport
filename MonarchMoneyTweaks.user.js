@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.17.04
+// @version      3.17
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.17.04';
+const version = '3.17';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -74,7 +74,6 @@ function MM_Init() {
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
     addStyle('.MTFlexGridRow { font-size: 16px; font-weight: 600; height: 44px; vertical-align: bottom;}');
     addStyle('.MTFlexSpacer, .MTFlexSpacer3 {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bbb + '}');
-    addStyle('.MTFlexSpacer2 {width: 100%; height: 16px;}');
     addStyle('.MTFlexGridItem { font-size: 14px;height: 32px;}');
     addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
     addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 { font-size: 15px;}');
@@ -367,10 +366,7 @@ function MT_GridDrawDetails() {
             }
         }
 
-        if(isSubTotal == true) {
-            let el2 = cec('tr','MTSpacerClassTR',Header,'','','','MTsection',useRow.Section);
-            el2 = cec('td','MTFlexSpacer2',el2,'','','','colspan',MTFlexTitle.length);
-        }
+        if(isSubTotal == true) {cec('tr','MTSpacerClassTR',Header,'','','height: 12px;','MTsection',useRow.Section);}
 
         function MT_GridDrawRowSub(inColumn,inStart,inEnd) {
             let useValue = 0,useCols = 0;
