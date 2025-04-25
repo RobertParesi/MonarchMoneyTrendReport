@@ -5,7 +5,7 @@ Email any issues directly:  robert @ paresi.net
 
 **Version 3.17 (beta):**
 
-• NEW: Expand and Collaspe sections in Reports
+• NEW: Expand and Collapse sections in Reports
 
 
 
