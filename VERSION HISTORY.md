@@ -3,10 +3,9 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.17 (beta):**
+**Version 3.17:**
 
 • NEW: Expand and Collapse sections in Reports
-
 
 
 **Version 3.16:**
