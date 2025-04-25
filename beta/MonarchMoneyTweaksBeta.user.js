@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.17.01
+// @version      3.17.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.17.01';
+const version = '3.17.03';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -95,7 +95,7 @@ function MM_Init() {
     addStyle('.MTInputDesc {padding-bottom: 20px; padding-top: 10px; display: grid;}');
     addStyle('.MTSideDrawerHeader { ' + standardText + ' padding: 12px; }');
     addStyle('.MTSideDrawerItem { font-size: 14px;  padding-top: 8px;  place-content: stretch space-between;  display: flex;');
-    addStyle('.TrendHistoryDetail { padding-top: 0px !important;');
+    addStyle('.MTSideDrawerItem2 { padding-top: 0px !important;');
     addStyle('.MTSideDrawerDetail { ' + standardText + ' width: 24%; text-align: right; font-size: 13px; }');
     addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 12px; }');
     addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 13px; font-family: MonarchIcons, sans-serif !important; }');
@@ -137,10 +137,10 @@ function MM_hideElement(qList,InValue,inStartsWith) {
     }
 }
 
-function MM_flipElement(inDiv) {
-    flipCookie(inDiv,1);
-    const cv = getCookie(inDiv,true);
-    MM_hideElement('div.TrendHistoryDetail',cv);
+function MM_flipSideElement(inCookie) {
+    flipCookie(inCookie,1);
+    const cv = getCookie(inCookie,true);
+    MM_hideElement('div.MTSideDrawerItem2',cv);
     return cv;
 }
 
@@ -194,6 +194,7 @@ function MF_GridDraw(inRedraw) {
     MT_GridDrawSort();
     MT_GridDrawDetails();
     MTFlexSum = [0,0];
+    MT_GridDrawExpand();
     if(inRedraw == false) {MT_GridDrawCards();}
     document.body.style.cursor = "";
 }
@@ -263,15 +264,15 @@ function MT_GridDrawDetails() {
 
         if(isSubTotal == false) {
             if(useRow.isHeader == true) {
-                el = cec('tr','MTFlexGridRow',Header,'','','','section',useRow.Section);
+                el = cec('tr','MTFlexGridRow',Header,'','','','MTsection',useRow.Section);
                 useStyle = 'MTFlexGridHCell';
                 Subtotals[SubtotalsNdx] = RowI;
                 SubtotalsNdx+=1;
             } else {
-                let el2 = cec('tr','MTSpacerClassTR',Header,'','','','section',useRow.Section);
+                let el2 = cec('tr','MTSpacerClassTR',Header,'','','','MTsection',useRow.Section);
                 el2 = cec('td','',el2,'','','','colspan',MTFlexTitle.length);
                 cec('div','MTFlexSpacer',el2,'','',hide);
-                el = cec('tr','MTFlexGridItem',Header,'','','','section',useRow.Section);
+                el = cec('tr','MTFlexGridItem',Header,'','','','MTsection',useRow.Section);
                 useStyle = 'MTFlexGridDCell';
             }
             useDesc = useRow[MTFields];
@@ -293,10 +294,10 @@ function MT_GridDrawDetails() {
             }
             useRow.IgnoreShade = true;
             useDesc = useRow.PK;
-            let el2 = cec('tr','MTSpacerClassTR',Header,'','','','section',useRow.Section);
+            let el2 = cec('tr','MTSpacerClassTR',Header,'','','','MTsection',useRow.Section);
             el2 = cec('td','',el2,'','','','colspan',MTFlexTitle.length);
             cec('div','MTFlexSpacer3',el2);
-            el = cec('tr','MTFlexGridItem',Header,'','','','section',useRow.Section);
+            el = cec('tr','MTFlexGridItem',Header,'','','','MTsection',useRow.Section);
             if(useRow.PKHRef) {
                 elx = cec('td','MTFlexGridSCell',el);
                 elx = cec('a','MTFlexGridDCell',elx,useDesc,useRow.PKHRef);
@@ -377,6 +378,20 @@ function MT_GridDrawDetails() {
         }
     }
 }
+
+function MT_GridDrawExpand() {
+
+    const trWithSection = document.querySelectorAll('tr[MTsection]');
+    let x = null, xBefore = null, cv = null;
+    trWithSection.forEach((tr) => {
+        x = Number(tr.getAttribute('MTsection'));
+        if(x != xBefore) {
+            cv = getCookie('MT' + MTFlex.Name + 'Expand' + x,true);
+        }
+        cv == 1 ? tr.style.display = 'none' : tr.style.display = '';
+    });
+}
+
 function MT_GridDrawSort() {
 
     let cn = MTFlex.Name + 'Sort' + (MTFlex.SortSeq ? MTFlex.SortSeq[MTFlex.Button2] : '');
@@ -1964,7 +1979,7 @@ function MenuTrendsHistoryDraw() {
         if(topDiv.getAttribute("cattype") == 'expense') {useURL = useURL + 'spending|';} else {useURL = useURL + 'income|';}
 
         for (let i = 0; i < detailQue.length; i++) {
-            let div2 = cec('div','TrendHistoryDetail MTSideDrawerItem',inDiv,'','',os4);
+            let div2 = cec('div','MTSideDrawerItem2 MTSideDrawerItem',inDiv,'','',os4);
             let div3 = cec('a','MTSideDrawerDetail4',div2,' ' + detailQue[i].DESC,useURL + detailQue[i].ID+'|',os3);
             if(skiprow == false) {div3 = cec('span','MTSideDrawerDetail2',div2,getDollarValue(detailQue[i].YR1));}
             div3 = cec('span','MTSideDrawerDetail2',div2,getDollarValue(detailQue[i].YR2));
@@ -1976,7 +1991,7 @@ function MenuTrendsHistoryDraw() {
                 div3 = cec('span','MTSideDrawerDetail2',div2,getDollarValue((detailQue[i].YR1 + detailQue[i].YR2)/(curYears-1)));
             }
         }
-        cec('div','TrendHistoryDetail MTSideDrawerItem',inDiv,'','',os4);
+        cec('div','MTSideDrawerItem2 MTSideDrawerItem',inDiv,'','',os4);
     }
 
     function MTHistoryFind(inDesc) {
@@ -2446,7 +2461,7 @@ window.onclick = function(event) {
                 if(onClickCloseDrawer() == true) {MenuReportsGo(MTFlex.Name);}
                 return;
             case 'MTTrendCellArrow2':
-                event.target.innerText = ['',''][MM_flipElement(MTFlex.Name + '_SidePanel')];
+                event.target.innerText = ['',''][MM_flipSideElement(MTFlex.Name + '_SidePanel')];
                 return;
             case 'MTPanelLink':
                 MenuTrendsHistoryExport();
@@ -2532,6 +2547,13 @@ window.onclick = function(event) {
 
 function onClickMTFlexExpand() {
 
+    let x = event.target.parentNode.getAttribute('MTSection');
+    if(x) {
+        x = Number(x) + 1;
+        flipCookie('MT' + MTFlex.Name + 'Expand' + x,1);
+        console.log(x);
+        MT_GridDrawExpand();
+    }
 }
 
 function onClickCloseDrawer() {
