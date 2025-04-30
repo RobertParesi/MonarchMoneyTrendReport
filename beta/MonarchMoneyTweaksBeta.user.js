@@ -8,7 +8,7 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.18.01';
+const version = '3.18.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -85,7 +85,7 @@ function MM_Init() {
     addStyle('.MTFlexBig {font-size: 18px !important;}');
     addStyle('.MTFlexSmall, .MTFlexLittle {font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 8px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
     addStyle('.MTFlexLittle {font-size: 10px !important;}');
-    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 26px; height: 24px; font-size: 18px; font-family: MonarchIcons, sans-serif; transition: 0.1s ease-out; cursor: pointer; border-radius: 100%; border-style: none;}');
+    addStyle('.MTFlexCellArrow, .MTTrendCellArrow, .MTTrendCellArrow2 {' + panelBackground + standardText + 'width: 27px; height: 24px; font-size: 18px; font-family: MonarchIcons, sans-serif; transition: 0.1s ease-out; cursor: pointer; border-radius: 100%; border-style: none;}');
     addStyle('.MTFlexCellArrow:hover {border: 1px solid ' + sidepanelBackground + '; box-shadow: rgba(8, 40, 100, 0.1) 0px 1px 2px;}');
     addStyle('.MTSideDrawerRoot {position: absolute;  inset: 0px;  display: flex;  -moz-box-pack: end;  justify-content: flex-end;}');
     addStyle('.MTSideDrawerContainer {overflow: hidden; padding: 12px; width: 640px; -moz-box-pack: end; ' + sidepanelBackground + ' position: relative; overflow:auto;}');
@@ -115,9 +115,13 @@ function MM_Init() {
 }
 
 function MM_MenuFix() {
-    const wbs = ['/advice','/investments','/objectives','/recurring','/plan','/settings/referrals'];
+    const wbs = ['\uf142','\uf145','\uf140','\uf10b','\uf12c','\uf11f'];
     const cks = ['MT_Advice','MT_Investments','MT_Goals','MT_Recurring','MT_Budget','MT_Ads'];
-    for (let i = 0; i < wbs.length; i += 1) {MM_hideElement("[href~='" + wbs[i] +"']",getCookie(cks[i],true));}
+    const divs = document.querySelectorAll('[class*="NavBarLink__Root-sc"]');
+    for (const div of divs) {
+        let j = startsInList(div.innerText,wbs);
+        if(j > 0) { j-=1;getCookie(cks[j],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
+    }
     debug = getCookie('MT_Debug',true);
 }
 
@@ -2293,7 +2297,7 @@ function MenuDisplay(OnFocus) {
                 qs = document.querySelector('.SettingsCard__Placeholder-sc-189f681-2');
                 qs = qs.firstChild.lastChild;
                 e1 = document.createElement('div');
-                e1.style = 'font-size: 14px; font-weight: 500;margin-left:24px;';
+                e1.style = 'font-size: 17px; font-weight: 500;margin-left:24px;';
                 e1.innerText = inValue;
                 qs.after(e1);
                 return;
