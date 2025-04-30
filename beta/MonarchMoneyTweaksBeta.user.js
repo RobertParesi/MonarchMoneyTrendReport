@@ -2109,7 +2109,7 @@ function MTUpdateAccountPartner() {
         let li2 = li.childNodes[4];
         let div = document.createElement('div');
         div = li.insertBefore(div, li2);
-        cec('div','',div,'Account Group (Found in Trends/Accounts reports & Accounts / Summary)','','font-size: 14px;font-weight: 500;');
+        cec('div','',div,'Account Group (Reports / [Trends, Accounts, Tags] and Accounts / Summary)','','font-size: 14px;font-weight: 500;');
         div = cec('input','MTInputClass',div,'','','margin-bottom: 12px;width: 100%;');
         const p = SaveLocationPathName.split('/');
         if(p.length > 2) {div.value = getCookie('MTAccounts:' + p[3],false);}
