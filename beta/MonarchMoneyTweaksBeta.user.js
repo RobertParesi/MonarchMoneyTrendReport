@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.18.02
+// @version      3.18.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.18.02';
+const version = '3.18.03';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -25,7 +25,7 @@ let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
 
 function MM_Init() {
 
-    MM_MenuFix()
+    MM_MenuFix();
     MM_RefreshAll();
 
     const a = isDarkMode();
@@ -583,7 +583,7 @@ function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, 
         let div4 = cec('div','MTSideDrawerMotion',div3,'','','','grouptype',inType);
         if(inType2) {div4.setAttribute('groupsubtype',inType2);}
         div = cec('span','MTSideDrawerHeader',div4);
-        cec('button','MTTrendCellArrow',div,'','','float:right;')
+        cec('button','MTTrendCellArrow',div,'','','float:right;');
         if(inToggle == true) {cec('button','MTTrendCellArrow2',div,['',''][getCookie(MTFlex.Name + '_SidePanel',true)],'','float:right;margin-right: 16px;');}
         cec('div','MTFlexCardBig',div,inBig);
         div = cec('span','MTSideDrawerHeader',div4);
@@ -839,8 +839,8 @@ async function MenuReportsTagsGo() {
 
     let snapshotData4 = null,rec = null;
     let TagQueue = [],TagCols = [];
-    let useID = '',useAmt = 0, useTitle='',ii = 0;
-    let useURL = '',useOrder = '';
+    let useID = '',useAmt = 0, useTitle='',useURL = '';
+    let ii = 0;
     let CurrentFilter = '', CurrentFilterObj = [];
 
     MF_GridInit('MTTags', 'Tags');
@@ -2306,7 +2306,7 @@ function MenuDisplay(OnFocus) {
                 case 'header':
                     e1.innerText = inValue;
                     e1.style = 'font-size: 18px; font-weight: 500; margin-left:24px;padding-bottom:12px;';
-                    break
+                    break;
                 case 'dropdown':
                     e1.style = 'margin: 11px 25px; display:flex;column-gap: 10px;';
                     dropDowns+=1;
@@ -2556,7 +2556,7 @@ function onClickContainer() {
             cn = divsWithLtrDir[i].className;
             it = divsWithLtrDir[i].innerText;
             if(cn != 'osano-cm-window' && it.startsWith('Original')) {MM_SearchMerchants(divsWithLtrDir[i]);return;}
-        };
+        }
     }
 }
 
@@ -2788,7 +2788,7 @@ function unformatQueryDate(date) {
     let year = Number(date.slice(0,4));
     let month = Number(date.slice(5,7)) -1;
     let day = Number(date.slice(8,10));
-    const x = new Date(year,month,day)
+    const x = new Date(year,month,day);
     return x;
 }
 
