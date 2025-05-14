@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.18.03
+// @version      3.19
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.18.03';
+const version = '3.19';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -117,7 +117,8 @@ function MM_Init() {
 function MM_MenuFix() {
     const wbs = ['\uf142','\uf145','\uf140','\uf10b','\uf12c','\uf11f'];
     const cks = ['MT_Advice','MT_Investments','MT_Goals','MT_Recurring','MT_Budget','MT_Ads'];
-    const divs = document.querySelectorAll('[class*="NavBarLink__Root-sc"]');
+    const divs = document.querySelectorAll('[class*="NavLink-sc"]');
+    console.log(divs);
     for (const div of divs) {
         let j = startsInList(div.innerText,wbs);
         if(j > 0) { j-=1;getCookie(cks[j],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
