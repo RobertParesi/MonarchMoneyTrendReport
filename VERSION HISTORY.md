@@ -3,9 +3,11 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.17:**
+**Version 3.17-3.19:**
 
 • NEW: Expand and Collapse sections in Reports
+
+• FIX: Fixes with Menu items being hidden
 
 
 **Version 3.16:**
