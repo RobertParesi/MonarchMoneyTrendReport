@@ -7,7 +7,7 @@ Email any issues directly:  robert @ paresi.net
 
 • NEW: Expand and Collapse sections in Reports
 
-• FIX: Fixes with Menu items being hidden
+• REGRESSION: Fixes with Menu items being hidden
 
 
 **Version 3.16:**
