@@ -118,7 +118,6 @@ function MM_MenuFix() {
     const wbs = ['\uf142','\uf145','\uf140','\uf10b','\uf12c','\uf11f'];
     const cks = ['MT_Advice','MT_Investments','MT_Goals','MT_Recurring','MT_Budget','MT_Ads'];
     const divs = document.querySelectorAll('[class*="NavLink-sc"]');
-    console.log(divs);
     for (const div of divs) {
         let j = startsInList(div.innerText,wbs);
         if(j > 0) { j-=1;getCookie(cks[j],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
@@ -2277,11 +2276,11 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
             MenuDisplay_Input('Budget','','spacer');
             MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
-            MenuDisplay_Input('Reorder Budget Categories','MT_BudgetOrder','dropdown','',['Income, Expenses, Contributions|[0,1,2]','Expenses, Income, Contributions|[1,0,2]','Expenses, Contributions, Income|[2,0,1]']);
             MenuDisplay_Input('Show Checking / Credit Card balances / Left to Spend in Budget Summary','MT_PlanLTB','checkbox');
             MenuDisplay_Input('Ignore Budget Income remaining in "Left to Spend"','MT_PlanLTBII','checkbox','margin-left: 22px;');
             MenuDisplay_Input('Ignore Budget Expenses remaining in "Left to Spend"','MT_PlanLTBIE','checkbox','margin-left: 22px;');
             MenuDisplay_Input('Ignore Rollover budgets, always use actual Budget minus actual Spent for “Left to Spend”','MT_PlanLTBIR','checkbox','margin-left: 22px;');
+            MenuDisplay_Input('Reorder Budget Categories','MT_BudgetOrder','dropdown','',['Income, Expenses, Contributions|[0,1,2]','Expenses, Income, Contributions|[1,0,2]','Expenses, Contributions, Income|[2,0,1]']);
             MenuDisplay_Input('System','','spacer');
             MenuDisplay_Input('Debug data to console log (Only turn on if asked)','MT_Debug','checkbox');
         }
