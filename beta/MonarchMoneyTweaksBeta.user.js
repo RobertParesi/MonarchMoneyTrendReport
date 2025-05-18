@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.20
+// @version      3.21
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.20';
+const version = '3.21';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -305,13 +305,14 @@ function MT_GridDrawDetails() {
         for (let j = 1; j < MTFlexTitle.length; j += 1) {
             if(MTFlexTitle[j].isHidden != true) {
                 useValue = useRow[j + MTFields];
+                let aE = '';
                 switch(MTFlexTitle[j].Format) {
                     case -1:
                         useValue2 = getMonthName(useValue,2);break;
                     case 1:
-                        useValue2 = getDollarValue(useValue,false);break;
+                        useValue2 = getDollarValue(useValue,false);aE = ' fs-exclude';break;
                     case 2:
-                        useValue2 = getDollarValue(useValue,true);break;
+                        useValue2 = getDollarValue(useValue,true);aE = ' fs-exclude';break;
                     default:
                         useValue2 = useValue;
                 }
@@ -336,7 +337,7 @@ function MT_GridDrawDetails() {
                         useStyle2 = pct[1];
                     }
                     if(useStyle2 == '') { useStyle2 = MT_GridDrawEmbed(useRow.Section,j,useValue,useDesc);}
-                    if(useStyle2) {elx = cec('td',useStyle,el,useValue2,'',useStyle2);} else {elx = cec('td',useStyle,el,useValue2);}
+                    if(useStyle2) {elx = cec('td',useStyle + aE,el,useValue2,'',useStyle2);} else {elx = cec('td',useStyle + aE,el,useValue2);}
                     if(useRow[j + MTFields] != null) {
                         Grouptotals[j-1] += useValue;
                     }
@@ -475,7 +476,7 @@ function MT_GridDrawCards() {
         topDiv = cec('div','MTFlexContainer2',div);
         for (let i = 0; i < MTFlexCard.length; i++) {
             let div2 = cec('div','MTFlexContainerCard',topDiv,'','','flex-flow: column;');
-            cec('span','MTFlexCardBig',div2,MTFlexCard[i].Title,'',MTFlexCard[i].Style);
+            cec('span','MTFlexCardBig fs-exclude',div2,MTFlexCard[i].Title,'',MTFlexCard[i].Style);
             cec('span','MTFlexSmall',div2,MTFlexCard[i].Subtitle,'','text-align:center');
         }
     }
