@@ -3,9 +3,9 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.20:**
+**Version 3.20-3.21:**
 
-• NEW: Added fs-exclude class to money fields (Except in Reports) 
+• NEW: Added fs-exclude class to all money fields 
 
 **Version 3.17-3.19:**
 
