@@ -3,6 +3,10 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.20:**
+
+• NEW: Added fs-exclude class to money fields (Except reports) 
+
 **Version 3.17-3.19:**
 
 • NEW: Expand and Collapse sections in Reports
