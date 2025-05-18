@@ -8,7 +8,7 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.19';
+const version = '3.20';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1323,7 +1323,7 @@ async function MenuAccountsSummary() {
                     cec('span','tooltiptext',tt,aSummary[j].ToolTipLiability,'','width:260px;text-align: left;padding-left:10px;');
                 }
 
-                elx = cec('span','',divChild,isAsset == true ? getDollarValue(aSummary[j].Asset) : getDollarValue(aSummary[j].Liability),'','color: rgb(119, 117, 115)');
+                elx = cec('span','fs-exclude',divChild,isAsset == true ? getDollarValue(aSummary[j].Asset) : getDollarValue(aSummary[j].Liability),'','color: rgb(119, 117, 115)');
 
             }
         }
@@ -2057,7 +2057,7 @@ async function MenuPlanRefresh() {
     function writePlan(inDesc,inValue,inHref,inStyle,inStyle2,isSpace) {
         let div2 = cec('div','',div,'','',isSpace == true ? 'margin-top: 10px;' : '');
         cec(inHref != '' ? 'a' : 'span','MTBudget1',div2,inDesc,inHref,inStyle);
-        cec('span','MTBudget2',div2,inValue,'',inStyle + inStyle2);
+        cec('span','MTBudget2 fs-exclude',div2,inValue,'',inStyle + inStyle2);
     }
 
     function getPendingBalance() {
