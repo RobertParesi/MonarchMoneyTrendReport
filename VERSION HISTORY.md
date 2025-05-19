@@ -3,6 +3,10 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.22: (beta)**
+
+• NEW: Added "Budget Remaining" to Left to Spend in Budget Summary
+
 **Version 3.20-3.21:**
 
 • NEW: Added fs-exclude class to all money fields 
