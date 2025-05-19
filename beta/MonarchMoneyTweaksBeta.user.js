@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.21
+// @version      3.22.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.21';
+const version = '3.22.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2022,7 +2022,7 @@ async function MenuPlanRefresh() {
     if(div == null) {MTSpawnProcess = 3;return;}
 
     removeAllSections('div.MTBudget');
-    let bCK = 0,bCC = 0,bSV=0,LeftToSpend=0,LTSLit = 'Left to Spend';
+    let bCK = 0,bCC = 0,bSV=0,LeftToSpend=0,BudgetRemain = 0,BRLit = 'Budget Remaining',LTSLit = 'Left to Spend';
     let noBudget=true;
     let snapshotData = await getAccountsData();
     let snapshotData4 = await GetTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true);
@@ -2043,8 +2043,8 @@ async function MenuPlanRefresh() {
     if(getCookie('MT_PlanLTBIR',true) == 0) {budgetI[3] = budgetI[0];budgetE[3]=budgetE[0];} else {
         budgetI[3] = budgetI[1]-budgetI[2];budgetE[3]=budgetE[1]-budgetE[2];}
 
-    if(getCookie('MT_PlanLTBII',true) == 0) {noBudget = false; if(budgetI[3] > 0) { LeftToSpend = LeftToSpend + budgetI[3];}}
-    if(getCookie('MT_PlanLTBIE',true) == 0) {noBudget = false; if(budgetE[3] > 0) { LeftToSpend = LeftToSpend - budgetE[3];} else {LTSLit=LTSLit + ' (Over Budget!)';}}
+    if(getCookie('MT_PlanLTBII',true) == 0) {noBudget = false; if(budgetI[3] > 0) { BudgetRemain = budgetI[3];LeftToSpend = LeftToSpend + budgetI[3];}}
+    if(getCookie('MT_PlanLTBIE',true) == 0) {noBudget = false; if(budgetE[3] >= 0) { BudgetRemain = BudgetRemain - budgetE[3];LeftToSpend = LeftToSpend - budgetE[3];} else {LTSLit=LTSLit + ' (Over Budget!)';}}
     let LeftToSpendStyle = css_green;if(LeftToSpend < 0) {LeftToSpendStyle = css_red;}
 
     div = cec('div','MTBudget',div);
@@ -2052,7 +2052,10 @@ async function MenuPlanRefresh() {
     writePlan('Total in Credit Cards',getDollarValue(bCC,true),'','');
     writePlan('Total Pending (' + bPDtx + ')',getDollarValue(bPD,true),'/transactions?isPending=true','');
     writePlan('Total Available',getDollarValue(bCK-bCC-bPD,true),'','font-weight: 500;');
-    if(noBudget == false) {writePlan(LTSLit,getDollarValue(LeftToSpend,true),'','font-weight: 500;',LeftToSpendStyle, true);}
+    if(noBudget == false) {
+        writePlan(BRLit,getDollarValue(BudgetRemain,true),'','font-weight: 500;','', true);
+        writePlan(LTSLit,getDollarValue(LeftToSpend,true),'','font-weight: 500;',LeftToSpendStyle, true);
+    }
     if(bSV > 0) {writePlan('Total in Savings',getDollarValue(bSV,true),'','','', true);}
 
     function writePlan(inDesc,inValue,inHref,inStyle,inStyle2,isSpace) {
