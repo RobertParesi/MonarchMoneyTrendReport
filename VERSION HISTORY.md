@@ -3,6 +3,10 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.23:**
+
+• REGRESSION: MM changes affecting Transactions grid (colors & Pending)
+
 **Version 3.22:**
 
 • NEW: Added "Budget Remaining" to Left to Spend in Budget Summary
