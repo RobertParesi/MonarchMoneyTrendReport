@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.23
+// @version      3.24.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.23';
+const version = '3.24.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1095,11 +1095,9 @@ async function MenuReportsAccountsGoStd(){
     MTP.Column = 2; MTP.Title = 'Group';MTP.Format = 0;MF_QueueAddTitle(MTP);
     MTP.Column = 3; MTP.Title = 'Updated';MTP.Format = -1;MF_QueueAddTitle(MTP);
     MTP.Column = 4; MTP.Title = 'Beg Balance'; MTP.isSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];MF_QueueAddTitle(MTP);
-    if(MTFlex.Button2 > 0) { MTP.isHidden = true; }
     MTP.Column = 5; MTP.Title = 'Income'; MF_QueueAddTitle(MTP);
     MTP.Column = 6; MTP.Title = 'Expenses'; MF_QueueAddTitle(MTP);
     MTP.Column = 7; MTP.Title = 'Transfers'; MF_QueueAddTitle(MTP);
-    MTP.isHidden = false;
     MTP.Column = 8; MTP.Title = 'Balance';MF_QueueAddTitle(MTP);
     if(getCookie('MT_AccountsHidePer2',true) == 0) {MTP.ShowPercent = 3;}
     MTP.Column = 9; MTP.Title = 'Net Change'; MF_QueueAddTitle(MTP);
@@ -1179,8 +1177,8 @@ async function MenuReportsAccountsGoStd(){
                         }
                     }
                     MTFlexRow[MTFlexCR][MTFields+10] = getAccountPendingBalance(snapshotData.accounts[i].id);
-                    if(skipTxs == 1 && MTFlex.Button2 == 0 && (snapshotData.accounts[i].subtype.name == 'checking' || snapshotData.accounts[i].subtype.name == 'credit_card')) {
-                        if(snapshotData.accounts[i].isAsset == true){
+                    if(skipTxs == 1 && (snapshotData.accounts[i].subtype.name == 'checking' || snapshotData.accounts[i].subtype.name == 'credit_card')) {
+                         if(snapshotData.accounts[i].isAsset == true){
                             MTFlexRow[MTFlexCR][MTFields+4] = useBalance - MTFlexRow[MTFlexCR][MTFields+5] + MTFlexRow[MTFlexCR][MTFields+6] - MTFlexRow[MTFlexCR][MTFields+7];
                         } else {
                             MTFlexRow[MTFlexCR][MTFields+4] = useBalance - MTFlexRow[MTFlexCR][MTFields+5] - MTFlexRow[MTFlexCR][MTFields+6] + MTFlexRow[MTFlexCR][MTFields+7];
