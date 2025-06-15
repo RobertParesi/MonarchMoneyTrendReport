@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.25
+// @version      3.26.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.25';
+const version = '3.26.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -842,7 +842,7 @@ async function MenuReportsTagsGo() {
     let TagQueue = [],TagCols = [];
     let useID = '',useAmt = 0, useTitle='',useURL = '';
     let ii = 0;
-    let CurrentFilter = '', CurrentFilterObj = [];
+    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false;
 
     MF_GridInit('MTTags', 'Tags');
     MTFlex.Title1 = 'Net Income Report by Tags';
@@ -850,6 +850,7 @@ async function MenuReportsTagsGo() {
     MTFlex.TriggerEvents = false;
     MF_GridOptions(1,['By group','By category','By both']);
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
+    MF_GridOptions(2,['Ignore Hidden Transactions','Include Hidden Transactions','Only Hidden Transactions']);
     MF_GridOptions(4,getAccountGroupInfo());
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTFlex.Title3 = '';
@@ -862,7 +863,9 @@ async function MenuReportsTagsGo() {
     let recIdx = 0, recCnt = 0;
     do {
         recCnt = 0;
-        snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj);
+        if(MTFlex.Button2 == 2) {HiddenFilter = true;}
+        if(MTFlex.Button2 == 1) {HiddenFilter = null;}
+        snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj,HiddenFilter);
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt+=1;recIdx+=1;
@@ -1113,9 +1116,9 @@ async function MenuReportsAccountsGoStd(){
     let AccountGroupFilter = getAccountGroupFilter();
 
     snapshotData = await getAccountsData();
-    snapshotData2 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false);
+    snapshotData2 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),0,false,null,false);
     snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate1));
-    snapshotData4 = await GetTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(MTFlexDate2),0,true);
+    snapshotData4 = await GetTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(MTFlexDate2),0,true,null,false);
     if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
 
     for (let i = 0; i < 5; i += 1) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards+=1;}}
@@ -2023,7 +2026,7 @@ async function MenuPlanRefresh() {
     let bCK = 0,bCC = 0,bSV=0,LeftToSpend=0,BudgetRemain = 0,BRLit = 'Budget Remaining',LTSLit = 'Left to Spend';
     let noBudget=true;
     let snapshotData = await getAccountsData();
-    let snapshotData4 = await GetTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true);
+    let snapshotData4 = await GetTransactions(formatQueryDate(getDates('d_StartofLastMonth')),formatQueryDate(getDates('d_Today')),0,true,null,false);
 
     for (let i = 0; i < snapshotData.accounts.length; i += 1) {
         if(snapshotData.accounts[i].hideTransactionsFromReports == false) {
@@ -2960,10 +2963,10 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
     .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
 }
 
-async function GetTransactions(startDate,endDate, offset, isPending, inAccounts) {
+async function GetTransactions(startDate,endDate, offset, isPending, inAccounts,inHideReports) {
     const limit = 5000;
-    if(inAccounts == undefined) inAccounts = [];
-    const filters = {startDate: startDate, endDate: endDate, hideFromReports: false, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts })};
+    if(inAccounts == undefined || inAccounts == null) inAccounts = [];
+    const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
           query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n tags {\n id\n name\n color\n order\n } \n account {\n id }  \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
