@@ -5,7 +5,7 @@ Email any issues directly:  robert @ paresi.net
 
 **Version 3.25:**
 
-• FIX: Reports / Tags was included Hidden transactions.  Now they are excluded.
+• FIX: Reports / Tags was including Hidden transactions.  Now they are excluded.
 
 **Version 3.24:**
 
