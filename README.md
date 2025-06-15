@@ -95,31 +95,34 @@ Enjoy!
 ## Screenshots:
 
 **Monarch Tweaks Settings**
-![Settings](/images/MT_V2_01.png)
+![Settings](/images/MT_V3_01.png)
 
 **Monarch Tweaks Spit Transaction 50/50**
-![Settings](/images/MT_V2_03.png)
+![Settings](/images/MT_V3_03.png)
 
 **Monarch Tweaks Reports / Trends Compare**
-![Settings](/images/MT_V2_04.png)
+![Settings](/images/MT_V3_04.png)
 
 **Monarch Tweaks Reports / Trends Monthly Breakdown**
-![Settings](/images/MT_V2_05.png)
+![Settings](/images/MT_V3_05.png)
 
 **Monarch Tweaks Reports / Trends Yearly Breakdown**
-![Settings](/images/MT_V2_06.png)
+![Settings](/images/MT_V3_06.png)
 
 **Monarch Tweaks Reports / Accounts Monthly Account Average**
-![Settings](/images/MT_V2_07.png)
+![Settings](/images/MT_V3_07.png)
 
 **Monarch Tweaks Reports / Accounts Balance and Pending**
-![Settings](/images/MT_V2_08.png)
+![Settings](/images/MT_V3_08.png)
+
+**Monarch Tweaks Reports / Accounts Balance and Pending**
+![Settings](/images/MT_V3_09.png)
 
 **Monarch Tweaks Reports tag multiple cells**
-![Settings](/images/MT_V2_09.png)
+![Settings](/images/MT_V3_10.png)
 
 **Monarch Tweaks Household Description for Breakdown**
-![Settings](/images/MT_V2_10.png)
+![Settings](/images/MT_V3_11.png)
 
 ![Settings](/images/MT_V2_11.png)
 
