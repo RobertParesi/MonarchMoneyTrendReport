@@ -109,13 +109,13 @@ Enjoy!
 **Monarch Tweaks Reports / Trends Yearly Breakdown**
 ![Settings](/images/MT_V3_06.png)
 
-**Monarch Tweaks Reports / Accounts Monthly Account Average**
+**Monarch Tweaks Reports / Accounts**
 ![Settings](/images/MT_V3_07.png)
 
-**Monarch Tweaks Reports / Accounts Balance and Pending**
+**Monarch Tweaks Reports / Accounts**
 ![Settings](/images/MT_V3_08.png)
 
-**Monarch Tweaks Reports / Accounts Balance and Pending**
+**Monarch Tweaks Reports / Tags**
 ![Settings](/images/MT_V3_09.png)
 
 **Monarch Tweaks Reports tag multiple cells**
@@ -123,8 +123,6 @@ Enjoy!
 
 **Monarch Tweaks Household Description for Breakdown**
 ![Settings](/images/MT_V3_11.png)
-
-![Settings](/images/MT_V2_11.png)
 
 
 ## Contributions:
