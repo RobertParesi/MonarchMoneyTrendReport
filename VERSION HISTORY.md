@@ -3,9 +3,9 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.25:**
+**Version 3.25-3.26:**
 
-• FIX: Reports / Tags was including Hidden transactions.  Now they are excluded.
+• FIX: User can select whether to include/exclude Hidden transactions.
 
 **Version 3.24:**
 
