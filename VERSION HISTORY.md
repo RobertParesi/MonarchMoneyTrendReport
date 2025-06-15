@@ -9,7 +9,7 @@ Email any issues directly:  robert @ paresi.net
 
 • FIX: Menu items may not be hidden under Safari browser.
 
-• REMOVE: Removed "Hide Ads" from Settings - Money Money can now do this on their Referrals tab.
+• REMOVE: Removed "Hide Ads" from Settings - Monarch Money can now do this on their Referrals tab.
 
 
 **Version 3.24:**
