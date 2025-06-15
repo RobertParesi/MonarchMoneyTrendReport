@@ -3,7 +3,7 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.24 (beta):**
+**Version 3.24:**
 
 • ENHANCEMENT: Added Income, Expenses and Transfers to more Reports / Accounts
 
