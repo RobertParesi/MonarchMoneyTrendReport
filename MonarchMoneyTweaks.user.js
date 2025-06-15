@@ -866,7 +866,6 @@ async function MenuReportsTagsGo() {
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt+=1;recIdx+=1;
-            if(rec.hideFromReports != true) {
                 if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
                 useAmt = rec.amount;
                 if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
@@ -874,7 +873,6 @@ async function MenuReportsTagsGo() {
                 if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','');}
                 else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*','001','');}
                 else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order+2).padStart(3, '0'),rec.tags[0].color);}
-            }
         }
     } while (recCnt > 999);
 
@@ -2965,7 +2963,7 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
 async function GetTransactions(startDate,endDate, offset, isPending, inAccounts) {
     const limit = 5000;
     if(inAccounts == undefined) inAccounts = [];
-    const filters = {startDate: startDate, endDate: endDate, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts })};
+    const filters = {startDate: startDate, endDate: endDate, hideFromReports: false, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
           query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n tags {\n id\n name\n color\n order\n } \n account {\n id }  \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
