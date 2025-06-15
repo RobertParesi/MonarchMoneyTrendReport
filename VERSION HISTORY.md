@@ -7,6 +7,8 @@ Email any issues directly:  robert @ paresi.net
 
 • FIX: User can select whether to include/exclude Hidden transactions.
 
+• FIX: Menu items may not be hidden under Safari browser.
+
 • REMOVE: Removed "Hide Ads" from Settings - Money Money can now do this on their Referrals tab.
 
 
