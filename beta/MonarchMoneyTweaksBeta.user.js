@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.24
+// @version      3.25
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.24';
+const version = '3.25';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -866,13 +866,15 @@ async function MenuReportsTagsGo() {
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt+=1;recIdx+=1;
-            if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
-            useAmt = rec.amount;
-            if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
-            ii = rec.tags.length;
-            if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','');}
-            else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*','001','');}
-            else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order+2).padStart(3, '0'),rec.tags[0].color);}
+            if(rec.hideFromReports != true) {
+                if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
+                useAmt = rec.amount;
+                if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
+                ii = rec.tags.length;
+                if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','');}
+                else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*','001','');}
+                else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order+2).padStart(3, '0'),rec.tags[0].color);}
+            }
         }
     } while (recCnt > 999);
 
