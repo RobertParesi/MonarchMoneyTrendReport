@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.24.01
+// @version      3.24.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.24.01';
+const version = '3.24.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2962,7 +2962,7 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
 }
 
 async function GetTransactions(startDate,endDate, offset, isPending, inAccounts) {
-    const limit = 1000;
+    const limit = 5000;
     if(inAccounts == undefined) inAccounts = [];
     const filters = {startDate: startDate, endDate: endDate, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
