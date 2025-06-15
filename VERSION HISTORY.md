@@ -7,6 +7,9 @@ Email any issues directly:  robert @ paresi.net
 
 • FIX: User can select whether to include/exclude Hidden transactions.
 
+• REMOVE: Removed "Hide Ads" from Settings - Money Money can now do this on their Referrals tab.
+
+
 **Version 3.24:**
 
 • ENHANCEMENT: Added Income, Expenses and Transfers to more Reports / Accounts
