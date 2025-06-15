@@ -3,6 +3,10 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.25:**
+
+• FIX: Reports / Tags was included Hidden transactions.  Now they are excluded.
+
 **Version 3.24:**
 
 • ENHANCEMENT: Added Income, Expenses and Transfers to more Reports / Accounts
