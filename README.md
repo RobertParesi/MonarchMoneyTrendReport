@@ -1,6 +1,6 @@
 # Monarch Money Tweaks - GET STARTED! 
 
-[Already have MM Tweaks? - Click here to Update to V3.25](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
+[Already have MM Tweaks? - Click here to Update to V3.26](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
 
 Hello!  I use **Monarch Money**.  
 
@@ -30,7 +30,8 @@ I found there were opportunities to enhance the Monarch Money web application wi
 * **Reports / Tags**
      - Summarize all your Transactions by Tags
      - Filter Income & Spending by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business" etc).
-     - Sort tagged data by any column and export it to Excel or Numbers.        
+     - Sort tagged data by any column and export it to Excel or Numbers.
+     - Select to include or exclude Hidden Transactions.      
        
 * Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant.
 * Breakdown Assets & Liabilities Account Summary by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
