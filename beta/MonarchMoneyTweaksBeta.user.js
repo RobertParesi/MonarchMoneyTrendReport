@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.26.02
+// @version      3.26.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.26.02';
+const version = '3.26.03';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -375,11 +375,11 @@ function MT_GridDrawExpand() {
     trS.forEach((tr) => {
         x = Number(tr.getAttribute('MTsection'));
         if(tr.className == 'MTFlexGridRow') {
-            cv = getCookie('MT' + MTFlex.Name + 'Expand' + (x+1),true);
+            cv = getCookie(MTFlex.Name + 'Expand' + (x+1),true);
             if(cv == 1) {tr.firstChild.innerText = ' ' + tr.firstChild.innerText.slice(2);} else {tr.firstChild.innerText = ' ' + tr.firstChild.innerText.slice(2);}
         } else {
             if(x != xBefore) {
-                cv = getCookie('MT' + MTFlex.Name + 'Expand' + x,true);
+                cv = getCookie(MTFlex.Name + 'Expand' + x,true);
                 cv == 1 ? tr.style.display = 'none' : tr.style.display = '';
             }
         }
@@ -745,14 +745,20 @@ function MenuReports(OnFocus) {
     }
 }
 
-function MenuReportsSetFilter(inType,inCategory,inGroup) {
+function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
 
     let reportsObj = localStorage.getItem('persist:reports');
     let startDate = formatQueryDate(getDates('d_Minus3Years'));
     let endDate = formatQueryDate(getDates('d_Today'));
+    if(MTFlex.Name == 'MTTags') {
+        startDate = formatQueryDate(MTFlexDate1);
+        endDate = formatQueryDate(MTFlexDate2);
+    }
     let useCats = '';
+    let useHidden = '';
+    if(inHidden) {useHidden = ',\\"hideFromReports\\":' + inHidden;}
     if(inGroup) {useCats = getCategoryGroupList(inGroup);} else {useCats = '\\"' + inCategory + '\\"';}
-    reportsObj = replaceBetweenWith(reportsObj,'"filters":"{','}','"filters":"{\\"startDate\\":\\"' + startDate + '\\",\\"endDate\\":\\"' + endDate + '\\",\\"categories\\":[' + useCats + ']}');
+    reportsObj = replaceBetweenWith(reportsObj,'"filters":"{','}','"filters":"{\\"startDate\\":\\"' + startDate + '\\",\\"endDate\\":\\"' + endDate + '\\",\\"categories\\":[' + useCats + ']' + useHidden + '}');
     reportsObj = reportsObj.replace('}}','}');
     reportsObj = replaceBetweenWith(reportsObj,'"groupByTimeframe":',',','"groupByTimeframe":"\\"month\\"",');
     reportsObj = replaceBetweenWith(reportsObj,'"' + inType + '":"{','}",','"' + inType + '":"{\\"viewMode\\":\\"changeOverTime\\",\\"chartType\\":\\"stackedBarChart\\"}",');
@@ -845,6 +851,12 @@ async function MenuReportsTagsGo() {
     let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false;
 
     MF_GridInit('MTTags', 'Tags');
+
+    let ckd = getCookie(MTFlex.Name + 'LowerDate');
+    if(ckd) { MTFlexDate1 = ckd; }
+    ckd = getCookie(MTFlex.Name + 'HigherDate');
+    if(ckd) { MTFlexDate2 = ckd; }
+
     MTFlex.Title1 = 'Net Income Report by Tags';
     MTFlex.TriggerEvent = 2;
     MTFlex.TriggerEvents = false;
@@ -856,6 +868,7 @@ async function MenuReportsTagsGo() {
     MTFlex.Title3 = '';
     MTP = [];MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(MTP);
+
     if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
         CurrentFilter = getAccountGroupFilter();
         CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
@@ -926,7 +939,7 @@ async function MenuReportsTagsGo() {
                         MTP.PKHRef = useURL + '|' + retGroup.GROUP + '|';
                         MTP.PKTriggerEvent = 'category-groups/' + retGroup.GROUP;
                     }
-                    MTP.SKHRef = useURL + retGroup.ID + '|';
+                    MTP.SKHRef = useURL + retGroup.ID + '||';
                     MTP.SKTriggerEvent = 'categories/' + retGroup.ID;
                     useTitle = retGroup.NAME;
                 } else {
@@ -935,6 +948,7 @@ async function MenuReportsTagsGo() {
                     MTP.PKTriggerEvent = '';
                     MTP.SKTriggerEvent = 'category-groups/' + retGroup.GROUP;
                 }
+                MTP.SKHRef = MTP.SKHRef + HiddenFilter + '|';
 
                 MTP.Icon = retGroup.ICON;
                 MTP.SKExpand = '';
@@ -2478,7 +2492,7 @@ window.onclick = function(event) {
                         event.stopPropagation();
                         event.preventDefault();
                         const p = event.target.hash.split('|');
-                        MenuReportsSetFilter(p[1],p[2],p[3]);
+                        MenuReportsSetFilter(p[1],p[2],p[3],p[4]);
                         window.location.replace('/reports/' + p[1]);
                     }
                 }
@@ -2511,7 +2525,7 @@ function onClickMTFlexExpand() {
     let x = event.target.parentNode.getAttribute('MTSection');
     if(x) {
         x = Number(x) + 1;
-        flipCookie('MT' + MTFlex.Name + 'Expand' + x,1);
+        flipCookie(MTFlex.Name + 'Expand' + x,1);
         MT_GridDrawExpand();
     }
 }
@@ -2540,6 +2554,8 @@ function onClickCloseDrawer() {
             returnV = true;
             break;
     }
+    setCookie(MTFlex.Name + 'LowerDate',MTFlexDate1);
+    setCookie(MTFlex.Name + 'HigherDate',MTFlexDate2);
     removeAllSections('div.MTHistoryPanel');
     return returnV;
 }
