@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.26.03
+// @version      3.26.05
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.26.03';
+const version = '3.26.05';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -853,9 +853,9 @@ async function MenuReportsTagsGo() {
     MF_GridInit('MTTags', 'Tags');
 
     let ckd = getCookie(MTFlex.Name + 'LowerDate');
-    if(ckd) { MTFlexDate1 = ckd; }
+    if(ckd) { MTFlexDate1 = unformatQueryDate(ckd); }
     ckd = getCookie(MTFlex.Name + 'HigherDate');
-    if(ckd) { MTFlexDate2 = ckd; }
+    if(ckd) { MTFlexDate2 = unformatQueryDate(ckd); }
 
     MTFlex.Title1 = 'Net Income Report by Tags';
     MTFlex.TriggerEvent = 2;
@@ -1102,7 +1102,7 @@ async function MenuReportsAccountsGoExt(){
 async function MenuReportsAccountsGoStd(){
 
     let snapshotData = null, snapshotData2 = null, snapshotData3 = null,snapshotData4 = null,snapshotData5 = null;
-
+    console.log(MTFlexDate1,MTFlexDate2);
     let isToday = getDates('isToday',MTFlexDate2);
     let useDateRange = ['d_StartofMonth','d_Minus3Months','d_Minus6Months','d_StartOfYear','d_Minus1Year','d_Minus2Years','d_Minus3Years'][MTFlex.Button2];
     MTFlexDate1 = getDates(useDateRange,MTFlexDate2);
@@ -2554,8 +2554,8 @@ function onClickCloseDrawer() {
             returnV = true;
             break;
     }
-    setCookie(MTFlex.Name + 'LowerDate',MTFlexDate1);
-    setCookie(MTFlex.Name + 'HigherDate',MTFlexDate2);
+    setCookie(MTFlex.Name + 'LowerDate',formatQueryDate(MTFlexDate1));
+    setCookie(MTFlex.Name + 'HigherDate',formatQueryDate(MTFlexDate2));
     removeAllSections('div.MTHistoryPanel');
     return returnV;
 }
