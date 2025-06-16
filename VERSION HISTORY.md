@@ -5,7 +5,7 @@ Email any issues directly:  robert @ paresi.net
 
 **Version 3.25-3.26:**
 
-• FIX: User can select whether to include/exclude Hidden transactions.
+• NEW: User can select whether to include/exclude Hidden transactions.
 
 • FIX: Menu items may not be hidden under Safari browser.
 
