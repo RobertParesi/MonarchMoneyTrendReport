@@ -3,6 +3,10 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.27:**
+
+• REGRESSION: Cash Flow / Monthly History button regression not working & not disappearing.
+
 **Version 3.25-3.26:**
 
 • NEW: User can select whether to include/exclude Hidden transactions.
