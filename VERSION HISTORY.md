@@ -7,6 +7,8 @@ Email any issues directly:  robert @ paresi.net
 
 • NEW: Reports / Accounts - Added Personal Net Worth Statement for Loan Applications.
 
+• NEW: Reports / Accounts - Sorting by Type will put "Other Assets" and "Other Liabilities" at the bottom of the group.
+
 **Version 3.27:**
 
 • REGRESSION: Cash Flow / Monthly History button regression not working & not disappearing.
