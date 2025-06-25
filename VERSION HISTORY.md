@@ -3,6 +3,10 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.28 (beta):**
+
+• NEW: Reports / Accounts - Added Personal Net Worth Statement for Loan Applications.
+
 **Version 3.27:**
 
 • REGRESSION: Cash Flow / Monthly History button regression not working & not disappearing.
