@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.28.01
+// @version      3.28.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.28.01';
+const version = '3.28.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -510,31 +510,43 @@ function MT_GridExport() {
 
     const CRLF = String.fromCharCode(13,10),c = ',';
     const MTFieldsEnd = MTFields + MTFlexTitle.length;
-    let csvContent = '',useValue = '',k = 0;
+    let csvContent = '',useValue = '',k = 0,Cols = 0;
 
     for (let i = 0; i < MTFlexTitle.length; i += 1) {
-        if(MTFlexTitle[i].isHidden == false) { csvContent = csvContent + '"' + MTFlexTitle[i].Title + '"' + c;}
-    }
-    csvContent = csvContent + CRLF;
-
-    for (let i = 0; i < MTFlexRow.length; i += 1) {
-        if(i > 0 && MTFlexRow[i].Section != MTFlexRow[i-1].Section) { csvContent = csvContent + c + CRLF; }
-        k = 0;
-        for (let j = MTFields; j < MTFieldsEnd; j += 1) {
-            if(MTFlexTitle[k].isHidden == false) {
-                useValue = '';
-                if(MTFlexRow[i][j] != undefined) {
-                    switch(MTFlexTitle[k].Format) {
-                        case 1: useValue = Number(MTFlexRow[i][j]).toFixed(2); break;
-                        case 2: useValue = Math.round(Number(MTFlexRow[i][j])).toFixed(0); break;
-                        default: useValue = MTFlexRow[i][j];
-                    }
-                }
-                csvContent = csvContent + useValue + c;
-            }
-            k+=1;
+        if(MTFlexTitle[i].isHidden == false) {
+            Cols+=1;
+            if(MTFlex.HideDetails != true) csvContent = csvContent + '"' + MTFlexTitle[i].Title + '"' + c;
         }
+    }
+    if(MTFlex.HideDetails != true) {
         csvContent = csvContent + CRLF;
+        for (let i = 0; i < MTFlexRow.length; i += 1) {
+            if(i > 0 && MTFlexRow[i].Section != MTFlexRow[i-1].Section) { csvContent = csvContent + c + CRLF; }
+            k = 0;
+            for (let j = MTFields; j < MTFieldsEnd; j += 1) {
+                if(MTFlexTitle[k].isHidden == false) {
+                    useValue = '';
+                    if(MTFlexRow[i][j] != undefined) {
+                        switch(MTFlexTitle[k].Format) {
+                            case 1: useValue = Number(MTFlexRow[i][j]).toFixed(2); break;
+                            case 2: useValue = Math.round(Number(MTFlexRow[i][j])).toFixed(0); break;
+                            default: useValue = MTFlexRow[i][j];
+                        }
+                    }
+                    csvContent = csvContent + useValue + c;
+                }
+                k+=1;
+            }
+            csvContent = csvContent + CRLF;
+        }
+    } else {
+        const spans = document.querySelectorAll('td.MThRefClass2,td.MTFlexGridHCell2,td.MTFlexGridS3Cell,td.MTFlexGridDCell2');
+        let j=0;
+        spans.forEach(span => {
+            if(span.className == 'MThRefClass2') { useValue = span.innerText.slice(2);csvContent = csvContent + CRLF;} else {useValue = span.innerText;}
+            j=j+1;csvContent = csvContent + '"' + useValue + '"';
+            if(j == Cols) { j=0;csvContent = csvContent + CRLF;} else {csvContent = csvContent + c;}
+        });
     }
     downloadFile( MTFlex.Title1 +' - ' + MTFlex.Title2,csvContent);
 }
@@ -989,13 +1001,15 @@ async function MenuReportsAccountsGo() {
 
     await MF_GridInit('MTAccounts', 'Accounts');
     MTFlex.Title1 = 'Accounts Report';
-    MTFlex.SortSeq = ['1','1','1','1','1','1','1','2','3','4','5'];
+    MTFlex.SortSeq = ['1','1','1','1','1','1','1','2','3','4','5','6'];
     MTFlex.TriggerEvent = 1;
     MTFlex.TriggerEvents = false;
     MF_GridOptions(1,['Hide subtotals','Subtotal on Type','Subtotal on Group']);
     MF_GridOptions(2,['This month','3 months', '6 months', 'This year', '1 year', '2 years', '3 years','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years with average','Personal Statement']);
     MF_GridOptions(4,getAccountGroupInfo());
     if(MTFlex.Button1 > 0) MTFlex.Subtotals = true;
+    if(MTFlex.Button1 == 1 || MTFlex.Button2 == 11) MTFlex.PKSlice = 2;
+    if(MTFlex.Button2 == 11) MTFlex.Subtotals = true;
     MTP = [];
     MTP.Column = 0; MTP.Title = 'Group';MTP.isSortable = 1; MTP.Format = 0; MF_QueueAddTitle(MTP);
     if(MTFlex.Button2 > 6 && MTFlex.Button2 != 11) {await MenuReportsAccountsGoExt();} else {await MenuReportsAccountsGoStd();}
@@ -1036,7 +1050,6 @@ async function MenuReportsAccountsGoExt(){
         }
     }
     MTFlex.RequiredCols = [3,4,5,6,7,8,9,10,11,12,13,14,15];
-
     MTP.isHidden = false;
     MTP.Column = 15; MTP.Title = 'Current';MF_QueueAddTitle(MTP);
     MTP.Column = 16; MTP.Title = 'Average';MF_QueueAddTitle(MTP);
@@ -1047,18 +1060,7 @@ async function MenuReportsAccountsGoExt(){
                 MTP = [];
                 MTP.isHeader = false;
                 MTP.UID = snapshotData.accounts[i].id;
-                if(snapshotData.accounts[i].isAsset == true) {
-                    MTP.BasedOn = 1;MTP.Section = 2;
-                } else {
-                    MTP.BasedOn = 2; MTP.Section = 4;
-                }
-                MTP.SKHRef = '/accounts/details/' + MTP.UID;
-                let accountName = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
-                switch(Number(MTFlex.Button1)) {
-                    case 1:MTP.PK = snapshotData.accounts[i].type.display; break;
-                    case 2:MTP.PK = accountName;break;
-                    default:MTP.PK = MTP.BasedOn.toString();
-                }
+                let accountName = getAccountPrimaryKey(snapshotData.accounts[i].isAsset,snapshotData.accounts[i].type.display,snapshotData.accounts[i].subtype.display)
                 MF_QueueAddRow(MTP);
                 MTFlexRow[MTFlexCR][MTFields] = snapshotData.accounts[i].displayName;
                 MTFlexRow[MTFlexCR][MTFields+1] = snapshotData.accounts[i].subtype.display;
@@ -1111,7 +1113,6 @@ async function MenuReportsAccountsGoStd(){
     if(MTFlex.Button2 == 11) {
         MTP.isHidden = true;
         MTFlex.HideDetails = true;
-        MTFlex.PKSlice = 2;
         NetWorthLit = 'Net Worth';
         MF_GridOptions(1,[]);
         MTFlex.Title1 = 'Personal Net Worth Statement';
@@ -1166,28 +1167,8 @@ async function MenuReportsAccountsGoStd(){
                 if(useBalance == null) {useBalance = 0;}
                 pastBalance = getAccountBalance(MTP.UID);
                 if(pastBalance == null) {pastBalance = 0;}
-
                 if(useBalance !=0 || getAccountUsed(MTP.UID) == true || pastBalance != 0) {
-                    if(snapshotData.accounts[i].isAsset == true) {
-                        MTP.BasedOn = 1;MTP.Section = 2;
-                    } else {
-                        MTP.BasedOn = 2; MTP.Section = 4;
-                    }
-                    let accountName = getCookie('MTAccounts:' + snapshotData.accounts[i].id,false);
-                    if(MTFlex.Button2 == 11) {
-                        MTP.PK = snapshotData.accounts[i].type.display;
-                        if(inList(snapshotData.accounts[i].type.display,['Credit Cards','Other Liabilities','Other Assets']) == 0) {
-                            MTP.PK = snapshotData.accounts[i].type.display + ' - ' + snapshotData.accounts[i].subtype.display
-                        }
-                        if(MTP.PK.startsWith('Other')) {MTP.PK = '02' + MTP.PK; } else {MTP.PK = '01' + MTP.PK;}
-                    } else {
-                        switch(Number(MTFlex.Button1)) {
-                            case 1:MTP.PK = snapshotData.accounts[i].type.display; break;
-                            case 2:MTP.PK = accountName;break;
-                            default:MTP.PK = MTP.BasedOn.toString();
-                        }
-                    }
-                    MTP.SKHRef = '/accounts/details/' + MTP.UID;
+                    let accountName = getAccountPrimaryKey(snapshotData.accounts[i].isAsset,snapshotData.accounts[i].type.display,snapshotData.accounts[i].subtype.display)
                     MF_QueueAddRow(MTP);
                     MTFlexRow[MTFlexCR][MTFields] = snapshotData.accounts[i].displayName;
                     MTFlexRow[MTFlexCR][MTFields+1] = snapshotData.accounts[i].subtype.display;
@@ -1288,6 +1269,30 @@ async function MenuReportsAccountsGoStd(){
         }
         return 0;
     }
+}
+
+function getAccountPrimaryKey(inAsset,inDisplay,inSubDisplay) {
+    if(inAsset == true) {
+        MTP.BasedOn = 1;MTP.Section = 2;
+    } else {
+        MTP.BasedOn = 2; MTP.Section = 4;
+    }
+    MTP.SKHRef = '/accounts/details/' + MTP.UID;
+    let accountName = getCookie('MTAccounts:' + MTP.UID,false);
+    if(MTFlex.Button2 == 11) {
+        MTP.PK = inDisplay;
+        if(inList(inDisplay,['Credit Cards','Other Liabilities','Other Assets']) == 0) {
+            MTP.PK = inDisplay + ' - ' + inSubDisplay
+        }
+        if(MTP.PK.startsWith('Other')) {MTP.PK = '02' + MTP.PK; } else {MTP.PK = '01' + MTP.PK;}
+    } else {
+        switch(Number(MTFlex.Button1)) {
+            case 1:MTP.PK = inDisplay; if(MTP.PK.startsWith('Other')) {MTP.PK = '02' + MTP.PK; } else {MTP.PK = '01' + MTP.PK;} break;
+            case 2:MTP.PK = accountName;break;
+            default:MTP.PK = MTP.BasedOn.toString();
+        }
+    }
+    return accountName;
 }
 
 function getAccountGroupInfo(inName) {
