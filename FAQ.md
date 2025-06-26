@@ -48,6 +48,8 @@ There are three scenerios that people can use them in:
     * Personal vs Business
     * Household Members
     * Tax and Tax Deferred
+    * Family vs Kids
+    
 
 **Personal & Business**
 
@@ -61,6 +63,9 @@ If your accounts are designated as either yours personally, your partner's perso
 
 If your accounts are designated as accounts you can touch (taxable) versus IRAs and other Tax Deferred accounts, you could assign each checking, savings, investment, etc. account with either "Taxable" or "Tax Deferred". You could then look at both Reports / Trends & Reports / Accounts either combined or just the tax level of the accounts.
 
+**Family vs Kids**
+
+If there are future investments or credit cards your kids use, you could designate as such for Accounts and Trends reporting.
 
 ## Contributions:
 
