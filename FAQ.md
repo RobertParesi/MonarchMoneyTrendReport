@@ -57,7 +57,7 @@ If your accounts are designated for either Personal or Business purposes, you co
 
 **Household Members**
 
-If your accounts are designated as either yours personally, your partner's personally as well as maybe joint, you could assign each checking, savings, credit card, etc. account with either "Your Name" or "Their Name" (or even "Both). You could then look at both Reports / Trends & Reports / Accounts either combined or just as what's happened on your accounts vs your partner's accounts.
+If your accounts are designated as either yours personally, your partner's personally as well as maybe joint, you could assign each checking, savings, credit card, etc. account with either "Your Name" or "Their Name" (or even "Both). You could then look at both Reports / Trends & Reports / Accounts either combined or just as what's happened on your accounts vs your partner's accounts.  Example:  "Jerry", "Elaine", "Both"
 
 **Tax and Tax Deferred**
 
