@@ -26,6 +26,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
      - View Income, Expenses and Transfers done by Account for the current month
      - Filter Accounts by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
      - Sort accounts data by any column and export it to Excel or Numbers.
+     - Generate a simple Personal Net Worth report for Loan Applications.
        
 * **Reports / Tags**
      - Summarize all your Transactions by Tags
@@ -121,6 +122,9 @@ Enjoy!
 
 **Monarch Tweaks Reports tag multiple cells**
 ![Settings](/images/MT_V3_10.png)
+
+**Personal Net Worth Report (Reports / Accounts / Perosnal Statement)**
+![Settings](/images/MT_V3_12.png)
 
 **Monarch Tweaks Household Description for Breakdown**
 ![Settings](/images/MT_V3_11.png)
