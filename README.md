@@ -123,7 +123,7 @@ Enjoy!
 **Monarch Tweaks Reports tag multiple cells**
 ![Settings](/images/MT_V3_10.png)
 
-**Personal Net Worth Report (Reports / Accounts / Perosnal Statement)**
+**Personal Net Worth Report (Reports / Accounts / Personal Statement)**
 ![Settings](/images/MT_V3_12.png)
 
 **Monarch Tweaks Household Description for Breakdown**
