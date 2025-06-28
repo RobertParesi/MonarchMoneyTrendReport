@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.29.01
+// @version      3.29.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.29.01';
+const version = '3.29.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -41,6 +41,7 @@ function MM_Init() {
     const bdr = 'border: 1px solid ' + ['#e4e1de;','#62605D;'][a];
     const bdrb = 'border-bottom: 1px solid ' + ['#e4e1de;','#62605D;'][a];
     const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px; border-radius:';
+    const detailLine = ['#ebe8e5','#2a2a28'][a];
 
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
 
@@ -79,7 +80,7 @@ function MM_Init() {
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2 {' + standardText +' }');
     addStyle('.MThRefClass2 {font-family: MonarchIcons, "Oracle", sans-serif;}');
     addStyle('.MTFlexGridDCell2 { text-align: right; }');
-    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {  height: 36px;' + standardText + ' font-weight: 600; }');
+    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {  background-color: ' + detailLine + ';height: 36px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexGridSCell2 { text-align: right !important;}');
     addStyle('.MTFlexCardBig, .MTFlexBig {font-size: 20px; ' + standardText + 'font-weight: 500; padding-top: 8px;}');
     addStyle('.MTFlexBig {font-size: 18px !important;}');
