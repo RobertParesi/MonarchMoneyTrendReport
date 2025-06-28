@@ -296,7 +296,7 @@ function MT_GridDrawDetails() {
                 elx = cec('td','MTFlexGridSCell',el);
                 elx = cec('a','MTFlexGridDCell',elx,useDesc,useRow.PKHRef);
             } else {
-                elx = cec('td','MTFlexGridS3Cell',el,useDesc);
+                elx = cec('td',MTFlex.HideDetails == true ? 'MTFlexGridDCell' : 'MTFlexGridS3Cell',el,useDesc);
             }
             MTFlex.HideDetails == true ? useStyle = 'MTFlexGridDCell' : useStyle = 'MTFlexGridSCell';
         }
