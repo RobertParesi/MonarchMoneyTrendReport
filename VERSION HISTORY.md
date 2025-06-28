@@ -9,6 +9,7 @@ Email any issues directly:  robert @ paresi.net
 
 • NEW: Reports / Accounts - Added ability to hide Last Updated column (Settings)
 
+• ENHANCEMENT: Sub-Total Highlighting for Light & Dark mode for easier reading of reports with sub totals.
 
 **Version 3.28:**
 
