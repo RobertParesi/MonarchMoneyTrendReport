@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.29
+// @version      3.30.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.29';
+const version = '3.30.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -213,6 +213,7 @@ function MT_GridDrawDetails() {
     MT_GridDrawClear();
     MT_GridDrawTitles();
     for (RowI = 0; RowI < MTFlexRow.length; RowI += 1) {
+        console.log(RowI,MTFlexRow[RowI].Section,MTFlexRow[RowI].Section,MTFlexRow[RowI].PK,MTFlexRow[RowI][MTFields],MTFlexRow[RowI][MTFields+1]);
         MT_GridDrawRow(false);
         if(RowI == MTFlexRow.length-1) {
             MT_GridDrawRow(true);
@@ -1160,7 +1161,6 @@ async function MenuReportsAccountsGoStd(){
 
     for (let i = 0; i < 5; i += 1) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards+=1;}}
     if(debug == 1) console.log('MenuReportsAccountsGoStd',snapshotData,snapshotData2,AccountGroupFilter);
-    console.log(snapshotData);
     for (let i = 0; i < snapshotData.accounts.length; i += 1) {
         if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + snapshotData.accounts[i].id,false)) {
             if(snapshotData.accounts[i].hideFromList == false || skipHidden == 0) {
@@ -1183,7 +1183,6 @@ async function MenuReportsAccountsGoStd(){
                     MTFlexRow[MTFlexCR][MTFields+2] = accountName;
                     MTFlexRow[MTFlexCR][MTFields+3] = snapshotData.accounts[i].displayLastUpdatedAt.substring(0, 10);
                     MTFlexRow[MTFlexCR][MTFields+8] = useBalance;
-
                     if(snapshotData.accounts[i].hideTransactionsFromReports == false) {
                         for (let j = 0; j < snapshotData2.allTransactions.results.length; j += 1) {
                             if(snapshotData2.allTransactions.results[j].hideFromReports == false) {
@@ -1295,7 +1294,10 @@ function getAccountPrimaryKey(inAsset,inDisplay,inSubDisplay) {
         if(MTP.PK.startsWith('Other')) {MTP.PK = '02' + MTP.PK; } else {MTP.PK = '01' + MTP.PK;}
     } else {
         switch(Number(MTFlex.Button1)) {
-            case 1:MTP.PK = inDisplay; if(MTP.PK.startsWith('Other')) {MTP.PK = '02' + MTP.PK; } else {MTP.PK = '01' + MTP.PK;} break;
+            case 1:
+                MTP.PK = inDisplay;
+                if(MTP.PK.startsWith('Other')) {MTP.PK = '02' + MTP.PK; } else {MTP.PK = '01' + MTP.PK;}
+                break;
             case 2:MTP.PK = accountName;break;
             default:MTP.PK = MTP.BasedOn.toString();
         }
