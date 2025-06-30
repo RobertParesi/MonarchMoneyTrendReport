@@ -53,11 +53,11 @@ There are four scenerios that people can use them in:
 
 **Personal & Business**
 
-If your accounts are designated for either Personal or Business purposes, you could assign each checking, savings, credit card, etc. account with either "Personal" or "Business" or "Both.
+If your accounts are designated for either Personal or Business purposes, you could assign each checking, savings, credit card, etc. account with either "Personal", "Business" or "Both.
 
 **Household Members**
 
-If your accounts are designated as either yours personally, your partner's personally as well as maybe joint, you could assign each checking, savings, credit card, etc. account with either "Your Name" or "Their Name" (or even "Both). Example:  "Jerry", "Elaine", "Both"
+If your accounts are designated as either yours personally, your partner's personally as well as maybe joint, you could assign each checking, savings, credit card, etc. account with either "Your Name", "Their Name", or "Both". Example:  "Jerry", "Elaine", "Both"
 
 **Tax and Tax Deferred**
 
@@ -65,7 +65,7 @@ If your accounts are designated as accounts you can touch (taxable) versus IRAs 
 
 **Family vs Kids**
 
-If there are future investments or credit cards your kids use, you could designate with "Family" vs "Kids".
+If there are future investments or credit cards your kids use, you could designate with "Family" or "Kids".
 
 ## Contributions:
 
