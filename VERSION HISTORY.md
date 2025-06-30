@@ -5,6 +5,8 @@ Email any issues directly:  robert @ paresi.net
 
 **Version 3.30 (beta):**
 
+• NEW: Reports / Accounts - You can now ignore accounts marked as "Hide balance from net worth" for more flexibility.
+
 • FIX: Reports / Accounts - Sub Totals could be skipped if there were hidden accounts
 
 • FIX: Reports / Trends - Date period could display incorrectly when immediately switching between Accounts and Trends reports. 
