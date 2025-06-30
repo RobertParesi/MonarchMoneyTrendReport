@@ -2322,10 +2322,10 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Reports / Accounts','','spacer');
             MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
             MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
-            MenuDisplay_Input('Hide Pending & Projected Balance information','MT_AccountsHidePending','checkbox');
             MenuDisplay_Input('Hide Last Updated','MT_AccountsHideUpdated','checkbox');
             MenuDisplay_Input('Hide Net Change','MT_AccountsHidePer1','checkbox');
             MenuDisplay_Input('Hide percentage of Net Change','MT_AccountsHidePer2','checkbox');
+            MenuDisplay_Input('Hide Pending & Projected Balance information','MT_AccountsHidePending','checkbox');
             MenuDisplay_Input('Show total Checking card','MT_AccountsCard0','checkbox');
             MenuDisplay_Input('Show total Savings card','MT_AccountsCard1','checkbox');
             MenuDisplay_Input('Show total Credit Card Liability card','MT_AccountsCard2','checkbox');
