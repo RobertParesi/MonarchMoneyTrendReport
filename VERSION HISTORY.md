@@ -1,282 +1,101 @@
-# Monarch Money Tweaks - Version History
-Here are a list of Open Issues, Unreleased changes and past changes:
-
-Email any issues directly:  robert @ paresi.net
-
 **Version 3.30 (beta):**
 
-• NEW: Reports / Accounts - You can now ignore accounts marked as "Hide balance from net worth" for more flexibility.
-
-• FIX: Reports / Accounts - Sub Totals could be skipped if there were hidden accounts
-
-• FIX: Reports / Trends - Date period could display incorrectly when immediately switching between Accounts and Trends reports. 
+    NEW: Reports / Accounts — You can now ignore accounts marked as "Hide balance from net worth" for greater flexibility (Settings).
+    FIX: Reports / Accounts — Subtotals could be skipped if there were hidden accounts.
+    FIX: Reports / Trends — Date period could display incorrectly when immediately switching between Accounts and Trends reports.
 
 **Version 3.29:**
 
-• NEW: Reports / Accounts - Added ability to hide Net Change column (Settings)
-
-• NEW: Reports / Accounts - Added ability to hide Last Updated column (Settings)
-
-• ENHANCEMENT: Sub-Total Highlighting (Light & Dark mode) for easier reading of reports with sub totals.
+    NEW: Reports / Accounts — Added ability to hide the Net Change column (Settings).
+    NEW: Reports / Accounts — Added ability to hide the Last Updated column (Settings).
+    ENHANCEMENT: Sub-Total highlighting (Light & Dark mode) for easier reading of reports with subtotals.
 
 **Version 3.28:**
 
-• NEW: Reports / Accounts - Added Personal Net Worth Statement for Loan Applications.
-
-• NEW: Reports / Accounts - Sorting by Type will put "Other Assets" and "Other Liabilities" at the bottom of the group.
+    NEW: Reports / Accounts — Added Personal Net Worth Statement for loan applications.
+    NEW: Reports / Accounts — Sorting by Type will position "Other Assets" and "Other Liabilities" at the bottom of the group.
 
 **Version 3.27:**
 
-• REGRESSION: Cash Flow / Monthly History button regression not working & not disappearing.
+    REGRESSION: The Cash Flow / Monthly History button regression—it's not working and not disappearing.
 
-**Version 3.25-3.26:**
+**Version 3.25–3.26:**
 
-• NEW: User can select whether to include/exclude Hidden transactions.
-
-• FIX: Menu items may not be hidden under Safari browser.
-
-• REMOVE: Removed "Hide Ads" from Settings - Monarch Money can now do this on their Referrals tab.
-
+    NEW: Users can now select whether to include or exclude hidden transactions.
+    FIX: Menu items may not be hidden under the Safari browser.
+    REMOVE: Removed "Hide Ads" from Settings — Monarch Money now manages this on their Referrals tab.
 
 **Version 3.24:**
 
-• ENHANCEMENT: Added Income, Expenses and Transfers to more Reports / Accounts
+    ENHANCEMENT: Added Income, Expenses, and Transfers options to more Reports / Accounts.
 
 **Version 3.23:**
 
-• REGRESSION: MM changes affecting Transactions grid (colors & Pending)
+    REGRESSION: Changes affecting the Transactions grid (colors & Pending status) due to Monarch Money updates.
 
 **Version 3.22:**
 
-• NEW: Added "Budget Remaining" to Left to Spend in Budget Summary
+    NEW: Added "Budget Remaining" to the Left to Spend in the Budget Summary.
 
-**Version 3.20-3.21:**
+**Versions 3.20–3.21:**
 
-• NEW: Added fs-exclude class to all money fields 
+    NEW: Added fs-exclude class to all money fields.
 
-**Version 3.17-3.19:**
+**Versions 3.17–3.19:**
 
-• NEW: Expand and Collapse sections in Reports
-
-• REGRESSION: Fixes with Menu items being hidden
-
+    NEW: Expand and collapse sections in Reports.
+    REGRESSION: Fixed issues with menus being hidden.
 
 **Version 3.16:**
 
-• NEW: More enhancements to the Income by Tags report (Date Range) 
-
-• CHANGE: Limit cards in Reports / Tags to 6
-
-• FIX: Number of fixes to Reports / Accounts
-
+    NEW: Enhancements to the Income by Tags report (date range).
+    CHANGE: Limited the number of cards in Reports / Tags to 6.
+    FIX: Several fixes to Reports / Accounts.
 
 **Version 3.15:**
 
-• NEW: More enhancements to the Income by Tags report (Added Cards, Colors)
-
-• CHANGE: Reports / Accounts report will suppress detail lines that are all NULL and/or $zero.
-
-• CHANGE: Reports / Accounts Extended report (Last Months / Last Years) will look at the Monarch's "Is Account Hidden Flag"
+    NEW: Further enhancements to the Income by Tags report (added cards, colors).
+    CHANGE: Reports / Accounts will now suppress detail lines that are all null or zero dollars.
+    CHANGE: The extended report (Last Months / Last Years) will respect Monarch's "Is Account Hidden" flag.
 
 **Version 3.14:**
 
-• NEW: Net Income by Tags report  
+    NEW: Net Income by Tags report.
 
 **Version 3.13:**
 
-• REGRESSION: Split 50/50 button when splitting transaction because of MM changes.
+    REGRESSION: Split 50/50 button issues when splitting transactions due to Monarch Money changes.
 
-**Version 3.11-3.12:**
+**Versions 3.11–3.12:**
 
-• CHANGE: Better merchant maching logic.
+    CHANGE: Improved merchant matching logic.
 
-**Version 3.10:** 
+**Version 3.10:**
 
-• NEW: Reports / Trends & Reports / Accounts automatic line hovering
+    NEW: Reports / Trends & Reports / Accounts support automatic line hovering.
+    NEW: Reports / Trends & Reports / Accounts can now use a user-selected font (Settings / Display / Reports).
+    NEW: Assist and populate feature when searching merchants (Settings / Display / Transactions).
 
-• NEW: Reports / Trends & Reports / Accounts can use a user selected font (Settings / Display / Reports)
+**Versions 3.03–3.09:**
 
-• NEW: Assist and populate when Searching Merchants. (Settings / Display / Transactions)  
+    NEW: Reports / Trends can now be run at the Account Group level (e.g., income & spending by household members or other groups like "Business" vs. "Personal").
+    CHANGE: Improved tooltip images and positioning on Accounts Summary.
+    REGRESSION: Reports / Accounts could show no results or the side panel history could be empty.
 
+**Version 3.02:**
 
-**Version 3.03-3.09:** 
+    FIX: Scripts could fail to load or function properly on Safari.
+    NEW: Reports / Accounts can now be subtotaled by either Account Group or Account Type.
 
-• NEW: Reports / Trends can now be run at the Account Group level. (Display your Income & Spending by household members or other account groups such as "Business" vs "Personal")
+**Version 3.01:**
 
-• CHANGE: Better tooltip image and positioning on Accounts Summary
+    NEW: Added "Lowest," "Highest," and "Average" to the Trends Monthly History side panel.
+    NEW: Tooltip on Accounts / Assets & Liabilities to show account breakdown.
 
-• REGRESSION: Reports / Accounts could show no results or side panel History could show no results
+**Version 3.00:**
 
+    NEW: Monarch Money tweaks no longer use cookies—helping to prevent people from losing settings.
 
-**Version 3.02:** 
-
-• FIX: Script could fail to load or work properly on Safari browser.
-
-• NEW: Reports / Accounts can now be sub-totaled by either Account Group or by Account Type.
-
-**Version 3.01:** 
-
-• NEW: Added "Lowest", "Highest" and "Average" to Trends Monthly History side panel
-
-• NEW: Added Tooltip on Accounts / Assets & Liabilities to show account breakdown.
-
-**Version 3.00:** 
-
-• NEW: Monarch Money Tweaks no longer uses Cookies - which should help with people losing settings.  
-> [!IMPORTANT]
-> **Please redo all your settings immediately after this update. - Sorry for this, but it makes things better under the covers going forward.**  
-
-• NEW: Reports / Trends history side panel will now show a Sub Total.
-
-• FIX: When running Accounts report for previous month, the Balance column was showing zero.
-
-
-**Version 2.46:** 
-
-• REGRESSION: The Export button stopped working in Trends & Accounts.
-
-
-**Version 2.00-2.45:** 
-
-• FIX: Reports / Accounts could fail if user changed Account Groups to be less than the previous default selection.
-
-• FIX: Filter out "transfers" in Monthly Trends report.
-
-• REGRESSION: Clicking on Date in Reports Accounts & Trends goes back to end of previous month.
-
-• FIX: You can now change Light and Dark mode in Trends/Accounts reports without having to refresh the screen.
-
-• CHANGE: Removed Datasets (Tweaks Saved Reports) - No longer need since Saved Reports as now part of Monarch Money (Yea!)
-
-• CHANGE: Corrected Trends/Account Date/Filter header to be compatible with changes in Monarch Money
-
-• CHANGE: Removed Calendar shortcuts - No longer compatible with changes in Monarch Money 
-
-• NEW: Change Calendar "Last" Number from String to Spinbox
-
-• FIX: Stop Trends & Accounts reports from running twice simultaneously if user double-clicked on menu link.
-
-• CHANGE: Made Househould more generic by calling it "Account Group" and updated screens.
-
-• CHANGE: More streamlined code / Correction of possible duplicate Household information in Account Summary
-
-• NEW: Added "Household" name to Accounts / Edit screen.  (ie: Parents, Kids, etc.)
-
-• NEW: Accounts Summary pane will now show "Household" breakdown of Assets and Liabilities.
-
-• NEW: Added ability to Filter Reports / Accounts by All or by Household group.
-
-• NEW: Ability to change order of Income, Expenses and Contributions in Budgets.
-
-• REGRESSION: Reports / Trends & Reports / Accounts would fail because of changes made by Monarch Money to the Reports menus.
-
-• BUG: Reports / Trends could fail when running Monthly.
-
-• NEW: "Monthly Summary" button goes to three year Monthly Summary when expanding Categories and Category Groups from Transactions & Budgets.
-
-• NEW: Budget Summary Panel removed if Budgets Menu item is turned off.
-
-• CHANGE: Better Trends/Accounts buttons for pull-down.
-
-• REGRESSION:  Changes on Monarch side caused Transaction Compressed Grid not to work.
-
-• REGRESSION:  Changes on Monarch side caused Left to Spend to not always appear during Flex Budget.
-
-• NEW:  "Left to Spend" direct link for Pending Transactions
-
-• NEW:  Added ability to Ignore Rollover Budget remaining and always use Budget minus Spent.
-
-• NEW:  Added "Left to Spend" (Checking - Credit Cards - Pending) to Budget Summary and Budget Dashboard. (Turn on in Display/Settings/Budget)  
-
-• CHANGE:  Ability to do Ignore Budget Income & Ignore Budget Expenses. (2.21)
-
-• FIX:  Left to Spend might not show up if you use Rollover budgets. (2.22)
-
-• NEW:  Reports / Trends Monthly Summary can now link expanded items to Income & Spending charts. 
-
-• NEW: Reports / Trends now goes to Reports Income & Spending rather than the old Cash-Flow screen.
-
-• NEW: Ability to always hide decimals in Reports / Accounts
-
-• NEW: Added "Last three years with average" to Reports / Accounts
-
-• NEW: Automatic Calculations - click on multiple cells to get SUM, AVG and CNT.  Click on each bubble to copy the value to your clipboard.
-
-• REGRESSION: Reports / Accounts - Drop-Down for Time-Frame was not setting properly.
-
-• NEW: Display Current year, last 12 months or last 6 months of Account Balances with Average in Reports / Accounts 
-
-• NEW: New and more streamlined Cards with more information in Reports / Trends
-
-• NEW: "Refresh All" accounts the first time logging in for the day (Settings / Display / Accounts)
-
-• NEW: Ability to always hide decimals in Reports / Trends
-
-• NEW: Ability to show Pending total and Projected balance amounts by account in Reports / Accounts
-
-• NEW: Ability to hide Net Change percent in Reports / Accounts
-
-• NEW: Transactions grid can have smaller font & compressed grid. (Settings / Display)
-
-• NEW: Budget grid can have smaller font & compressed grid. (Settings / Display)
-
-• NEW: Ability to compress Reports / Trends & Accounts grid.
-
-• FIX: Export History Grid might throw exception creating file name.
-
-• CHANGE: Better styling with new color style.
-
-• REGRESSION: Reports / Trends - Left two columns were comparing to End of Month regardless of setting.
-
-• REGRESSION: The calendar was not always working properly (Last 12 months, Last year YTD, This quarter) depending on Calendar "include full month" configuration.
-
-• FIX: Some rounding could be $1 different between the screen of data versus export of data. (Export was not rounding)
-
-• CHANGE: Reports / Trends & Accounts - Better font sizes, faster, less flicker
-
-• FIX: Clicking on outside border of "Date" button would not load custom three date ranges.
-
-• CHANGE: Reports / Trends - When on last day of current month (11/30) and comparing to last month, last month will now compare to last day of month (10/31 instead of 10/30).
-
-• FIX: Monarch new color scheme corrections.
-
-• DEPRECATED: Reports Breadcrumbs and compressed transaction grid functionality removed.  Monarch Money now does it.  Yea!
-
-• NEW: Reports / Accounts - Ability to select which total cards to show at top (Checking, Savings, Credit Card, Investments) - Unused cards will be filled with individual credit card accounts.
-
-• FIX: Reports / Accounts - If beginning balance for account was zero and ending balance was also zero, but there were transfers for the current month, the account would not show in the list.  
-
-• FIX: Reports [Datasets] button stopped appearing in Safari browser.
-
-• CHANGE: Nicer Settings / Display menu
-
-• FIX: Reports / Accounts - Going back to previous month would duplicate Cards
-
-• FIX: Reports / Accounts - Fixed Accounts that may not appear with pastBalance <> 0
-
-• FIX: Reports / Trends - If YTD previous was negative and current year positive, shading would not occur.
-
-• CHANGE: Reports / Accounts - Added percentage to Difference column.
-
-• CHANGE: Reports / Trends - Better column header formatting.
-
-• ADDED: Reports / Trends - Added "All years by year" to Trends to see all your Trend history by year.
-
-• NEW: Report options now have easier drop-down selections
-
-• NEW: Reports / Accounts Net Difference now allows flexible options (This week, Two Weeks, This month, 3 months, 6 months, This Year, etc.)
-
-• NEW: Reports / Trends now has Monthly Grid (Jan-Dec) display with full column sorting and exporting.
-
-• NEW: Added Income, Expenses and Transfers to Reports / Accounts (Checking and Credit Card can use a Calculated balance based on Display / Settings)
-
-• NEW: Added ability to go back to previous month in Reports / Accounts like Trends
-
-• NEW: Added column sorting indicators (ascending & descending)
-
-• FIX:  Reports / Accounts could hang on null balance
-
-• NEW:  Rewrite of Trends including cleaner percentages and better Trend cards at top.
-
-• NEW: Added Accounts to Reports (display & export)  - More enhancements & flexibility to come for Accounts
+        [IMPORTANT]
+        **Please redo all your settings immediately after this update. Sorry for the inconvenience, but it improves things under the hood moving
 
