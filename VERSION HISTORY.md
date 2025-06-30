@@ -3,6 +3,12 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
+**Version 3.30 (beta):**
+
+• FIX: Reports / Accounts - Sub Totals could be skipped if there were hidden accounts
+
+• FIX: Reports / Trends - Date period could show wrong if immediately switching between Accounts and Trends reports. 
+
 **Version 3.29:**
 
 • NEW: Reports / Accounts - Added ability to hide Net Change column (Settings)
