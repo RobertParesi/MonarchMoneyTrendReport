@@ -1,8 +1,8 @@
 **Version 3.30 (beta):**
 
-    NEW: Reports / Accounts — You can now ignore accounts marked as "Hide balance from net worth" for greater flexibility (Settings).
-    FIX: Reports / Accounts — Subtotals could be skipped if there were hidden accounts.
-    FIX: Reports / Trends — Date period could display incorrectly when immediately switching between Accounts and Trends reports.
+    * NEW: Reports / Accounts — You can now ignore accounts marked as "Hide balance from net worth" for greater flexibility (Settings).
+    * FIX: Reports / Accounts — Subtotals could be skipped if there were hidden accounts.
+    * FIX: Reports / Trends — Date period could display incorrectly when immediately switching between Accounts and Trends reports.
 
 **Version 3.29:**
 
