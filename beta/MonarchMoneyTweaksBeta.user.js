@@ -213,7 +213,7 @@ function MT_GridDrawDetails() {
     MT_GridDrawClear();
     MT_GridDrawTitles();
     for (RowI = 0; RowI < MTFlexRow.length; RowI += 1) {
-        console.log(RowI,MTFlexRow[RowI].Section,MTFlexRow[RowI].Section,MTFlexRow[RowI].PK,MTFlexRow[RowI][MTFields],MTFlexRow[RowI][MTFields+1]);
+        console.log(RowI,MTFlexRow[RowI].Section,MTFlexRow[RowI].PK,MTFlexRow[RowI][MTFields],MTFlexRow[RowI][MTFields+1]);
         MT_GridDrawRow(false);
         if(RowI == MTFlexRow.length-1) {
             MT_GridDrawRow(true);
