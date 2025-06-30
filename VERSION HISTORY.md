@@ -3,7 +3,7 @@ Here are a list of Open Issues, Unreleased changes and past changes:
 
 Email any issues directly:  robert @ paresi.net
 
-**Version 3.29 (beta):**
+**Version 3.29:**
 
 • NEW: Reports / Accounts - Added ability to hide Net Change column (Settings)
 
