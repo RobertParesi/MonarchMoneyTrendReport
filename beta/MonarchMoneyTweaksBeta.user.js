@@ -73,14 +73,14 @@ function MM_Init() {
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
     addStyle('.MTFlexGridRow { font-size: 16px; font-weight: 600; height: 44px; vertical-align: bottom;}');
     addStyle('.MTFlexSpacer, .MTFlexSpacer3 {width: 100%; margin-top: 3px; margin-bottom: 3px; ' + bdrb + '}');
-    addStyle('.MTFlexGridItem { font-size: 14px;height: 32px;}');
+    addStyle('.MTFlexGridItem { font-size: 14px;height: 28px;}');
     addStyle('.MTFlexGridItem:hover { ' + selectBackground + '}');
     addStyle('.MTFlexGridHCell, .MTFlexGridHCell2 { font-size: 15px;}');
     addStyle('.MTFlexGridHCell2 { text-align: right;}');
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2 {' + standardText +' }');
     addStyle('.MThRefClass2 {font-family: MonarchIcons, "Oracle", sans-serif;}');
     addStyle('.MTFlexGridDCell2 { text-align: right; }');
-    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {  background-color: ' + detailLine + ';height: 36px;' + standardText + ' font-weight: 600; }');
+    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {  background-color: ' + detailLine + ';height: 30px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexGridSCell2 { text-align: right !important;}');
     addStyle('.MTFlexCardBig, .MTFlexBig {font-size: 20px; ' + standardText + 'font-weight: 500; padding-top: 8px;}');
     addStyle('.MTFlexBig {font-size: 18px !important;}');
