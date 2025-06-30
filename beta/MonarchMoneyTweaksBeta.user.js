@@ -1291,7 +1291,7 @@ async function MenuReportsAccountsGo() {
         if(MTFlex.Button2 == 11) {
             MTP.PK = inDisplay;
             if(inList(inDisplay,['Credit Cards','Other Liabilities','Other Assets']) == 0) {
-                MTP.PK = inDisplay + ' - ' + inSubDisplay
+                MTP.PK = inDisplay + ' - ' + inSubDisplay;
             }
             MTP.PK = (MTP.PK.startsWith('Other ')) ? '02' + MTP.PK : '01' + MTP.PK;
         } else {
