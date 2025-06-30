@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.28
+// @version      3.29
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.28';
+const version = '3.29';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -41,6 +41,7 @@ function MM_Init() {
     const bdr = 'border: 1px solid ' + ['#e4e1de;','#62605D;'][a];
     const bdrb = 'border-bottom: 1px solid ' + ['#e4e1de;','#62605D;'][a];
     const bs = 'box-shadow: rgba(8, 40, 100, 0.04) 0px 4px 8px; border-radius:';
+    const detailLine = ['#ebe8e5','#2a2a28'][a];
 
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
 
@@ -79,7 +80,7 @@ function MM_Init() {
     addStyle('.MTFlexGridDCell, .MTFlexGridD3Cell, .MThRefClass, .MThRefClass2 {' + standardText +' }');
     addStyle('.MThRefClass2 {font-family: MonarchIcons, "Oracle", sans-serif;}');
     addStyle('.MTFlexGridDCell2 { text-align: right; }');
-    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {  height: 36px;' + standardText + ' font-weight: 600; }');
+    addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {  background-color: ' + detailLine + ';height: 36px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexGridSCell2 { text-align: right !important;}');
     addStyle('.MTFlexCardBig, .MTFlexBig {font-size: 20px; ' + standardText + 'font-weight: 500; padding-top: 8px;}');
     addStyle('.MTFlexBig {font-size: 18px !important;}');
@@ -295,7 +296,7 @@ function MT_GridDrawDetails() {
                 elx = cec('td','MTFlexGridSCell',el);
                 elx = cec('a','MTFlexGridDCell',elx,useDesc,useRow.PKHRef);
             } else {
-                elx = cec('td','MTFlexGridS3Cell',el,useDesc);
+                elx = cec('td',MTFlex.HideDetails == true ? 'MTFlexGridDCell' : 'MTFlexGridS3Cell',el,useDesc);
             }
             MTFlex.HideDetails == true ? useStyle = 'MTFlexGridDCell' : useStyle = 'MTFlexGridSCell';
         }
@@ -1012,7 +1013,7 @@ async function MenuReportsAccountsGo() {
     if(MTFlex.Button1 > 0) MTFlex.Subtotals = true;
     if(MTFlex.Button1 == 1 || MTFlex.Button2 == 11) MTFlex.PKSlice = 2;
     if(MTFlex.Button2 == 11) {MTFlex.Subtotals = true;MTFlex.TableStyle = 'max-width: 640px;';}
-    MTP.Column = 0; MTP.Title = 'Group';MTP.isSortable = 1; MTP.Format = 0;
+    MTP.Column = 0; MTP.Title = 'Description';MTP.isSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(MTP);
     if(MTFlex.Button2 > 6 && MTFlex.Button2 != 11) {await MenuReportsAccountsGoExt();} else {await MenuReportsAccountsGoStd();}
     MTSpawnProcess = 1;
@@ -1129,18 +1130,22 @@ async function MenuReportsAccountsGoStd(){
 
     MTP.Column = 1; MTP.Title = 'Type'; MF_QueueAddTitle(MTP);
     MTP.Column = 2; MTP.Title = 'Group';MTP.Format = 0;MF_QueueAddTitle(MTP);
+    if(getCookie('MT_AccountsHideUpdated',true) == 1) {MTP.isHidden = true;}
     MTP.Column = 3; MTP.Title = 'Updated';MTP.Format = -1;MF_QueueAddTitle(MTP);
+    if(MTFlex.Button2 != 11) MTP.isHidden = false;
     MTP.Column = 4; MTP.Title = 'Beg Balance'; MTP.isSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];MF_QueueAddTitle(MTP);
     MTP.Column = 5; MTP.Title = 'Income'; MF_QueueAddTitle(MTP);
     MTP.Column = 6; MTP.Title = 'Expenses'; MF_QueueAddTitle(MTP);
     MTP.Column = 7; MTP.Title = 'Transfers'; MF_QueueAddTitle(MTP);
     MTP.Column = 8; MTP.Title = 'Balance';MTP.isHidden = false;MF_QueueAddTitle(MTP);
-    if(MTFlex.Button2 == 11) { MTP.isHidden = true;}
-    if(getCookie('MT_AccountsHidePer2',true) == 0) {MTP.ShowPercent = 3;}
-    MTP.Column = 9; MTP.Title = 'Net Change'; MF_QueueAddTitle(MTP);
-    if(getCookie('MT_AccountsHidePending',true) == 1) {MTP.isHidden = true;}
-    MTP.Column = 10; MTP.Title = 'Pending'; MTP.ShowPercent = 0; MF_QueueAddTitle(MTP);
-    MTP.Column = 11; MTP.Title = 'Proj Balance'; MTP.ShowPercent = 0; MF_QueueAddTitle(MTP);
+    if(MTFlex.Button2 != 11) {
+        if(getCookie('MT_AccountsHidePer2',true) == 0) {MTP.ShowPercent = 3;}
+        if(getCookie('MT_AccountsHidePer1',true) == 1) {MTP.isHidden = true;} else {MTP.isHidden = false;}
+        MTP.Column = 9; MTP.Title = 'Net Change'; MF_QueueAddTitle(MTP);
+        if(getCookie('MT_AccountsHidePending',true) == 1) {MTP.isHidden = true;} else {MTP.isHidden = false;}
+        MTP.Column = 10; MTP.Title = 'Pending'; MTP.ShowPercent = 0; MF_QueueAddTitle(MTP);
+        MTP.Column = 11; MTP.Title = 'Proj Balance'; MTP.ShowPercent = 0; MF_QueueAddTitle(MTP);
+    }
 
     let useBalance = 0, pastBalance = 0, useAmount = 0;
     let skipTxs = getCookie('MT_AccountsBalance',true);
@@ -2318,6 +2323,8 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
             MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
             MenuDisplay_Input('Hide Pending & Projected Balance information','MT_AccountsHidePending','checkbox');
+            MenuDisplay_Input('Hide Last Updated','MT_AccountsHideUpdated','checkbox');
+            MenuDisplay_Input('Hide Net Change','MT_AccountsHidePer1','checkbox');
             MenuDisplay_Input('Hide percentage of Net Change','MT_AccountsHidePer2','checkbox');
             MenuDisplay_Input('Show total Checking card','MT_AccountsCard0','checkbox');
             MenuDisplay_Input('Show total Savings card','MT_AccountsCard1','checkbox');
