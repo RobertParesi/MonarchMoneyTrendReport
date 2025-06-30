@@ -97,4 +97,4 @@
 * NEW: Monarch Money tweaks no longer use cookies—helping to prevent people from losing settings.
 
 [IMPORTANT]
-**Please redo all your settings immediately after this update. Sorry for the inconvenience, but it improves things under the hood moving
+Please redo all your settings immediately after this update. Sorry for the inconvenience, but it improves things under the hood moving
