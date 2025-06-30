@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.30.01
+// @version      3.30.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.30.01';
+const version = '3.30.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -212,6 +212,8 @@ function MT_GridDrawDetails() {
 
     MT_GridDrawClear();
     MT_GridDrawTitles();
+    console.clear();
+    console.log('Button Settings: ',MTFlex.Button1,MTFlex.Button2,MTFlex.Button3,MTFlex.Button4);
     for (RowI = 0; RowI < MTFlexRow.length; RowI += 1) {
         console.log(RowI,MTFlexRow[RowI].Section,MTFlexRow[RowI].PK,MTFlexRow[RowI][MTFields],MTFlexRow[RowI][MTFields+1]);
         MT_GridDrawRow(false);
