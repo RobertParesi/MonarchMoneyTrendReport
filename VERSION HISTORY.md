@@ -1,4 +1,4 @@
-**Version 3.30 (beta):**
+**Version 3.30:**
 
 * NEW: Reports / Accounts — You can now ignore accounts marked as "Hide balance from net worth" for greater flexibility (Settings).
 * FIX: Reports / Accounts — Subtotals could be skipped if there were hidden accounts.
