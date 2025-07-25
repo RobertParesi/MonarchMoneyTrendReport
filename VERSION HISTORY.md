@@ -1,3 +1,7 @@
+**Version 3.31:**
+
+* REGRESSION: Transaction screen "Pending in Red" and "Compressed" stopped working.
+
 **Version 3.30:**
 
 * NEW: Reports / Accounts — You can now ignore accounts marked as "Hide balance from net worth" for greater flexibility (Settings).
