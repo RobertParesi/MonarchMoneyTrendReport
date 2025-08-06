@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.31
+// @version      3.32.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.31';
+const version = '3.32.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1514,7 +1514,7 @@ async function MenuReportsTrendsGo() {
 
         // this year
         MTP = [];
-        MTP.Column = 5; MTP.Title = 'YTD ' + year; MTP.isSortable = 2; MTP.Width = '14%'; MTP.Format = useFormat; MTP.ShowPercentShade = false;
+        MTP.Column = 5; MTP.Title = 'YTD ' + year; MTP.isSortable = 2; MTP.Width = '12%'; MTP.Format = useFormat; MTP.ShowPercentShade = false;
         if(getCookie('MT_TrendHidePer1',true) != true) {MTP.ShowPercent = 2;}
         MF_QueueAddTitle(MTP);
         await BuildTrendData('cp',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
@@ -1524,10 +1524,10 @@ async function MenuReportsTrendsGo() {
         lowerDate.setFullYear(year);
         higherDate.setFullYear(year);
         MTP = [];
-        MTP.Column = 4; MTP.Title = 'YTD ' + year; MTP.isSortable = 2; MTP.Format = useFormat; MTP.Width = '14%'; MTP.ShowPercentShade = false;
+        MTP.Column = 4; MTP.Title = 'YTD ' + year; MTP.isSortable = 2; MTP.Format = useFormat; MTP.Width = '12%'; MTP.ShowPercentShade = false;
         if(getCookie('MT_TrendHidePer1',true) != true) {MTP.ShowPercent = 2;}
         MF_QueueAddTitle(MTP);
-        MTP.Column = 6; MTP.Title = 'Difference'; MTP.Format = useFormat; MTP.Width = '14%';MTP.ShowPercentShade = true;
+        MTP.Column = 6; MTP.Title = 'Difference'; MTP.Format = useFormat; MTP.Width = '12%';MTP.ShowPercentShade = true;
         if(getCookie('MT_TrendHidePer2',true) != true) {MTP.ShowPercent = 1;}
         MF_QueueAddTitle(MTP);
         await BuildTrendData('lp',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
@@ -1554,7 +1554,7 @@ async function MenuReportsTrendsGo() {
 
         useTitle = useTitle + getMonthName(month2,true) + ' ' + year;
         MTP = [];
-        MTP.Column = 2; MTP.Title = useTitle; MTP.isSortable = 2; MTP.Width = '14%'; MTP.Format = useFormat; MTP.ShowPercentShade = false;
+        MTP.Column = 2; MTP.Title = useTitle; MTP.isSortable = 2; MTP.Width = '12%'; MTP.Format = useFormat; MTP.ShowPercentShade = false;
         if(getCookie('MT_TrendHidePer1',true) != true) {MTP.ShowPercent = 2;}
         MF_QueueAddTitle(MTP);
         await BuildTrendData('cm',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
@@ -1597,22 +1597,29 @@ async function MenuReportsTrendsGo() {
             }
             MTFlex.TitleShort = useTitle;
         }
-
         if(TrendFullPeriod == 1) {
             day2 = daysInMonth(month2,year);
             higherDate.setDate(day2);
             useTitle = useTitle + ' *';
         }
         MTP = [];
-        MTP.Column = 1; MTP.Title = useTitle; MTP.isSortable = 2; MTP.Format = useFormat; MTP.Width = '14%'; MTP.ShowPercentShade = false;
+        MTP.Column = 1; MTP.Title = useTitle; MTP.isSortable = 2; MTP.Format = useFormat; MTP.Width = '12%'; MTP.ShowPercentShade = false;
         if(getCookie('MT_TrendHidePer1',true) != true) {MTP.ShowPercent = 2;}
         MF_QueueAddTitle(MTP);
         MTP = [];
-        MTP.Column = 3; MTP.Title = 'Difference'; MTP.isSortable = 2; MTP.Format = useFormat; MTP.Width = '14%'; MTP.ShowPercentShade = true;
+        MTP.Column = 3; MTP.Title = 'Difference'; MTP.isSortable = 2; MTP.Format = useFormat; MTP.Width = '12%'; MTP.ShowPercentShade = true;
         if(getCookie('MT_TrendHidePer2',true) != true) {MTP.ShowPercent = 1;}
         MF_QueueAddTitle(MTP);
-
         await BuildTrendData('lm',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
+        // future month
+        lowerDate = getDates('d_StartofNextMonthLY',MTFlexDate2);
+        higherDate = getDates('d_EndofNextMonthLY',MTFlexDate2);
+        MTP = [];
+        MTP.Column = 7; MTP.Title = getDates('s_MidDate',lowerDate); MTP.Width = '11%';MTP.isSortable = 2;MTP.Format = useFormat; MTP.ShowPercentShade = false;
+        if(getCookie('MT_TrendHideNextMonth',true) == true) {MTP.isHidden = true;}
+        MF_QueueAddTitle(MTP);
+        await BuildTrendData('fu',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
+
         await WriteCompareData();
     }
     MTSpawnProcess = 1;
@@ -1698,6 +1705,7 @@ async function WriteCompareData() {
                  TrendQueue[i].N_LAST = TrendQueue[i].N_LAST * -1;
                  TrendQueue[i].N_CURRENTM = TrendQueue[i].N_CURRENTM * -1;
                  TrendQueue[i].N_LASTM = TrendQueue[i].N_LASTM * -1;
+                 TrendQueue[i].N_FUTURE = TrendQueue[i].N_FUTURE * -1;
                  MTP.BasedOn = 2;
                  MTP.Section = 4;
                  useURL = '#|spending|';
@@ -1734,6 +1742,7 @@ async function WriteCompareData() {
             MTFlexRow[MTFlexCR][MTFields+4] = TrendQueue[i].N_LAST;
             MTFlexRow[MTFlexCR][MTFields+5] = TrendQueue[i].N_CURRENT;
             MTFlexRow[MTFlexCR][MTFields+6] = TrendQueue[i].N_CURRENT - TrendQueue[i].N_LAST;
+            MTFlexRow[MTFlexCR][MTFields+7] = TrendQueue[i].N_FUTURE;
          }
     }
     MF_GridRollup(1,2,1,'Income');
@@ -1818,15 +1827,17 @@ function Trend_UpdateQueue(useID,useAmount,inCol) {
                 case 'lp':TrendQueue[i].N_LAST = useAmount;break;
                 case 'cm':TrendQueue[i].N_CURRENTM = useAmount;break;
                 case 'lm':TrendQueue[i].N_LASTM = useAmount;break;
+                case 'fu':TrendQueue[i].N_FUTURE = useAmount;break;
             }
             return;
         }
     }
     switch(inCol) {
-        case 'cp':TrendQueue.push({"ID": useID,"N_CURRENT": useAmount,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": 0});break;
-        case 'lp':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": useAmount, "N_CURRENTM": 0, "N_LASTM": 0});break;
-        case 'cm':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": useAmount, "N_LASTM": 0});break;
-        case 'lm':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": useAmount});break;
+        case 'cp':TrendQueue.push({"ID": useID,"N_CURRENT": useAmount,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": 0});break;
+        case 'lp':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": useAmount, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": 0});break;
+        case 'cm':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": useAmount, "N_LASTM": 0, "N_FUTURE": 0});break;
+        case 'lm':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": useAmount, "N_FUTURE": 0});break;
+        case 'fu':TrendQueue.push({"ID": useID,"N_CURRENT": 0,"N_LAST": 0, "N_CURRENTM": 0, "N_LASTM": 0, "N_FUTURE": useAmount});break;
     }
 }
 
@@ -2324,6 +2335,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('By Month "Avg" ignores Current Month','MT_TrendIgnoreCurrent','checkbox');
             MenuDisplay_Input('Hide percentage of Income & Spending','MT_TrendHidePer1','checkbox');
             MenuDisplay_Input('Hide percentage of Difference','MT_TrendHidePer2','checkbox');
+            MenuDisplay_Input('Hide next month (Based on last year)','MT_TrendHideNextMonth','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
             MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
@@ -2803,9 +2815,12 @@ function getDates(InValue,InDate) {
         case 'd_Minus5Years':d.setDate(1);d.setFullYear(d.getFullYear() - 5);return d;
         case 'd_StartofMonth':d.setDate(1);return d;
         case 'd_EndofMonth':day = daysInMonth(month,year); d.setDate(day);return d;
+        case 'd_StartofNextMonthLY':month+=1;d.setMonth(month);d.setDate(1);d.setYear(year-1);return d;
+        case 'd_EndofNextMonthLY':month+=1;day = daysInMonth(month,year); d.setMonth(month);d.setDate(day);d.setYear(year-1);return d;
         case 'd_StartOfYear':d.setDate(1);d.setMonth(0);return d;
         case 's_FullDate':return(getMonthName(month,true) + ' ' + day + ', ' + year );
         case 's_ShortDate':return(getMonthName(month,true) + ' ' + day);
+        case 's_MidDate':return(getMonthName(month,true) + ' ' + year);
         case 'd_ThisQTRs':
             if(month < 3) {month = 0;}
             if(month == 4 || month == 5) {month = 3;}
