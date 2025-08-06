@@ -1,3 +1,7 @@
+**Version 3.32:**
+
+* NEW: Added Next Month (based on last year) to Reports / Trends. (Can be turned off in Settings)
+
 **Version 3.31:**
 
 * REGRESSION: Transaction screen "Pending in Red" and "Compressed" stopped working.
