@@ -1,6 +1,8 @@
-**Version 3.32:**
+**Version 3.32 (beta):**
 
 * NEW: Added Next Month (based on last year) to Reports / Trends. (Can be turned off in Settings)
+
+* NEW: Added past Credit Score to Credit Score Dashboard ("Was 790 on Aug 7" for example)
 
 **Version 3.31:**
 
