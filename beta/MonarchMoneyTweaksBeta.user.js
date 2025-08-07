@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.32.02
+// @version      3.32.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.32.02';
+const version = '3.32.03';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2360,8 +2360,6 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Hide percentage of Income & Spending','MT_TrendHidePer1','checkbox');
             MenuDisplay_Input('Hide percentage of Difference','MT_TrendHidePer2','checkbox');
             MenuDisplay_Input('Hide next month (Based on last year)','MT_TrendHideNextMonth','checkbox');
-            MenuDisplay_Input('Ignore "Flexible Spending" in next month','MT_TrendHideNextMonthFlex','checkbox','margin-left: 22px;');
-            MenuDisplay_Input('Ignore "Non-Monthly Spending" in next month','MT_TrendHideNextMonthNM','checkbox','margin-left: 22px;');
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
             MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
