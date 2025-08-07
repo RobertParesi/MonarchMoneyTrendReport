@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.32.03
+// @version      3.32.04
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.32.03';
+const version = '3.32.04';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2086,7 +2086,9 @@ function MenuCreditScore() {
         }
         ocs = getCookie('MT_CreditScoreOld',false);
         if(ocs != '' && ocs != cs) {
-            cec('div','MTCreditScore',el,'(Was ' + getCookie('MT_CreditScoreOld',false) + ' on ' + getCookie('MT_CreditScoreDate',false) + ')','','font-size: 13px;margin-left: 10px;');
+            let lit = cs > ocs ? 'Up' : 'Down';
+            el = el.parentNode.parentNode.parentNode;
+            cec('div','MTCreditScore',el,lit + ' from ' + getCookie('MT_CreditScoreOld',false) + ' on ' + getCookie('MT_CreditScoreDate',false),'','font-size: 13px;text-align: right; width: 100%;');
         }
     }
 }
