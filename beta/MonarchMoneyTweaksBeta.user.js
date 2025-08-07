@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.32.01
+// @version      3.32.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.32.01';
+const version = '3.32.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2066,6 +2066,27 @@ function MenuTrendsHistoryExport() {
     });
     downloadFile('Monarch Trends History ' + getDates('s_FullDate'),csvContent);
 }
+// [ Credit Score ]
+function MenuCreditScore() {
+
+    let el = document.querySelector('[class*="Pill__Root-sc"]');
+    if(!el) { MTSpawnProcess = 8;return;}
+
+    const cs = el.nextElementSibling.innerText;
+    if(cs) {
+        let ocs = getCookie('MT_CreditScore',false);
+
+        if(cs != ocs) {
+            setCookie('MT_CreditScore',cs);
+            setCookie('MT_CreditScoreOld',ocs);
+            setCookie('MT_CreditScoreDate',getDates('s_ShortDate'));
+        }
+        ocs = getCookie('MT_CreditScoreOld',false);
+        if(ocs != '' && ocs != cs) {
+            cec('div','',el,'(Was ' + getCookie('MT_CreditScoreOld',false) + ' on ' + getCookie('MT_CreditScoreDate',false) + ')','','font-size: 13px;margin-left: 10px;');
+        }
+    }
+}
 
 // [ Budgets ]
 async function MenuPlanRefresh() {
@@ -2336,6 +2357,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Hide percentage of Income & Spending','MT_TrendHidePer1','checkbox');
             MenuDisplay_Input('Hide percentage of Difference','MT_TrendHidePer2','checkbox');
             MenuDisplay_Input('Hide next month (Based on last year)','MT_TrendHideNextMonth','checkbox');
+            MenuDisplay_Input('Ignore "Flexible Spending" in next month','MT_TrendHideNextMonthFlex','checkbox','margin-left: 22px;');
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
             MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
@@ -2343,7 +2365,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Hide accounts marked as "Hide balance from net worth"','MT_AccountsHidden2','checkbox');
             MenuDisplay_Input('Hide Last Updated','MT_AccountsHideUpdated','checkbox');
             MenuDisplay_Input('Hide Net Change','MT_AccountsHidePer1','checkbox');
-            MenuDisplay_Input('Hide percentage of Net Change','MT_AccountsHidePer2','checkbox');
+            MenuDisplay_Input('Hide percentage of Net Change','MT_AccountsHidePer2','checkbox','margin-left: 22px;');
             MenuDisplay_Input('Hide Pending & Projected Balance information','MT_AccountsHidePending','checkbox');
             MenuDisplay_Input('Show total Checking card','MT_AccountsCard0','checkbox');
             MenuDisplay_Input('Show total Savings card','MT_AccountsCard1','checkbox');
@@ -2453,6 +2475,7 @@ function MenuCheckSpawnProcess() {
             case 3:
                 MenuPlanRefresh();
                 MenuPlanBudgetReorder();
+                MTSpawnProcess = 8;
                 break;
             case 4:
                 MenuAccountsSummary();
@@ -2462,6 +2485,9 @@ function MenuCheckSpawnProcess() {
                 break;
             case 7:
                 MM_SplitTransaction();
+                break;
+            case 8:
+                MenuCreditScore();
                 break;
         }
     }
