@@ -2069,8 +2069,11 @@ function MenuTrendsHistoryExport() {
 // [ Credit Score ]
 function MenuCreditScore() {
 
-    let el = document.querySelector('[class*="Pill__Root-sc"]');
-    if(!el) { MTSpawnProcess = 8;return;}
+    let el = document.querySelector('MTCreditScore');
+    if(el) return;
+
+    el = document.querySelector('[class*="Pill__Root-sc"]');
+    if(!el) { MTSpawnProcess = 3;return;}
 
     const cs = el.nextElementSibling.innerText;
     if(cs) {
@@ -2083,7 +2086,7 @@ function MenuCreditScore() {
         }
         ocs = getCookie('MT_CreditScoreOld',false);
         if(ocs != '' && ocs != cs) {
-            cec('div','',el,'(Was ' + getCookie('MT_CreditScoreOld',false) + ' on ' + getCookie('MT_CreditScoreDate',false) + ')','','font-size: 13px;margin-left: 10px;');
+            cec('div','MTCreditScore',el,'(Was ' + getCookie('MT_CreditScoreOld',false) + ' on ' + getCookie('MT_CreditScoreDate',false) + ')','','font-size: 13px;margin-left: 10px;');
         }
     }
 }
@@ -2366,7 +2369,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Hide accounts marked as "Hide balance from net worth"','MT_AccountsHidden2','checkbox');
             MenuDisplay_Input('Hide Last Updated','MT_AccountsHideUpdated','checkbox');
             MenuDisplay_Input('Hide Net Change','MT_AccountsHidePer1','checkbox');
-            MenuDisplay_Input('Hide percentage of Net Change','MT_AccountsHidePer2','checkbox','margin-left: 22px;');
+            MenuDisplay_Input('Hide percentage of Net Change','MT_AccountsHidePer2','checkbox');
             MenuDisplay_Input('Hide Pending & Projected Balance information','MT_AccountsHidePending','checkbox');
             MenuDisplay_Input('Show total Checking card','MT_AccountsCard0','checkbox');
             MenuDisplay_Input('Show total Savings card','MT_AccountsCard1','checkbox');
@@ -2476,7 +2479,7 @@ function MenuCheckSpawnProcess() {
             case 3:
                 MenuPlanRefresh();
                 MenuPlanBudgetReorder();
-                MTSpawnProcess = 8;
+                MenuCreditScore();
                 break;
             case 4:
                 MenuAccountsSummary();
@@ -2488,7 +2491,6 @@ function MenuCheckSpawnProcess() {
                 MM_SplitTransaction();
                 break;
             case 8:
-                MenuCreditScore();
                 break;
         }
     }
