@@ -2358,6 +2358,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Hide percentage of Difference','MT_TrendHidePer2','checkbox');
             MenuDisplay_Input('Hide next month (Based on last year)','MT_TrendHideNextMonth','checkbox');
             MenuDisplay_Input('Ignore "Flexible Spending" in next month','MT_TrendHideNextMonthFlex','checkbox','margin-left: 22px;');
+            MenuDisplay_Input('Ignore "Non-Monthly Spending" in next month','MT_TrendHideNextMonthNM','checkbox','margin-left: 22px;');
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
             MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
