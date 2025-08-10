@@ -2,6 +2,8 @@
 
 * NEW: Reports / Trends - Added Next Month Last Year column (Settings)
 
+* NEW: Reports / Accounts - Better flexibility for Start, End and AsOf dates.
+
 * NEW: Added past Credit Score to Credit Score Dashboard ("Was 790 on Aug 7" for example)
 
 **Version 3.31:**
