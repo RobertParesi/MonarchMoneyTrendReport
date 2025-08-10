@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.32.06
+// @version      3.32.07
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.32.06';
+const version = '3.32.07';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1031,6 +1031,7 @@ async function MenuReportsAccountsGo() {
     let skipHidden = getCookie('MT_AccountsHidden',true);
     let skipHidden2 = getCookie('MT_AccountsHidden2',true);
     let AccountGroupFilter = getAccountGroupFilter();
+    let snapshotData5 = null;
     if(MTFlex.Button2 > 1) {await MenuReportsAccountsGoExt();} else {await MenuReportsAccountsGoStd();}
     MTSpawnProcess = 1;
 
@@ -1040,7 +1041,7 @@ async function MenuReportsAccountsGo() {
         let CurMonth = getDates('n_CurMonth',MTFlexDate2),CurYear = 0;
         let NumMonths = (MTFlex.Button2 == 2) ? 6 : 12;
         let useDate = getDates('d_Minus1Year',MTFlexDate2);
-
+        let isToday = getDates('isToday',MTFlexDate2);
         MTFlex.Title2 = 'Last ' + NumMonths + ' Months as of ' + getDates('s_FullDate',MTFlexDate2);
         MTFlex.Title3 = '(Based on beginning of each month)';
 
@@ -1068,9 +1069,10 @@ async function MenuReportsAccountsGo() {
         }
         MTFlex.RequiredCols = [3,4,5,6,7,8,9,10,11,12,13,14,15];
         MTP.isHidden = false;
-        MTP.Column = 15; MTP.Title = 'Current';MF_QueueAddTitle(MTP);
+        MTP.Column = 15; MTP.Title = getDates('s_ShortDate',MTFlexDate2);MF_QueueAddTitle(MTP);
         MTP.Column = 16; MTP.Title = 'Average';MF_QueueAddTitle(MTP);
         snapshotData = await getAccountsData();
+        if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
         for (let i = 0; i < snapshotData.accounts.length; i += 1) {
             if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + snapshotData.accounts[i].id,false)) {
                 if(snapshotData.accounts[i].hideFromList == false || skipHidden == 0) {
@@ -1083,7 +1085,11 @@ async function MenuReportsAccountsGo() {
                         MTFlexRow[MTFlexCR][MTFields] = snapshotData.accounts[i].displayName;
                         MTFlexRow[MTFlexCR][MTFields+1] = snapshotData.accounts[i].subtype.display;
                         MTFlexRow[MTFlexCR][MTFields+2] = accountName;
-                        MTFlexRow[MTFlexCR][MTFields+15] = Number(snapshotData.accounts[i].displayBalance);
+                        if(isToday == true) {
+                             MTFlexRow[MTFlexCR][MTFields+15] = Number(snapshotData.accounts[i].displayBalance);
+                        } else {
+                            MTFlexRow[MTFlexCR][MTFields+15] = getAccountPrevBalance(MTP.UID);
+                        }
                     }
                 }
             }
@@ -1125,7 +1131,7 @@ async function MenuReportsAccountsGo() {
 
     async function MenuReportsAccountsGoStd(){
 
-        let snapshotData = null, snapshotData2 = null, snapshotData3 = null,snapshotData4 = null,snapshotData5 = null;
+        let snapshotData = null, snapshotData2 = null, snapshotData3 = null,snapshotData4 = null;
         let cards = 0,acard=[0,0,0,0,0];
         let isToday = getDates('isToday',MTFlexDate2);
         let NetWorthLit = 'Net Worth/Totals';
@@ -1283,12 +1289,14 @@ async function MenuReportsAccountsGo() {
             }
             amt = amt * -1;return amt;
         }
-        function getAccountPrevBalance(inId) {
-            for (let k = 0; k < snapshotData5.accounts.length; k++) {
-                if(snapshotData5.accounts[k].id == inId ) { return snapshotData5.accounts[k].displayBalance; }
-            }
-            return 0;
+
+    }
+
+    function getAccountPrevBalance(inId) {
+        for (let k = 0; k < snapshotData5.accounts.length; k++) {
+            if(snapshotData5.accounts[k].id == inId ) { return snapshotData5.accounts[k].displayBalance; }
         }
+        return 0;
     }
 
     function getAccountPrimaryKey(inAsset,inDisplay,inSubDisplay) {
