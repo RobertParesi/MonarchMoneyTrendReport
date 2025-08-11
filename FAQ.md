@@ -63,6 +63,10 @@ If your accounts are designated as either yours personally, your partner's perso
 
 If your accounts are designated as accounts you can touch (taxable) versus IRAs and other Tax Deferred accounts, you could assign each checking, savings, investment, etc. account with either "Taxable" or "Tax Deferred". 
 
+**Managed and Non Managed**
+
+If some accounts are managed by an advisor and some are not, you can assign "Managed" and "Non Managed" to different accounts to compare performance of both types of accounts. 
+
 **Family vs Kids**
 
 If there are future investments or credit cards your kids use, you could designate with "Family" or "Kids".
