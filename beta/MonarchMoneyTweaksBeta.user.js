@@ -21,7 +21,7 @@ const FlexOptions = ['Trends','Accounts','Tags'];
 const MTFields = 13;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexCR = 0, MTFlexDetails = null, MTP = null, MTFlexSum = [0,0];
-let MTFlexDate1 = new Date(), MTFlexDate2 = new Date(), MTFlexDate2Checkbox = false;
+let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
 
 function MM_Init() {
 
@@ -2653,17 +2653,24 @@ function onClickCloseDrawer() {
     let divs = null,returnV=false;
     switch(event.target.innerText) {
         case 'Apply':
+            if(MTFlex.TriggerEvent == 2) {
+                let lv = null,hv=null;
+                divs = document.querySelectorAll('input.MTInputClass');
+                for (let i = 0; i < divs.length; ++i) {
+                    if(i == 0) lv = divs[i].value;
+                    if(i == 1) hv = divs[i].value;
+                }
+                if(lv > hv) {divs[0].style = 'color:red';return;}
+            }
+
             divs = document.querySelectorAll('input.MTInputClass');
             for (let i = 0; i < divs.length; ++i) {
                 let value = divs[i].value;
                 if(MTFlex.TriggerEvent == 3) {
-                    MTFlexDate2 = unformatQueryDate(value);
-                    setCookie(MTFlex.Name + 'HigherDate',formatQueryDate(MTFlexDate2));
+                    MTFlexDate2 = unformatQueryDate(value);setCookie(MTFlex.Name + 'HigherDate',formatQueryDate(MTFlexDate2));
                 } else {
-                    if(i == 0) MTFlexDate1 = unformatQueryDate(value);
-                    if(i == 1) MTFlexDate2 = unformatQueryDate(value);
-                    setCookie(MTFlex.Name + 'LowerDate',formatQueryDate(MTFlexDate1));
-                    setCookie(MTFlex.Name + 'HigherDate',formatQueryDate(MTFlexDate2));
+                    if(i == 0) {MTFlexDate1 = unformatQueryDate(value);setCookie(MTFlex.Name + 'LowerDate',formatQueryDate(MTFlexDate1));}
+                    if(i == 1) {MTFlexDate2 = unformatQueryDate(value);setCookie(MTFlex.Name + 'HigherDate',formatQueryDate(MTFlexDate2));}
                 }
             }
             divs = document.querySelector('input.MTDateCheckbox');
@@ -2709,11 +2716,7 @@ function onClickSetupDropdown(et) {
 function onClickLastNumber() {
 
     const id = document.querySelector('input.NumericInput__Input-sc-1km21mm-0');
-    if(id) {
-        id.type = 'Number';
-        id.min = 0;
-        id.max = 365;
-    }
+    if(id) {id.type = 'Number';id.min = 0; id.max = 365;}
 }
 function onClickSumCells() {
     let x = Number(getCleanValue(event.target.textContent,2));
@@ -2757,13 +2760,8 @@ function onClickMTFlexBig() {
         inputs.push({'NAME': 'As of Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2)});
         MT_GetInput(inputs);
     } else {
-        if(getDates('isToday',MTFlexDate2)) {
-            MTFlexDate1 = getDates('d_StartofLastMonth');
-            MTFlexDate2 = getDates('d_EndofLastMonth');
-        } else {
-            MTFlexDate1 = getDates('d_StartofMonth');
-            MTFlexDate2 = getDates('d_Today');
-        }
+        if(getDates('isToday',MTFlexDate2)) { MTFlexDate1 = getDates('d_StartofLastMonth'); MTFlexDate2 = getDates('d_EndofLastMonth');
+        } else { MTFlexDate1 = getDates('d_StartofMonth'); MTFlexDate2 = getDates('d_Today');}
         MenuReportsGo(MTFlex.Name);
     }
 }
