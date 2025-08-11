@@ -2660,7 +2660,7 @@ function onClickCloseDrawer() {
                     if(i == 0) lv = divs[i].value;
                     if(i == 1) hv = divs[i].value;
                 }
-                if(lv > hv) {divs[0].style = 'color:red';return;}
+                if(lv > hv) {divs[0].style = css_red;return;}
             }
 
             divs = document.querySelectorAll('input.MTInputClass');
