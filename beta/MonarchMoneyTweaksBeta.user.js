@@ -888,11 +888,10 @@ async function MenuReportsTagsGo() {
     let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false;
 
     MF_GridInit('MTTags', 'Tags');
-    MF_SetupDates();
-
     MTFlex.Title1 = 'Net Income Report by Tags';
     MTFlex.TriggerEvent = 2;
     MTFlex.TriggerEvents = false;
+    MF_SetupDates();
     MF_GridOptions(1,['By group','By category','By both']);
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MF_GridOptions(2,['Ignore Hidden Transactions','Include Hidden Transactions','Only Hidden Transactions']);
@@ -1020,10 +1019,9 @@ async function MenuReportsAccountsGo() {
     await MF_GridInit('MTAccounts', 'Accounts');
     MTFlex.Title1 = 'Accounts Report';
     MTFlex.SortSeq = ['1','2','3','4','5','6'];
-
     if(MTFlex.Button2 == 0) { MTFlex.TriggerEvent = 2;} else { MTFlex.TriggerEvent = 3; }
-    MF_SetupDates();
     MTFlex.TriggerEvents = false;
+    MF_SetupDates();
     MF_GridOptions(1,['Hide subtotals','Subtotal on Type','Subtotal on Group']);
     MF_GridOptions(2,['Standard Report','Personal Statement','Last 6 months with average','Last 12 months with average','This year with average','Last 3 years with average']);
     MF_GridOptions(4,getAccountGroupInfo());
