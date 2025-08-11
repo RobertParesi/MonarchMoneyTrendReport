@@ -43,7 +43,7 @@ Having been available for over a year to members of the Monarch Money community,
 
 Account Groups allow you to break out your transactions (Income & Expenses) as well as your Accounts (Assets & Liabilities).
 
-There are four scenerios that people can use them in:
+There are different scenerios that Monarch Money users use them in:
 
     * Personal vs Business
     * Household Members
