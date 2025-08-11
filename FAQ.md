@@ -49,6 +49,8 @@ There are four scenerios that people can use them in:
     * Household Members
     * Tax and Tax Deferred
     * Family vs Kids
+    * Managed vs Non Managed
+    
     
 
 **Personal & Business**
