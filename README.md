@@ -20,7 +20,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 * **Reports / Accounts**
      - Summarize all your Account balances
-     - Compare to different time periods (This week, Last two weeks, This month, 3 months, 6 months, 1 year, 2 years and 3 years)
+     - Compare to different time periods 
      - Show Monthly Account balances with average for current year, last 6 months or last 12 months
      - Quickly view total amount owed on credit cards and other Checking and Credit card balances
      - View Income, Expenses and Transfers done by Account for the current month
