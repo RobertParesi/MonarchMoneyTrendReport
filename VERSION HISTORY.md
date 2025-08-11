@@ -4,7 +4,7 @@
 
 * NEW: Reports / Accounts - Better flexibility for Start, End and AsOf dates.
 
-* NEW: Reports / Tags - Better flexibility for Start, End dates.
+* NEW: Reports / Tags - Better flexibility for Start and End dates.
 
 * NEW: Added past Credit Score to Credit Score Dashboard ("Was 798 on Aug 7" for example)
 
