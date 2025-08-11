@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.32.07
+// @version      3.32.09
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.32.07';
+const version = '3.32.09';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -21,7 +21,7 @@ const FlexOptions = ['Trends','Accounts','Tags'];
 const MTFields = 13;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexCR = 0, MTFlexDetails = null, MTP = null, MTFlexSum = [0,0];
-let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
+let MTFlexDate1 = new Date(), MTFlexDate2 = new Date(), MTFlexDate2Checkbox = false;
 
 function MM_Init() {
 
@@ -54,7 +54,7 @@ function MM_Init() {
     addStyle('.MTWait2 {font-size: 18px; font-weight: 500; font: "Oracle", sans-serif; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
     addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, sans-serif, "Oracle" !important; font-size: 15px; font-weight: 200;}');
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTCheckboxClass, .MTFlexCheckbox {width: 19px; height: 19px; margin-right: 10px;float: inline-start; color: #FFFFFF; accent-color: ' + accentColor + '}');
+    addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTDateCheckbox {width: 19px; height: 19px; margin-right: 10px;float: inline-start; color: #FFFFFF; accent-color: ' + accentColor + '}');
     addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; height: 8px; border-bottom: 1px solid ' + lineForground +';}');
     addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
     addStyle('.MT' + FlexOptions.join(':hover, .MT') + ':hover {cursor:pointer;}');
@@ -143,19 +143,17 @@ function MM_flipSideElement(inCookie) {
 }
 
 // [ Flex Queue MF_ Called externally, MT_ used internally]
+
 function MF_SetupDates() {
+
+    let ckd = getCookie(MTFlex.Name + 'LowerDate',false);
     if(MTFlex.TriggerEvent == 2) {
-        let ckd = getCookie(MTFlex.Name + 'LowerDate');
         if(ckd == '') ckd = 'd_StartofMonth';
         if(ckd.startsWith('d_')) {MTFlexDate1 = getDates(ckd)} else {MTFlexDate1 = unformatQueryDate(ckd);}
-        ckd = getCookie(MTFlex.Name + 'HigherDate');
-        if(ckd == '') ckd = 'd_EndofMonth';
-        if(ckd.startsWith('d_')) {MTFlexDate2 = getDates(ckd)} else {MTFlexDate2 = unformatQueryDate(ckd);}
-    } else {
-        let ckd = getCookie(MTFlex.Name + 'AsOfDate');
-        if(ckd == '') ckd = 'd_Today';
-        if(ckd.startsWith('d_')) {MTFlexDate2 = getDates(ckd)} else {MTFlexDate2 = unformatQueryDate(ckd);}
     }
+    ckd = getCookie(MTFlex.Name + 'HigherDate',false);
+    if(ckd == '') ckd = 'd_Today';
+    if(ckd.startsWith('d_')) {MTFlexDate2 = getDates(ckd)} else {MTFlexDate2 = unformatQueryDate(ckd);}
 }
 
 function MF_QueueAddTitle(p) {
@@ -595,8 +593,15 @@ function MT_GetInput(inputs) {
     for (let i = 0; i < inputs.length; i += 1) {
         let div2 = cec('div','MTInputDesc',div);
         cec('div','',div2,inputs[i].NAME,'','font-weight: 600;padding: 6px;');
-        div2 = cec('input','MTInputClass',div2,'','','','type',inputs[i].TYPE);
-        div2.value = inputs[i].VALUE;
+        let div3 = cec('input','MTInputClass',div2,'','','','type',inputs[i].TYPE);
+        div3.value = inputs[i].VALUE;
+        if(i == inputs.length-1) {
+            div2 = cec('div','MTdropdown',div2);
+            div2 = cec('label','',div2,"Always use today's date",'','margin-top: 10px; font-size: 14px; font-weight: 600; display: inline-block;','htmlFor','TodayDate');
+            div2 = cec('input','MTDateCheckbox',div2,'','','margin-top: 2px;','id','TodayDate');
+            div2.type = 'checkbox';if(getCookie(MTFlex.Name + 'HigherDate',false) == 'd_Today') {div2.checked = true;}
+        }
+
     }
     div = cec('span','MTSideDrawerHeader',topDiv,'','');
     cec('button','MTInputButton',div,'Last Month','','float:left;margin-left: 0px;');
@@ -2655,7 +2660,7 @@ function onClickCloseDrawer() {
                 let value = divs[i].value;
                 if(MTFlex.TriggerEvent == 3) {
                     MTFlexDate2 = unformatQueryDate(value);
-                    setCookie(MTFlex.Name + 'AsOfDate',formatQueryDate(MTFlexDate2));
+                    setCookie(MTFlex.Name + 'HigherDate',formatQueryDate(MTFlexDate2));
                 } else {
                     if(i == 0) MTFlexDate1 = unformatQueryDate(value);
                     if(i == 1) MTFlexDate2 = unformatQueryDate(value);
@@ -2663,24 +2668,18 @@ function onClickCloseDrawer() {
                     setCookie(MTFlex.Name + 'HigherDate',formatQueryDate(MTFlexDate2));
                 }
             }
+            divs = document.querySelector('input.MTDateCheckbox');
+            if(divs) {if(divs.checked == true) {setCookie(MTFlex.Name + 'HigherDate','d_Today');}}
             returnV = true;
             break;
         case 'Last Month':
-            if(MTFlex.TriggerEvent == 3) {
-                setCookie(MTFlex.Name + 'AsOfDate','d_EndofLastMonth');
-            } else {
-                setCookie(MTFlex.Name + 'LowerDate','d_StartofLastMonth');
-                setCookie(MTFlex.Name + 'HigherDate','d_EndofLastMonth');
-            }
+            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_StartofLastMonth');}
+            setCookie(MTFlex.Name + 'HigherDate','d_EndofLastMonth');
             returnV = true;
             break;
         case 'This Month':
-            if(MTFlex.TriggerEvent == 3) {
-                setCookie(MTFlex.Name + 'AsOfDate','d_Today');
-            } else {
-                setCookie(MTFlex.Name + 'LowerDate','d_StartofMonth');
-                setCookie(MTFlex.Name + 'HigherDate','d_Today');
-            }
+            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_StartofMonth');}
+            setCookie(MTFlex.Name + 'HigherDate','d_Today');
             returnV = true;
             break;
     }
@@ -2757,7 +2756,7 @@ function onClickMTFlexBig() {
         inputs.push({'NAME': 'Higher Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2)});
         MT_GetInput(inputs);
     } else if (MTFlex.TriggerEvent == 3) {
-        inputs.push({'NAME': 'Higher Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2)});
+        inputs.push({'NAME': 'As of Date', 'TYPE': 'date', 'VALUE': formatQueryDate(MTFlexDate2)});
         MT_GetInput(inputs);
     } else {
         if(getDates('isToday',MTFlexDate2)) {
