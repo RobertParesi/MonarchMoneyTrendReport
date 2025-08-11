@@ -48,8 +48,8 @@ There are different scenerios that Monarch Money users use them in:
     * Personal vs Business
     * Household Members
     * Tax and Tax Deferred
-    * Family vs Kids
     * Managed vs Non Managed
+    * Family vs Kids
     
     
 
