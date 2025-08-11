@@ -27,6 +27,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
      - Filter Accounts by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
      - Sort accounts data by any column and export it to Excel or Numbers.
      - Generate a simple Personal Net Worth report for Loan Applications.
+     - Click on date header to change date range. 
        
 * **Reports / Tags**
      - Summarize all your Transactions by Tags
