@@ -1,4 +1,4 @@
-**Version 3.32 (beta):**
+**Version 3.32:**
 
 * NEW: Reports / Trends - Added Next Month Last Year column (Settings)
 
