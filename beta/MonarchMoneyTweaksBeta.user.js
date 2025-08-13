@@ -1047,7 +1047,7 @@ async function MenuReportsAccountsGo() {
         let isToday = getDates('isToday',MTFlexDate2);
         MTFlex.Title2 = 'Last ' + NumMonths + ' Months as of ' + getDates('s_FullDate',MTFlexDate2);
         const useEOM = getCookie('MT_AccountsEOM',true);
-        if(useEOM == true) { MTFlex.Title3 = '(Based on beginning of each month)';} else {MTFlex.Title3 = '(Based on end of each month)';}
+        if(useEOM == true) { MTFlex.Title3 = '(Based on end of each month)';} else {MTFlex.Title3 = '(Based on beginning of each month)';}
 
         MTP.Column = 1; MTP.Title = 'Type'; MF_QueueAddTitle(MTP);
         MTP.Column = 2; MTP.Title = 'Group';MTP.Format = 0;MF_QueueAddTitle(MTP);
@@ -2402,7 +2402,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Show total Credit Card Liability card','MT_AccountsCard2','checkbox');
             MenuDisplay_Input('Show total Investments card','MT_AccountsCard3','checkbox');
             MenuDisplay_Input('Show total 401k card','MT_AccountsCard4','checkbox');
-            MenuDisplay_Input('Month balances are "Based on beginning of each month" instead of "Based on end of each month"','MT_AccountsEOM','checkbox');
+            MenuDisplay_Input('Month balances are "Based on end of each month" instead of "Based on beginning of each month"','MT_AccountsEOM','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
             MenuDisplay_Input('Budget','','spacer');
             MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
