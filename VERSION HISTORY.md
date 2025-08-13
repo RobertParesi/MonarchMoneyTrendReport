@@ -1,3 +1,7 @@
+**Version 3.33 (beta):**
+
+* NEW: Reports / Accounts extended reports can be based on "End of Month" or "Beginning of Month" (Settings)
+
 **Version 3.32:**
 
 * NEW: Reports / Trends - Added Next Month Last Year column (Settings)
