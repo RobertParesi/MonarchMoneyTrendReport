@@ -1,4 +1,4 @@
-**Version 3.33 (beta):**
+**Version 3.33:**
 
 * NEW: Reports / Accounts extended reports can be based on "End of Month" or "Beginning of Month" (Settings)
 
