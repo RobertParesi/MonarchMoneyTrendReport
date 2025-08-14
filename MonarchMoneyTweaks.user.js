@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.32
+// @version      3.33
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.32';
+const version = '3.33';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -149,11 +149,11 @@ function MF_SetupDates() {
     let ckd = getCookie(MTFlex.Name + 'LowerDate',false);
     if(MTFlex.TriggerEvent == 2) {
         if(ckd == '') ckd = 'd_StartofMonth';
-        if(ckd.startsWith('d_')) {MTFlexDate1 = getDates(ckd)} else {MTFlexDate1 = unformatQueryDate(ckd);}
+        if(ckd.startsWith('d_')) {MTFlexDate1 = getDates(ckd);} else {MTFlexDate1 = unformatQueryDate(ckd);}
     }
     ckd = getCookie(MTFlex.Name + 'HigherDate',false);
     if(ckd == '') ckd = 'd_Today';
-    if(ckd.startsWith('d_')) {MTFlexDate2 = getDates(ckd)} else {MTFlexDate2 = unformatQueryDate(ckd);}
+    if(ckd.startsWith('d_')) {MTFlexDate2 = getDates(ckd);} else {MTFlexDate2 = unformatQueryDate(ckd);}
 }
 
 function MF_QueueAddTitle(p) {
@@ -1046,7 +1046,8 @@ async function MenuReportsAccountsGo() {
         let useDate = getDates('d_Minus1Year',MTFlexDate2);
         let isToday = getDates('isToday',MTFlexDate2);
         MTFlex.Title2 = 'Last ' + NumMonths + ' Months as of ' + getDates('s_FullDate',MTFlexDate2);
-        MTFlex.Title3 = '(Based on beginning of each month)';
+        const useEOM = getCookie('MT_AccountsEOM',true);
+        if(useEOM == true) { MTFlex.Title3 = '(Based on end of each month)';} else {MTFlex.Title3 = '(Based on beginning of each month)';}
 
         MTP.Column = 1; MTP.Title = 'Type'; MF_QueueAddTitle(MTP);
         MTP.Column = 2; MTP.Title = 'Group';MTP.Format = 0;MF_QueueAddTitle(MTP);
@@ -1098,9 +1099,11 @@ async function MenuReportsAccountsGo() {
             }
         }
         if(debug == 1) console.log('MenuReportsAccountsGoExt',snapshotData,MTFlexRow,MTFlex);
+        let workDate = null;
         for (let i = 0; i < 12; i += 1) {
             let used = false;
-            snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(useDate));
+            if(useEOM == true) {workDate = getDates('d_EndofMonth',useDate);} else {workDate = useDate;}
+            snapshotData3 = await getDisplayBalanceAtDateData(formatQueryDate(workDate));
             for (let j = 0; j < snapshotData3.accounts.length; j += 1) {
                 MF_GridUpdateUID(snapshotData3.accounts[j].id,i+3,snapshotData3.accounts[j].displayBalance,false);
                 if(snapshotData3.accounts[j].displayBalance != null) {used = true;}
@@ -2399,6 +2402,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Show total Credit Card Liability card','MT_AccountsCard2','checkbox');
             MenuDisplay_Input('Show total Investments card','MT_AccountsCard3','checkbox');
             MenuDisplay_Input('Show total 401k card','MT_AccountsCard4','checkbox');
+            MenuDisplay_Input('Month balances are "Based on end of each month" instead of "Based on beginning of each month"','MT_AccountsEOM','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
             MenuDisplay_Input('Budget','','spacer');
             MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
