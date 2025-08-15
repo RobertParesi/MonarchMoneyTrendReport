@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.33
+// @version      3.34
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.33';
+const version = '3.34';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1456,14 +1456,16 @@ async function MenuReportsTrendsGo() {
     MTFlex.TriggerEvent = 1;
     MTFlex.TriggerEvents = true;
     MF_GridOptions(1,['By group','By category','By both']);
-    MF_GridOptions(2,['Compare last month','Compare same month','Compare same quarter','This year by month','Last year by month','Last 12 months by month', 'Two years ago by month', 'Three years ago by month', 'All years by year']);
+    MF_GridOptions(2,['Compare last month','Compare same month','Compare same quarter','This year by month','Last year by month','Last 12 months by month', 'Two years ago by month', 'Three years ago by month', 'All years by year','All years by YTD']);
     MF_GridOptions(4,getAccountGroupInfo());
-    MTFlex.SortSeq = ['1','1','1','2','2','2','2','2','2'];
+    MTFlex.SortSeq = ['1','1','1','2','2','2','2','2','2','2'];
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
         CurrentFilter = getAccountGroupFilter();
         CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
     }
+
+    MTFlex.Title1 = 'Net Income Trend Report';
 
     MTP = [];
     MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
@@ -1475,7 +1477,6 @@ async function MenuReportsTrendsGo() {
         MF_QueueAddTitle(MTP);
         MTP.Column = 14; MTP.Title = 'Avg';
         MF_QueueAddTitle(MTP);
-        MTFlex.Title1 = 'Net Income Trend Report by Month';
         let newCol = 1;
         if(MTFlex.Button2 == 3) {
             if(getCookie('MT_TrendIgnoreCurrent',true) == 1) { MTFlex.Title3 = '* Average ignores Current Month'; }
@@ -1496,7 +1497,7 @@ async function MenuReportsTrendsGo() {
                 newCol+=1;
                 MF_QueueAddTitle(MTP);
             }
-        } else if (MTFlex.Button2 == 8) {
+        } else if (MTFlex.Button2 > 7) {
             lowerDate.setFullYear(year - 12);
             for (let i = year - 11; i <= year; i += 1) {
                 MTP.Column = newCol; MTP.Title = i.toString();
@@ -1526,14 +1527,20 @@ async function MenuReportsTrendsGo() {
         MTFlex.Title2 = getDates('s_FullDate',lowerDate) + ' - ' + getDates('s_FullDate',higherDate);
         if(MTFlex.Button2 == 8) {
             await BuildTrendData('oy',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
+        } else if (MTFlex.Button2 == 9) {
+            for (let i = year - 11; i <= year; i += 1) {
+                lowerDate.setFullYear(i,0,1);
+                higherDate.setFullYear(i,month2,day2);
+                await BuildTrendData('oy',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
+            }
         } else {
             await BuildTrendData('ot',MTFlex.Button1,'month',lowerDate,higherDate,'',CurrentFilterObj);
         }
+        MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
         await WriteByMonthData();
     } else {
         let useFormat = 1;
         if(getCookie('MT_NoDecimals',true) == 1) {useFormat = 2;}
-        MTFlex.Title1 = 'Net Income Trend Report';
         MTFlex.Title2 = getDates('s_FullDate',lowerDate) + ' - ' + getDates('s_FullDate',higherDate);
         if(TrendFullPeriod == 1) { MTFlex.Title3 = '* Comparing to End of Month'; }
 
@@ -1694,10 +1701,9 @@ async function WriteByMonthData() {
         MTFlexRow[i][MTFields] = useDesc;
     }
     MTFlexRow = MTFlexRow.filter(item => item.UID !== '');
-    if(MTFlex.Button2 == 8) {
+    if(MTFlex.Button2 > 7) {
         for(let i = 1; i <= 12; i++){ if(i < lowestMonth) {MTFlexTitle[i].isHidden = true;}}
         MTFlex.Title2 = MTFlex.Title2.substring(0, 7) + MTFlexTitle[lowestMonth].Title + MTFlex.Title2.substring(11);
-        MTFlex.Title1 = 'Net Income Trend Report by Year';
     }
     MF_GridRollup(1,2,1,'Income');
     MF_GridRollup(3,4,2,'Spending');
@@ -1795,7 +1801,7 @@ async function BuildTrendData (inCol,inGrouping,inPeriod,lowerDate,higherDate,in
     let snapshotData = null;
     let retGroups = [];
     let s_ndx = 0;
-    if(MTFlex.Button2 == 8) {s_ndx = getDates('n_CurYear',lowerDate);} else {s_ndx = getDates('n_CurMonth',lowerDate) + 1;}
+    if(MTFlex.Button2 > 7) {s_ndx = getDates('n_CurYear', MTFlexDate2) - 12;} else {s_ndx = getDates('n_CurMonth',lowerDate) + 1;}
 
     if(inID) { useType = getCategoryGroup(inID).TYPE; }
     inGrouping = Number(inGrouping);
