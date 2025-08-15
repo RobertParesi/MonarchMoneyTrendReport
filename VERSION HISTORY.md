@@ -1,3 +1,7 @@
+**Version 3.34:**
+
+* NEW: Reports / Trends - Add "All Years by YTD" report to compare to current date all years rather than full completed year.
+
 **Version 3.33:**
 
 * NEW: Reports / Accounts extended reports can be based on "End of Month" or "Beginning of Month" (Settings)
