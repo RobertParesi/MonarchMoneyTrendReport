@@ -1,9 +1,9 @@
-# Monarch Money Tweaks - EXISTING USER
+# Monarch Money Tweaks - Existing User
 
 [Click here to update to Lastest Version - V3.34](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
 
 
-# Monarch Money Tweaks - GET STARTED! 
+# Monarch Money Tweaks - Get Started! 
 
 Hello!  I use **Monarch Money**.  
 
