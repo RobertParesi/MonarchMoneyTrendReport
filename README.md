@@ -2,7 +2,8 @@
 
 [Click here to update to Lastest Version - V3.34](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
 
-> [!IMPORTANT] See additional links for FAQ, Help Installing and Version History
+> [!IMPORTANT]
+> See additional links for FAQ, Help Installing and Version History
 
 # Monarch Money Tweaks - GET STARTED! 
 
