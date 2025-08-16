@@ -87,7 +87,7 @@ Search App store for "User Script and Style Manager" by Justin Wasack
 > [!IMPORTANT]
 > Chrome Users - In your Chrome browser, using the menu, click on **Extensions / Manage Extensions** and set **Developer mode** to **on** found in upper-right corner. 
 
-[Click here to install or Update MM Tweaks](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js)
+[Click here to install MM Tweaks](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js)
 
 **STEP 3**
 
