@@ -2,7 +2,7 @@
 
 [Already have MM Tweaks? - Click here to Update to V3.34](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
 
-[Version History - Click here to see all enhancements and changes to Monarch Money Tweaks](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/Read me.md) 
+[Version History - Click here to see all enhancements and changes to Monarch Money Tweaks](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/README.md) 
 
 Hello!  I use **Monarch Money**.  
 
