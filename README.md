@@ -1,10 +1,10 @@
-# Monarch Money Tweaks - GET STARTED! 
-
-* **Already have MM Tweaks?**
+# Already have Monarch Money Tweaks
 
 [Click here to Update to V3.34](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
 
 [Click here to see Version History (Enhancements and changes)(https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/README.md) 
+
+# Monarch Money Tweaks - GET STARTED! 
 
 Hello!  I use **Monarch Money**.  
 
