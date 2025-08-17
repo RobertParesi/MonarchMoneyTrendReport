@@ -1,3 +1,7 @@
+**Version 3.35:**
+
+* NEW: Added GGLPAY (Google Pay) to parsing of Merchant Name when assigning merchants.
+
 **Version 3.34:**
 
 * NEW: Reports / Trends - Add "All Years by YTD" report to compare to current date all years rather than full completed year.
