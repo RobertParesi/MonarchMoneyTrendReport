@@ -38,7 +38,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
      - Sort tagged data by any column and export it to Excel or Numbers.
      - Select to include or exclude Hidden Transactions.      
        
-* Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant.
+* Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant. (Removes AplPay, GglPay, *TST, etc. when assigning merchant)
 * Breakdown Assets & Liabilities Account Summary by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
 * Apply a compressed and smaller font in the Transactions grid to display more items.
 * Apply a compressed and smaller font in the Budget grid to show additional items.
