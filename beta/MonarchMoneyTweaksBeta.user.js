@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.34
+// @version      3.35
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.34';
+const version = '3.35';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2296,7 +2296,7 @@ function MM_SearchMerchants(inDiv) {
             const ii = merText.indexOf('*');
             if(ii < 16) {merText = getStringPart(merText,'*','right');}
             merText = merText.trim();
-            let merObjs = ['aplpay', 'the ', 'paypal','www.'];
+            let merObjs = ['aplpay', 'gglpay','the ', 'paypal','www.'];
             for (let i = 0; i < merObjs.length; ++i) {
                 if(merText.toLowerCase().startsWith(merObjs[i].toLowerCase())) {
                     let j = merObjs[i].length;
