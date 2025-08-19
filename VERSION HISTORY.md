@@ -1,6 +1,8 @@
 **Version 3.36: (beta)**
 
 * NEW: Reports / Trends can now have expenses broken down by "Fixed Expenses" and "Non-Fixed Expenses".
+
+* NEW: Reports / Tags can now have expenses broken down by "Fixed Expenses" and "Non-Fixed Expenses".
   
 * CHANGE: Renamed some Settings options to be more descriptive what the Setting does.
 
