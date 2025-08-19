@@ -2,7 +2,7 @@
 
 * NEW: Reports / Trends can now have expenses broken down by "Fixed Expenses" and "Non-Fixed Expenses".
   
-* CHANGE: Renamed on Settings options to be more descriptive what the Setting does.
+* CHANGE: Renamed some Settings options to be more descriptive what the Setting does.
 
 **Version 3.35:**
 
