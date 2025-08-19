@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.36.01
+// @version      3.36.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.36.01';
+const version = '3.36.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -721,24 +721,6 @@ function MF_GridCalcRange(inColumn,inStart,inEnd,inOp) {
     }
 }
 
-function MF_GridAddCardSums (inSec,inStart,inEnd,inStyle,inTitle) {
-
-    let cards = MTFlexRow.length;
-    if(cards > 6) {cards = 6;}
-    for (let j = 0; j < cards; j += 1) {
-        if(MTFlexRow[j].Section == inSec) {
-            for (let i = inStart; i < inEnd+1; i += 1) {
-                if(MTFlexTitle[i].isHidden != true) {
-                    MTP = [];MTP.Col = MTFlexCard.length+1;
-                    MTP.Title = getDollarValue(MTFlexRow[j][MTFields + i]);
-                    MTP.Subtitle = MTFlexTitle[i].Title + inTitle;MTP.Style = inStyle;
-                    MF_QueueAddCard(MTP);
-                 }
-             }
-            break;
-         }
-     }
-}
 function MF_GridAddCard (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,inNegColor,inAddRowTitle,inAddColTitle) {
 
     let useValue = 0,useCells = 0,useRow='',useCol='';
@@ -884,7 +866,7 @@ async function MenuReportsTagsGo() {
     let TagQueue = [],TagCols = [];
     let useID = '',useAmt = 0, useTitle='',useURL = '';
     let ii = 0;
-    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false;
+    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false,hasFixed = false;
 
     MF_GridInit('MTTags', 'Tags');
     MTFlex.Title1 = 'Net Income Report by Tags';
@@ -955,8 +937,14 @@ async function MenuReportsTagsGo() {
                 MTP.isHeader = false;
                 MTP.UID = useID;
                 if(retGroup.TYPE == 'expense') {
-                    MTP.BasedOn = 2;
-                    MTP.Section = 4;
+                    if(retGroup.ISFIXED == true) {
+                        MTP.BasedOn = 2;
+                        MTP.Section = 4;
+                        hasFixed = true;
+                    } else {
+                        MTP.BasedOn = 3;
+                        MTP.Section = 6;
+                    }
                     useURL = '#|spending|';
                 } else {
                     MTP.BasedOn = 1;
@@ -990,10 +978,18 @@ async function MenuReportsTagsGo() {
         }
     }
     MF_GridRollup(1,2,1,'Income');
-    MF_GridRollup(3,4,2,'Spending');
-    MF_GridRollDifference(5,1,3,1,'Savings','Sub');
-    MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
-    MF_GridAddCardSums(3,1,totalCol-1,css_red,'\nSpending');
+    if(hasFixed == false) {
+        MF_GridRollup(3,4,2,'Spending');
+        MF_GridRollDifference(5,1,3,1,'Savings','Sub');
+        MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
+    } else {
+        MF_GridRollup(3,4,2,'Fixed Spending');
+        MF_GridRollup(5,6,3,'Non Fixed Spending');
+        MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
+        MF_GridRollDifference(8,1,7,1,'Savings','Sub');
+        MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
+    }
+
     MTSpawnProcess = 1;
 
     function TagsUpdateQueue(inID,inAmt,inTag, inOrder, inColor) {
@@ -2393,13 +2389,13 @@ function MenuAccounts(OnFocus) {
     }
 }
 
-function MenuDisplay(OnFocus) {
+function MenuSettings(OnFocus) {
 
-    let dropDowns = 0;
     if(SaveLocationPathName.startsWith('/settings/categories')) {
         if(OnFocus == false) {accountGroups=[];}
         if(OnFocus == true) {
             let divs = document.querySelectorAll('[class*="ManageCategoryGroupCard__Header-"]');
+            if(divs.length == 0) {SaveLocationPathName = '';return}
             let div = null,grp=null,isExp=null;
             for (let i = 0; i < divs.length; ++i) {
                 grp = divs[i].getAttribute('data-rbd-drag-handle-draggable-id');
@@ -2415,6 +2411,8 @@ function MenuDisplay(OnFocus) {
             }
         }
     }
+
+    let dropDowns = 0;
     if (SaveLocationPathName.startsWith('/settings/display')) {
         if(OnFocus == false) { }
         if(OnFocus == true) {
@@ -2441,8 +2439,8 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Reports / Trends','','spacer');
             MenuDisplay_Input('Always compare to End of Month','MT_TrendFullPeriod','checkbox');
             MenuDisplay_Input('By Month "Avg" ignores Current Month','MT_TrendIgnoreCurrent','checkbox');
-            MenuDisplay_Input('Hide percentage not in Difference columns','MT_TrendHidePer1','checkbox');
-            MenuDisplay_Input('Hide percentage in Difference columns','MT_TrendHidePer2','checkbox');
+            MenuDisplay_Input('Hide percentages not in Difference columns','MT_TrendHidePer1','checkbox');
+            MenuDisplay_Input('Hide percentages in Difference columns','MT_TrendHidePer2','checkbox');
             MenuDisplay_Input('Hide next month (Based on last year)','MT_TrendHideNextMonth','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
@@ -3128,7 +3126,7 @@ function MM_MenuRun(onFocus) {
     MenuPlan(onFocus);
     MenuAccounts(onFocus);
     MenuHistory(onFocus);
-    MenuDisplay(onFocus);
+    MenuSettings(onFocus);
     MenuCategories(onFocus);
 }
 // Query functions
