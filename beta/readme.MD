@@ -2,12 +2,12 @@
 
 Hello!
 
-This is the Monarch Money Tweaks Beta (future version) that is currently not released.  If you are a beta tester, please let me know through Reddit DM (Direct Message Chat) that you are using the Beta version.   
+This is the Monarch Money Tweaks Beta (upcoming version), which has not yet been officially released. If you're a beta tester, please send me a DM on Reddit to confirm you're using the Beta version.
 
-If you see any regressions / issues, please direct message me and let me know.
+If you encounter any issues or regressions, kindly reach out to me via DM and share the details.
 
-See the Version History file in the parent directory for details of what is recently changed.
+For a list of recent changes, please refer to the Version History file located in the parent directory.
 
-Many thanks!
+Thank you very much!
 
--Robert
+Robert
