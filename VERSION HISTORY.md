@@ -1,3 +1,7 @@
+**Version 3.36: (beta)**
+
+* NEW: Reports / Trends & Reports / Tags can now have expenses broken down by "Fixed Expenses" and "Non-Fixed Expenses".
+
 **Version 3.35:**
 
 * NEW: Added GGLPAY (Google Pay) to parsing of Merchant Name when assigning merchants.
