@@ -1,8 +1,7 @@
-# Already have Monarch Money Tweaks?
+# Monarch Money BETA version
 
-[Click here to update to Latest Version - V3.35](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
+Hello!
+
+This is the future version that is currently being used by Beta testers.   If you would like to be a beta tester, please let me know through Reddit DM (Direct Message Chat)
 
 
-# Monarch Money Tweaks - Get Started! 
-
-Hello!  I use **Monarch Money**.  
