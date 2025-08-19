@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.35
+// @version      3.36.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.35';
+const version = '3.36.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -54,7 +54,7 @@ function MM_Init() {
     addStyle('.MTWait2 {font-size: 18px; font-weight: 500; font: "Oracle", sans-serif; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
     addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, sans-serif, "Oracle" !important; font-size: 15px; font-weight: 200;}');
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
-    addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTDateCheckbox {width: 19px; height: 19px; margin-right: 10px;float: inline-start; color: #FFFFFF; accent-color: ' + accentColor + '}');
+    addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {width: 19px; height: 19px; margin-right: 10px;float: inline-start; color: #FFFFFF; accent-color: ' + accentColor + '}');
     addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; height: 8px; border-bottom: 1px solid ' + lineForground +';}');
     addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
     addStyle('.MT' + FlexOptions.join(':hover, .MT') + ':hover {cursor:pointer;}');
@@ -143,7 +143,6 @@ function MM_flipSideElement(inCookie) {
 }
 
 // [ Flex Queue MF_ Called externally, MT_ used internally]
-
 function MF_SetupDates() {
 
     let ckd = getCookie(MTFlex.Name + 'LowerDate',false);
@@ -165,7 +164,7 @@ function MF_QueueAddRow(p) {
     MTFlexCR = MTFlexRow.length;
     if(p.PK == undefined || p.PK == null) {p.PK = '';}
     if(p.SK == undefined || p.SK == null) {p.SK = '';}
-    MTFlexRow.push({"Num": MTFlexCR, "isHeader": p.isHeader, "BasedOn": p.BasedOn, "IgnoreShade": p.IgnoreShade, "Section": p.Section, "PK": p.PK, "SK": p.SK, "UID": p.UID,"PKHRef": p.PKHRef, "PKTriggerEvent": p.PKTriggerEvent, "SKHRef": p.SKHRef, "SKTriggerEvent": p.SKTriggerEvent, "Icon": p.Icon });
+    MTFlexRow.push({"Num": MTFlexCR, "isHeader": p.isHeader, "SummaryOnly": p.SummaryOnly, "BasedOn": p.BasedOn, "IgnoreShade": p.IgnoreShade, "Section": p.Section, "PK": p.PK, "SK": p.SK, "UID": p.UID,"PKHRef": p.PKHRef, "PKTriggerEvent": p.PKTriggerEvent, "SKHRef": p.SKHRef, "SKTriggerEvent": p.SKTriggerEvent, "Icon": p.Icon });
     for (let j = 1; j < MTFlexTitle.length; j += 1) {if(MTFlexTitle[j].Format > 0) {MTFlexRow[MTFlexCR][MTFields+j] = 0;}}}
 
 function MF_QueueAddCard(p) {
@@ -277,11 +276,11 @@ function MT_GridDrawDetails() {
             RecsInc +=1;
             useDesc = useRow[MTFields];
             if(useRow.isHeader == true) {
-                el = cec('tr','MTFlexGridRow',Header,'','','','MTsection',useRow.Section);
+                if(useRow.SummaryOnly == true) { el = cec('tr','MTFlexGridRow',Header,'','','');useDesc = '  ' + useDesc;
+                } else { el = cec('tr','MTFlexGridRow',Header,'','','','MTsection',useRow.Section);useDesc = ' ' + useDesc;}
                 useStyle = 'MTFlexGridHCell';
                 Subtotals[SubtotalsNdx] = RowI;
                 SubtotalsNdx+=1;
-                useDesc = ' ' + useDesc;
             } else {
                 if(MTFlex.HideDetails == true) css_cec = true;
                 MT_DrawLine();
@@ -673,7 +672,7 @@ function MF_GridRollDifference(inSection,inA,inB,inBasedOn,inName,inOp) {
     }
     if(p1 == null || p2 == null) {return;}
     MTP = [];
-    MTP.isHeader = true; MTP.IgnoreShade = true; MTP.Section = inSection; MTP.BasedOn = inBasedOn; MF_QueueAddRow(MTP);
+    MTP.isHeader = true; MTP.IgnoreShade = true; MTP.Section = inSection; MTP.BasedOn = inBasedOn; MTP.SummaryOnly = true; MF_QueueAddRow(MTP);
     MTFlexRow[MTFlexCR][MTFields] = inName;
     for (let j = 1; j < MTFlexTitle.length; j += 1) {
         if(MTFlexTitle[j].Format > 0) {
@@ -1659,15 +1658,21 @@ async function MenuReportsTrendsGo() {
 
 async function WriteByMonthData() {
 
-    let useDesc = '',lowestMonth = 13,useURL = '';
+    let useDesc = '',lowestMonth = 13,useURL = '',hasFixed = false;
     for (let i = 0; i < MTFlexRow.length; i += 1) {
         let retGroup = await getCategoryGroup(MTFlexRow[i].UID);
         if(retGroup.TYPE == 'transfer') {
             MTFlexRow[i].UID = '';
         } else {
             if(retGroup.TYPE == 'expense') {
-                MTFlexRow[i].BasedOn = 2;
-                MTFlexRow[i].Section = 4;
+                if(retGroup.ISFIXED == true) {
+                    MTFlexRow[i].BasedOn = 2;
+                    MTFlexRow[i].Section = 4;
+                    hasFixed = true;
+                } else {
+                    MTFlexRow[i].BasedOn = 3;
+                    MTFlexRow[i].Section = 6;
+                }
                 for (let j = 1; j < MTFlexTitle.length; j += 1) {
                     if(MTFlexRow[i][MTFields + j] != 0) {
                         if(j < lowestMonth) {lowestMonth = j;}
@@ -1706,25 +1711,40 @@ async function WriteByMonthData() {
         MTFlex.Title2 = MTFlex.Title2.substring(0, 7) + MTFlexTitle[lowestMonth].Title + MTFlex.Title2.substring(11);
     }
     MF_GridRollup(1,2,1,'Income');
-    MF_GridRollup(3,4,2,'Spending');
-    MF_GridRollDifference(5,1,3,1,'Savings','Sub');
+    if(hasFixed == true) {
+        MF_GridRollup(3,4,2,'Fixed Spending');
+        MF_GridRollup(5,6,3,'Non Fixed Spending');
+        MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
+        MF_GridRollDifference(8,1,7,1,'Savings','Sub');
+    } else {
+        MF_GridRollup(5,6,3,'Spending');
+        MF_GridRollDifference(8,1,5,1,'Savings','Sub');
+    }
+
     MF_GridCalcRange(13,1,12,'Add');
 
     lowestMonth = 12;
     if(getCookie('MT_TrendIgnoreCurrent',true) == 1) {if(MTFlex.Button2 == 3 || MTFlex.Button2 == 5) {lowestMonth = 11;}}
     if(MTFlex.Button2 == 8) {lowestMonth = 11;}
     MF_GridCalcRange(14,1,lowestMonth,'Avg');
+
     MF_GridAddCard(1,13,13,'HV','Total Income','',css_green,'','', '');
-    MF_GridAddCard(3,13,13,'HV','Total Expenses','',css_red,'','', '');
-    MF_GridAddCard(5,13,13,'HV','Total Savings','Total Overspent',css_green,css_red,'', '');
-    MF_GridAddCard(2,2,12,'HV','Highest Income','',css_green,'',' was with ', ' in ');
-    MF_GridAddCard(4,2,12,'HV','Highest Expense','',css_red,'',' was with ', ' in ');
+    MF_GridAddCard(7,13,13,'HV','Total Expenses','',css_red,'','', '');
+    MF_GridAddCard(2,1,12,'HV','Highest Income','',css_green,'',' was with ', ' in ');
+    if(hasFixed == true) {
+        MF_GridAddCard(4,1,12,'HV','Highest Fixed Expense','',css_red,'',' was with ', ' in ');
+        MF_GridAddCard(6,1,12,'HV','Highest Non-Fixed Expense','',css_red,'',' was with ', ' in ');
+    } else {
+        MF_GridAddCard(6,1,12,'HV','Highest Expense','',css_red,'',' was with ', ' in ');
+        MF_GridAddCard(8,13,13,'HV','Total Savings','Total Overspent',css_green,css_red,'', '');
+    }
+
 }
 
 async function WriteCompareData() {
 
     let useDesc = '',Numcards=0, useURL = '';
-    let useFormat = false;
+    let useFormat = false,hasFixed = false;
     if(getCookie('MT_NoDecimals',true) == 1) {useFormat = true;}
 
     for (let i = 0; i < TrendQueue.length; i += 1) {
@@ -1737,8 +1757,14 @@ async function WriteCompareData() {
                  TrendQueue[i].N_CURRENTM = TrendQueue[i].N_CURRENTM * -1;
                  TrendQueue[i].N_LASTM = TrendQueue[i].N_LASTM * -1;
                  TrendQueue[i].N_FUTURE = TrendQueue[i].N_FUTURE * -1;
-                 MTP.BasedOn = 2;
-                 MTP.Section = 4;
+                 if(retGroup.ISFIXED == true) {
+                     MTP.BasedOn = 2;
+                     MTP.Section = 4;
+                     hasFixed = true;
+                 } else {
+                     MTP.BasedOn = 3;
+                     MTP.Section = 6;
+                 }
                  useURL = '#|spending|';
              }
              if(retGroup.TYPE == 'income') {
@@ -1777,18 +1803,24 @@ async function WriteCompareData() {
          }
     }
     MF_GridRollup(1,2,1,'Income');
-    MF_GridRollup(3,4,2,'Spending');
-    MF_GridRollDifference(5,1,3,1,'Savings','Sub');
-    Numcards = Numcards + MF_GridAddCard(4,6,6,'HV','Over spending YTD','',css_red,'','\nmost in ','');
-    Numcards = Numcards + MF_GridAddCard(4,3,3,'HV','Over spending ' + ['vs same month','vs last month','vs same quarter'][MTFlex.Button2],'',css_red,'','\nmost in ','');
-    if(Numcards < 2) {
-        Numcards = Numcards + MF_GridAddCard(3,2,2,'HV','Total Spending','','',css_red,'','');
+    if(hasFixed == true) {
+        MF_GridRollup(3,4,2,'Fixed Spending');
+        MF_GridRollup(5,6,3,'Non Fixed Spending');
+        MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
+        MF_GridRollDifference(8,1,7,1,'Savings','Sub');
+    } else {
+        MF_GridRollup(5,6,3,'Spending');
+        MF_GridRollDifference(8,1,5,1,'Savings','Sub');
     }
-    if(Numcards < 2) {
-        Numcards = Numcards + MF_GridAddCard(4,6,6,'LV','','Saving YTD','',css_green,'\nmost in ','');
-    }
+
     Numcards = Numcards + MF_GridAddCard(1,6,6,'HV','More Total Income YTD','Less Total Income YTD',css_green,css_red,'','');
-    Numcards = Numcards + MF_GridAddCard(5,6,6,'HV','Savings YTD','Over spending YTD',css_green,css_red,'','');
+    if(hasFixed == true) {
+        Numcards = Numcards + MF_GridAddCard(3,6,6,'HV','More Fixed Expenses YTD','Less Fixed Expenses YTD',css_red,css_green,'','');
+        Numcards = Numcards + MF_GridAddCard(5,6,6,'HV','More Non Fixed Expenses YTD','Less Non Fixed Expenses YTD',css_red,css_green,'','');
+    } else {
+        Numcards = Numcards + MF_GridAddCard(5,6,6,'HV','More Expenses YTD','Less Non Fixed Expenses YTD',css_red,css_green,'','');
+    }
+    Numcards = Numcards + MF_GridAddCard(8,5,5,'HV','Total Savings','Total Overspent',css_green,css_red,'', '');
 }
 
 async function BuildTrendData (inCol,inGrouping,inPeriod,lowerDate,higherDate,inID,inAccounts) {
@@ -2337,7 +2369,7 @@ function MenuHistory(OnFocus) {
 
 function MenuCategories(OnFocus) {
     if(SaveLocationPathName.startsWith('/categories')) {
-       if(OnFocus == false) {removeAllSections('.MTHistoryButton');}
+       if(OnFocus == false) {removeAllSections('.MTHistoryButton')}
     }
 }
 
@@ -2364,7 +2396,25 @@ function MenuAccounts(OnFocus) {
 function MenuDisplay(OnFocus) {
 
     let dropDowns = 0;
-
+    if(SaveLocationPathName.startsWith('/settings/categories')) {
+        if(OnFocus == false) {accountGroups=[];}
+        if(OnFocus == true) {
+            let divs = document.querySelectorAll('[class*="ManageCategoryGroupCard__Header-"]');
+            let div = null,grp=null,isExp=null;
+            for (let i = 0; i < divs.length; ++i) {
+                grp = divs[i].getAttribute('data-rbd-drag-handle-draggable-id');
+                isExp = divs[i].parentNode.parentNode.parentNode;
+                if(isExp && isExp.innerText.startsWith('Expenses')) {
+                    div = cec ('div','',divs[i],'','','flex:1;');
+                    div = cec('label','',div,'Fixed Expense (MM Tweaks)','','font-size: 13px;float:right;','htmlFor','MTFixed');
+                    div = cec('input','MTFixedCheckbox',div,'','','margin-top: 2px;','id','MTFixed');
+                    div.setAttribute('grp',grp);
+                    div.type = 'checkbox';
+                    if(getCookie('MTGroupFixed:' + grp,true) == true) {div.checked = 'true';}
+                }
+            }
+        }
+    }
     if (SaveLocationPathName.startsWith('/settings/display')) {
         if(OnFocus == false) { }
         if(OnFocus == true) {
@@ -2386,13 +2436,13 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Hide Create Rule pop-up','MT_HideToaster','checkbox');
             MenuDisplay_Input('Assist and populate when Searching Merchants','MT_MerAssist','checkbox');
             MenuDisplay_Input('Reports','','spacer');
-            MenuDisplay_Input('Hide chart tooltip Difference amount','MT_HideTipDiff','checkbox');
+            MenuDisplay_Input('Hide the Difference Amount in Income & Spending chart tooltips','MT_HideTipDiff','checkbox');
             MenuDisplay_Input('Monarch Money Tweaks report font','MT_MonoMT','dropdown','',['System','Monospace','Courier','Courier New','Arial','Trebuchet MS','Verdana']);
             MenuDisplay_Input('Reports / Trends','','spacer');
             MenuDisplay_Input('Always compare to End of Month','MT_TrendFullPeriod','checkbox');
             MenuDisplay_Input('By Month "Avg" ignores Current Month','MT_TrendIgnoreCurrent','checkbox');
-            MenuDisplay_Input('Hide percentage of Income & Spending','MT_TrendHidePer1','checkbox');
-            MenuDisplay_Input('Hide percentage of Difference','MT_TrendHidePer2','checkbox');
+            MenuDisplay_Input('Hide percentage not in Difference columns','MT_TrendHidePer1','checkbox');
+            MenuDisplay_Input('Hide percentage in Difference columns','MT_TrendHidePer2','checkbox');
             MenuDisplay_Input('Hide next month (Based on last year)','MT_TrendHideNextMonth','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
@@ -2412,7 +2462,7 @@ function MenuDisplay(OnFocus) {
             MenuDisplay_Input('Always hide decimals','MT_AccountsNoDecimals','checkbox');
             MenuDisplay_Input('Budget','','spacer');
             MenuDisplay_Input('Budget panel has smaller font & compressed grid','MT_PlanCompressed','checkbox');
-            MenuDisplay_Input('Show Checking / Credit Card balances / Left to Spend in Budget Summary','MT_PlanLTB','checkbox');
+            MenuDisplay_Input('Show "Left to Spend" from Checking after paying off Credit Cards in Budget Summary','MT_PlanLTB','checkbox');
             MenuDisplay_Input('Ignore Budget Income remaining in "Left to Spend"','MT_PlanLTBII','checkbox','margin-left: 22px;');
             MenuDisplay_Input('Ignore Budget Expenses remaining in "Left to Spend"','MT_PlanLTBIE','checkbox','margin-left: 22px;');
             MenuDisplay_Input('Ignore Rollover budgets, always use actual Budget minus actual Spent for “Left to Spend”','MT_PlanLTBIR','checkbox','margin-left: 22px;');
@@ -2596,6 +2646,10 @@ window.onclick = function(event) {
                 MTFlex.Button3 = event.target.checked;
                 setCookie(MTFlex.Name + 'Button3',MTFlex.Button3);
                 if(MTFlex.Button3 == true) {MM_hideElement('div.MTFlexSpacer',1);} else {MM_hideElement('div.MTFlexSpacer',0);}
+                return;
+            case 'MTFixedCheckbox':
+                cn = event.target.getAttribute('grp');
+                flipCookie('MTGroupFixed:' + cn,1);
                 return;
             case 'MTFlexButtonExport':
                 MT_GridExport(); break;
@@ -3169,8 +3223,10 @@ async function buildCategoryGroups() {
 
     if(accountGroups.length == 0) {
         const categoryData = await getCategoryData();
+        let isFixed = '';
         for (let i = 0; i < categoryData.categories.length; i += 1) {
-            accountGroups.push({"GROUP": categoryData.categories[i].group.id, "GROUPNAME": categoryData.categories[i].group.name, "ID": categoryData.categories[i].id, "NAME": categoryData.categories[i].name, "ICON": categoryData.categories[i].icon, "TYPE": categoryData.categories[i].group.type, "ORDER": categoryData.categories[i].order});
+            isFixed = getCookie('MTGroupFixed:' + categoryData.categories[i].group.id,true);
+            accountGroups.push({"GROUP": categoryData.categories[i].group.id, "GROUPNAME": categoryData.categories[i].group.name, "ID": categoryData.categories[i].id, "NAME": categoryData.categories[i].name, "ICON": categoryData.categories[i].icon, "TYPE": categoryData.categories[i].group.type, "ORDER": categoryData.categories[i].order, "ISFIXED": isFixed});
         }
     }
 }
