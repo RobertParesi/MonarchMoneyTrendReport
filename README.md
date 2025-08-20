@@ -103,9 +103,9 @@ Refresh/Reload the Monarch Money webpage and select **Settings / Display** in Mo
 
 [Please read the FAQ after installing](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/FAQ.md) 
 
-![Settings](/images/MM_SettingsDeveloper.png)
-
 Enjoy!
+
+![Settings](/images/MM_SettingsDeveloper.png)
 
 ## Screenshots:
 
