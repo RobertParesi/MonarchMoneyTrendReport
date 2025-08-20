@@ -12,14 +12,16 @@ I found there were opportunities to enhance the Monarch Money web application wi
 # Features:
 
 * **Reports / Trends**
-    - Summarize your Monarch Money history.
-    - Compare to: Last month, Same month last year, Same quarter last year.
-    - Display a monthly grid of your history for: This year, Last year, Last 12 months, All years (including YTD totals and monthly/yearly averages)
-    - Customize comparisons and averages to include the current month if desired.
-    - Highlight spending based on thresholds: 25%, 50%, 100%
+    - Summarize your Monarch Money Income/Spending history.
+    - Compare with Last month, Same month last year, Same quarter last year.
+    - Display by This year, Last year, Last 12 months, All years, All years YTD with monthly averages.
+    - Filter by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business" etc).
+    - Highlight over-spending based on thresholds: 25%, 50%, 100%
     - Drill down to view monthly and year-to-date totals to identify trends in your groups and categories.
-    - Filter Income & Spending by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business" etc).
-    - Sort history data by any column and export it to Excel or Numbers.
+    - Sort history data by any column.
+    - Export it to Excel or Numbers.
+    - Customize comparisons and averages to include the current month if desired.
+    - Click on date header to go back to End of Last Month
 
 * **Reports / Accounts**
      - Summarize all your Account balances
