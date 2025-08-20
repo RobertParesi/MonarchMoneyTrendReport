@@ -17,10 +17,10 @@ Having been available for well over a year to members of the Monarch Money commu
 > [!IMPORTANT]
 > Only install or update the Monarch Money Tweaks extension from **this GitHub location only**. Do not install from other locations including direct links in Reddit or other websites.  This GitHub page is the only **official location** that should be used to get the extension.
 
-## Fixed vs Flexible expenses
+## Fixed vs Flexible Spending
 > Extension added field found when selecting Settings / Categories in Monarch Money:
 
-You can further define expenses **on the Group level** by either "Fixed" or "Non Fixed" expenses when looking at Trends report and Tags report.   Select Settings / Categories and check the box as appropriate.   If there are no Account Groups that have been checked, these reports will not breakdown the expenses.
+You can further define expenses **on the Group level** by either "Fixed Spending" or "Flexible Spending" when looking at Trends report and Tags report.   Select Settings / Categories and check the box as appropriate.   If there are no Account Groups that have been checked, these reports will not breakdown the expenses.
 
 ![Settings](/images/MM_FixedNoFixed.png)
 
