@@ -15,7 +15,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Summarize your Monarch Money Income/Spending history.
     - Compare with Last month, Same month last year, Same quarter last year.
     - Display by This year, Last year, Last 12 months, All years, All years YTD with monthly averages.
-    - Filter by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
+    - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
     - Highlight over-spending based on thresholds: 25%, 50%, 100%
     - Drill down to view monthly and year-to-date totals to identify trends in your groups and categories.
     - Sort history data by any column.
@@ -24,21 +24,25 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Click on date header to go back to End of Last Month
 
 * **Reports / Accounts**
-     - Summarize all your Account balances
+     - Summarize your Monarch Money Account balances
      - Compare to different time periods 
-     - Show Monthly Account balances with average for current year, last 6 months or last 12 months
-     - Quickly view total amount owed on credit cards and other Checking and Credit card balances
-     - View Income, Expenses and Transfers done by Account for the current month
-     - Filter Accounts by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
-     - Sort accounts data by any column and export it to Excel or Numbers.
+     - Display by any date range or show Monthly, Quarterly and Yearly balances.
+     - Display Income, Expenses and Transfers on the Account level.
+     - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
+     - Sort history data by any column.
+     - Export to Excel or Numbers.
      - Generate a simple Personal Net Worth report for Loan Applications.
      - Click on date header to change date range. 
        
 * **Reports / Tags**
-     - Summarize all your Transactions by Tags
-     - Filter Income & Spending by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business" etc).
-     - Sort tagged data by any column and export it to Excel or Numbers.
-     - Select to include or exclude Hidden Transactions.      
+     - Summarize your Monarch Money Income/Spending history by Tags (or "Notes tags!")
+     - Compare to Untagged or Multiple Tagged transactions.
+     - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
+     - Sort tagged data by any column
+     - Export it to Excel or Numbers.
+     - Select to include or exclude Hidden Transactions.
+     - Select transactions where transaction note starts with an asterisk (ie: "* Hawaii 2025" or "* Wedding")
+     - Click on date header to change date range.
        
 * Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant. (Removes AplPay, GglPay, *TST, etc. when assigning merchant)
 * Breakdown Assets & Liabilities Account Summary by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
