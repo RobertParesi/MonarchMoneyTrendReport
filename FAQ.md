@@ -17,22 +17,7 @@ Having been available for well over a year to members of the Monarch Money commu
 > [!IMPORTANT]
 > Only install or update the Monarch Money Tweaks extension from **this GitHub location only**. Do not install from other locations including direct links in Reddit or other websites.  This GitHub page is the only **official location** that should be used to get the extension.
 
-## Auto-Updating Monarch Money Tweaks
-> If you want the script to update automatically:
-
-1. Go to Extensions / Manage Extensions for Tampermoney / Extension options. (In Safari and Firefox, just click on the Tampermoney icon in the browser toolbar & then **Dashboard**).
-2. Next click on the **Installed Userscripts** tab
-3. Click on the "Edit" icon under "Actions" for Monarch Money Tweaks
-4. Next to "Editor", click on the "Settings" tab
-5. Under **Updates**, check the "Check for Updates" checkbox
-6. Paste the following into the Update URL: https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js
-7. Press **Save**
-
-**Tampermonkey Dashboard**
-
-![Settings](/images/MM_Chrome1.png)
-
-## Fixed vs Non Fixed expenses
+## Fixed vs Flexible expenses
 > Extension added field found when selecting Settings / Categories in Monarch Money:
 
 You can further define expenses **on the Group level** by either "Fixed" or "Non Fixed" expenses when looking at Trends report and Tags report.   Select Settings / Categories and check the box as appropriate.   If there are no Account Groups that have been checked, these reports will not breakdown the expenses.
@@ -73,6 +58,21 @@ If some accounts are managed by an advisor and some are not, you can assign "Man
 If there are future investments or credit cards your kids use, you could designate with "Family" or "Kids".
 
 ![Settings](/images/MM_AccountGroup.png)
+
+## Auto-Updating Monarch Money Tweaks
+> If you want the script to update automatically:
+
+1. Go to Extensions / Manage Extensions for Tampermoney / Extension options. (In Safari and Firefox, just click on the Tampermoney icon in the browser toolbar & then **Dashboard**).
+2. Next click on the **Installed Userscripts** tab
+3. Click on the "Edit" icon under "Actions" for Monarch Money Tweaks
+4. Next to "Editor", click on the "Settings" tab
+5. Under **Updates**, check the "Check for Updates" checkbox
+6. Paste the following into the Update URL: https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js
+7. Press **Save**
+
+**Tampermonkey Dashboard**
+
+![Settings](/images/MM_Chrome1.png)
 
 ## Contributions:
 
