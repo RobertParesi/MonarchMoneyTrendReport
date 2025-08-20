@@ -19,6 +19,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Highlight over-spending based on thresholds: 25%, 50%, 100%
     - Drill down to view monthly and year-to-date totals to identify trends in your groups and categories.
     - Sort history data by any column.
+    - Breakdown expenses by "Fixed Expenses" and "Flexible Expenses".
     - Export to Excel or Numbers.
     - Customize comparisons and averages whether to include the current month if desired.
     - Click on date header to go back to End of Last Month
@@ -39,6 +40,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
      - Compare to Untagged or Multiple Tagged transactions.
      - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
      - Sort tagged data by any column
+     - Breakdown tagged expenses by "Fixed Expenses" and "Flexible Expenses".
      - Export it to Excel or Numbers.
      - Select to include or exclude Hidden Transactions.
      - Select transactions where transaction note starts with an asterisk (ie: "* Hawaii 2025" or "* Wedding")
