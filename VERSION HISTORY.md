@@ -1,8 +1,8 @@
 **Version 3.36: (beta)**
 
-* NEW: Reports / Trends can now have expenses broken down by "Fixed Expenses" and "Non-Fixed Expenses".
+* NEW: Reports / Trends can now have expenses broken down by "Fixed Expenses" and "Flexible Expenses".
 
-* NEW: Reports / Tags can now have expenses broken down by "Fixed Expenses" and "Non-Fixed Expenses".
+* NEW: Reports / Tags can now have expenses broken down by "Fixed Expenses" and "Flexible Expenses".
 
 * NEW: Reports / Tags can now pull transactions where notes start with * (ie: * Hawaii 2025) and use that as a "Tag" instead.
   
