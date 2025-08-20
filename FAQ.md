@@ -45,7 +45,7 @@ You can further define expenses **on the Group level** by either "Fixed" or "Non
 ![Settings](/images/MM_FixedNoFixed.png)
 
 ## Account Groups 
-> Extension added field found when editing an Account in Monarch Money:
+> Extension added field found when editing an Institution Account in Monarch Money:
 
 Account Groups allow you to break out your transactions (Income & Expenses) as well as your Accounts (Assets & Liabilities).
 
@@ -56,9 +56,7 @@ There are different scenerios that Monarch Money users use them in:
     * Tax and Tax Deferred
     * Managed vs Non Managed
     * Family vs Kids
-    
-    
-
+      
 **Personal & Business**
 
 If your accounts are designated for either Personal or Business purposes, you could assign each checking, savings, credit card, etc. account with either "Personal", "Business" or "Both.
@@ -78,6 +76,8 @@ If some accounts are managed by an advisor and some are not, you can assign "Man
 **Family vs Kids**
 
 If there are future investments or credit cards your kids use, you could designate with "Family" or "Kids".
+
+![Settings](/images/MM_AccountGroup.png)
 
 ## Contributions:
 
