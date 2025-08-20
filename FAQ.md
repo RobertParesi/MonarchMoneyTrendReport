@@ -1,4 +1,4 @@
-## About Monarch Money Tweaks Extension
+## About Monarch Money Tweaks Extension (FAQ)
 > Safety, Security and Transparency of this extension:
 
 **Monarch Money Tweaks** is a 100% raw JavaScript program and open-source.   
