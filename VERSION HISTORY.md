@@ -6,7 +6,7 @@
 
 * NEW: Reports / Tags can now pull transactions where notes start with * (ie: * Hawaii 2025) and use that as a "Tag" instead.
   
-* CHANGE: Renamed some Settings options to be more descriptive what the Setting does.
+* CHANGE: Renamed some Settings options to be more descriptive what it does.
 
 **Version 3.35:**
 
