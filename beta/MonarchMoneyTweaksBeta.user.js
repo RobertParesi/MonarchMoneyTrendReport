@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.36.04
+// @version      3.36.05
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.36.04';
+const version = '3.36.05';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -866,7 +866,7 @@ async function MenuReportsTagsGo() {
     let TagQueue = [],TagCols = [];
     let useID = '',useAmt = 0, useTitle='',useURL = '';
     let ii = 0;
-    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false;
+    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false,hasNotes = false;
 
     MF_GridInit('MTTags', 'Tags');
     MTFlex.Title1 = 'Net Income Report by Tags';
@@ -891,8 +891,8 @@ async function MenuReportsTagsGo() {
         recCnt = 0;
         if(MTFlex.Button2 == 2) {HiddenFilter = true;}
         if(MTFlex.Button2 == 1 || MTFlex.Button2 == 3) {HiddenFilter = null;}
-        snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj,HiddenFilter);
-        console.log(snapshotData4);
+        if(MTFlex.Button2 == 3) {hasNotes = true;}
+        snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj,HiddenFilter,hasNotes);
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt+=1;recIdx+=1;
@@ -3156,7 +3156,7 @@ function callGraphQL(data) {
 
 async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccounts) {
     if(inAccounts == undefined) inAccounts = [];
-    let filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
+    const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({operationName: 'GetAggregatesGraph', variables: {filters: filters },
           query: "query GetAggregatesGraph($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"category\", \"" + groupingType + "\"]\n  fillEmptyValues: false\n ) {\n groupBy {\n category {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
      });
@@ -3167,7 +3167,7 @@ async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccou
 
 async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccounts) {
     if(inAccounts == undefined) inAccounts = [];
-    let filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
+    const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({ operationName: 'GetAggregatesGraphCategoryGroup',variables: {filters: filters },
           query: "query GetAggregatesGraphCategoryGroup($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"categoryGroup\", \"" + groupingType + "\"]\n fillEmptyValues: false\n ) {\n groupBy {\n categoryGroup {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
       });
@@ -3176,10 +3176,10 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
     .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
 }
 
-async function GetTransactions(startDate,endDate, offset, isPending, inAccounts,inHideReports) {
+async function GetTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes) {
     const limit = 5000;
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
-    const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts })};
+    let filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes && { hasNotes: true })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
           query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id }  \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
