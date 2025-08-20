@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.36.03
+// @version      3.36.04
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.36.03';
+const version = '3.36.04';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -992,7 +992,7 @@ async function MenuReportsTagsGo() {
         MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
     } else {
         MF_GridRollup(3,4,2,'Fixed Spending');
-        MF_GridRollup(5,6,3,'Non Fixed Spending');
+        MF_GridRollup(5,6,3,'Flexible Spending');
         MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
         MF_GridRollDifference(8,1,7,1,'Savings','Sub');
         MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
@@ -1716,7 +1716,7 @@ async function WriteByMonthData() {
     MF_GridRollup(1,2,1,'Income');
     if(accountsHasFixed == true) {
         MF_GridRollup(3,4,2,'Fixed Spending');
-        MF_GridRollup(5,6,3,'Non Fixed Spending');
+        MF_GridRollup(5,6,3,'Flexible Spending');
         MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
         MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     } else {
@@ -1807,7 +1807,7 @@ async function WriteCompareData() {
     MF_GridRollup(1,2,1,'Income');
     if(accountsHasFixed == true) {
         MF_GridRollup(3,4,2,'Fixed Spending');
-        MF_GridRollup(5,6,3,'Non Fixed Spending');
+        MF_GridRollup(5,6,3,'Flexible Spending');
         MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
         MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     } else {
@@ -1818,9 +1818,9 @@ async function WriteCompareData() {
     Numcards = Numcards + MF_GridAddCard(1,6,6,'HV','More Total Income YTD','Less Total Income YTD',css_green,css_red,'','');
     if(accountsHasFixed == true) {
         Numcards = Numcards + MF_GridAddCard(3,6,6,'HV','More Fixed Expenses YTD','Less Fixed Expenses YTD',css_red,css_green,'','');
-        Numcards = Numcards + MF_GridAddCard(5,6,6,'HV','More Non Fixed Expenses YTD','Less Non Fixed Expenses YTD',css_red,css_green,'','');
+        Numcards = Numcards + MF_GridAddCard(5,6,6,'HV','More Flexible Expenses YTD','Less Flexible Expenses YTD',css_red,css_green,'','');
     } else {
-        Numcards = Numcards + MF_GridAddCard(5,6,6,'HV','More Expenses YTD','Less Non Fixed Expenses YTD',css_red,css_green,'','');
+        Numcards = Numcards + MF_GridAddCard(5,6,6,'HV','More Expenses YTD','Less Expenses YTD',css_red,css_green,'','');
     }
     Numcards = Numcards + MF_GridAddCard(8,5,5,'HV','Total Savings','Total Overspent',css_green,css_red,'', '');
 }
