@@ -1,6 +1,3 @@
-
-![Settings](/images/MM_SettingsDeveloper.png)
-
 ## About Monarch Money Tweaks Extension
 > Safety, Security and Transparency of this extension:
 
