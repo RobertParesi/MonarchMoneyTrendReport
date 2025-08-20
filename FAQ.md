@@ -38,9 +38,9 @@ Having been available for over a year to members of the Monarch Money community,
 ![Settings](/images/MM_Chrome1.png)
 
 ## Fixed vs Non Fixed expenses
-> Extension added field found when selecting Settimngs / Categories in Monarch Money:
+> Extension added field found when selecting Settings / Categories in Monarch Money:
 
-You can further define expenses **on the Group level** by either "Fixed" or "Non Fixed" expenses when looking at Trends report and Tags report.   Select Settings / Categories and check the box as appropriate.   If there are no Account Groups that have been checked, the reports will not breakdown the expenses.
+You can further define expenses **on the Group level** by either "Fixed" or "Non Fixed" expenses when looking at Trends report and Tags report.   Select Settings / Categories and check the box as appropriate.   If there are no Account Groups that have been checked, these reports will not breakdown the expenses.
 
 ![Settings](/images/MM_FixedNoFixed.png)
 
