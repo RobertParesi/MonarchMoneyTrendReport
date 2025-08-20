@@ -62,7 +62,7 @@ If there are future investments or credit cards your kids use, you could designa
 ## Auto-Updating Monarch Money Tweaks
 > If you want the script to update automatically:
 
-1. Go to Extensions / Manage Extensions for Tampermoney / Extension options. (In Safari and Firefox, just click on the Tampermoney icon in the browser toolbar & then **Dashboard**).
+1. Go to Extensions / Manage Extensions for Tampermonkey / Extension options. (In Safari and Firefox, just click on the Tampermonkey icon in the browser toolbar & then **Dashboard**).
 2. Next click on the **Installed Userscripts** tab
 3. Click on the "Edit" icon under "Actions" for Monarch Money Tweaks
 4. Next to "Editor", click on the "Settings" tab
