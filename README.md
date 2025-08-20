@@ -19,8 +19,8 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Highlight over-spending based on thresholds: 25%, 50%, 100%
     - Drill down to view monthly and year-to-date totals to identify trends in your groups and categories.
     - Sort history data by any column.
-    - Export it to Excel or Numbers.
-    - Customize comparisons and averages to include the current month if desired.
+    - Export to Excel or Numbers.
+    - Customize comparisons and averages whether to include the current month if desired.
     - Click on date header to go back to End of Last Month
 
 * **Reports / Accounts**
