@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.36.05
+// @version      3.36.06
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.36.05';
+const version = '3.36.06';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -875,7 +875,7 @@ async function MenuReportsTagsGo() {
     MF_SetupDates();
     MF_GridOptions(1,['By group','By category','By both']);
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
-    MF_GridOptions(2,['Ignore Hidden Transactions','Include Hidden Transactions','Only Hidden Transactions','Note Transactions starting with *']);
+    MF_GridOptions(2,['Ignore hidden transactions','Include hidden transactions','Only hidden transactions','Only Notes starting with *']);
     MF_GridOptions(4,getAccountGroupInfo());
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTFlex.Title3 = '';
@@ -886,25 +886,23 @@ async function MenuReportsTagsGo() {
         CurrentFilter = getAccountGroupFilter();
         CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
     }
+    if(MTFlex.Button2 == 1) {HiddenFilter = null;}
+    else if(MTFlex.Button2 == 2) {HiddenFilter = true;}
+    else if(MTFlex.Button2 == 3) {HiddenFilter = null; hasNotes = true;}
+
     let recIdx = 0, recCnt = 0;
     do {
         recCnt = 0;
-        if(MTFlex.Button2 == 2) {HiddenFilter = true;}
-        if(MTFlex.Button2 == 1 || MTFlex.Button2 == 3) {HiddenFilter = null;}
-        if(MTFlex.Button2 == 3) {hasNotes = true;}
         snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj,HiddenFilter,hasNotes);
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt+=1;recIdx+=1;
-            if(MTFlex.Button2 == 3) {
-                if(rec.notes == null) continue;
-                if(rec.notes.startsWith('*') == false) continue;
-            }
+            if(MTFlex.Button2 == 3) {if(rec.notes.startsWith('*') == false) continue;}
             if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
             useAmt = rec.amount;
             if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
             if(MTFlex.Button2 == 3) {
-                TagsUpdateQueue(useID,useAmt,rec.notes.slice(2),'000','')
+                TagsUpdateQueue(useID,useAmt,rec.notes.slice(2),rec.notes.slice(2),'')
             } else {
                 ii = rec.tags.length;
                 if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','');}
@@ -914,7 +912,8 @@ async function MenuReportsTagsGo() {
         }
     } while (recCnt > 999);
 
-    TagCols.sort((a, b) => a.ORDER - b.ORDER);
+    if(MTFlex.Button2 == 3) {TagCols.sort((a, b) => a.ORDER.toString().localeCompare(b.ORDER.toString(), undefined, { numeric: true }));
+    } else {TagCols.sort((a, b) => a.ORDER - b.ORDER);}
 
     let totalCol = 0;
     for (let i = 0; i < TagCols.length; i += 1) {
@@ -3179,7 +3178,7 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
 async function GetTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes) {
     const limit = 5000;
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
-    let filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes && { hasNotes: true })};
+    const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true})};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
           query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id }  \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
