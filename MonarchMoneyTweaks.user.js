@@ -101,7 +101,7 @@ function MM_Init() {
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
     addStyle('.MTFlexdown-content div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
-    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 280px; overflow: auto;' + bdr + bs + '8px ; right: 0; z-index: 1;}');
+    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto;' + bdr + bs + '8px ; right: 0; z-index: 1;}');
     addStyle('.MTFlexdown-content a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
     addStyle('.show {display: block;}');
     addStyle('.MTBudget {margin-top: 20px;font-size: 14px;');
