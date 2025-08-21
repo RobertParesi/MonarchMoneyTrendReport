@@ -1,4 +1,4 @@
-**Version 3.36: (beta)**
+**Version 3.36:**
 
 * NEW: Reports / Trends can now have expenses broken down by "Fixed Expenses" and "Flexible Expenses".
 
