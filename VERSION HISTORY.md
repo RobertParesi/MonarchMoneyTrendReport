@@ -4,7 +4,7 @@
 
 * NEW: Reports / Tags can now have expenses broken down by "Fixed Expenses" and "Flexible Expenses".
 
-* NEW: Reports / Tags can now pull transactions where notes start with * (ie: * Hawaii 2025, * Wedding, etc) and use that as a "Tag" instead.
+* NEW: Reports / Tags can now pull transactions where notes start with * (ie: * Hawaii 2025, Project 123, etc) and use that as a "Tag" instead.
   
 * CHANGE: Renamed some Settings options to be more descriptive what it does.
 
