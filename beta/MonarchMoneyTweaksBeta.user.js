@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.36
+// @version      3.37
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.36';
+const version = '3.37';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -101,7 +101,7 @@ function MM_Init() {
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
     addStyle('.MTFlexdown-content div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
-    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 280px; overflow: auto;' + bdr + bs + '8px ; right: 0; z-index: 1;}');
+    addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto;' + bdr + bs + '8px ; right: 0; z-index: 1;}');
     addStyle('.MTFlexdown-content a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
     addStyle('.show {display: block;}');
     addStyle('.MTBudget {margin-top: 20px;font-size: 14px;');
@@ -116,6 +116,7 @@ function MM_Init() {
 }
 
 function MM_MenuFix() {
+
     const wbs = ['/advice','/investments','/objectives','/recurring','/plan'];
     const cks = ['MT_Advice','MT_Investments','MT_Goals','MT_Recurring','MT_Budget'];
     const divs = document.querySelectorAll('[class*="NavLink-sc"]');
@@ -526,10 +527,10 @@ function MT_GridExport() {
     const MTFieldsEnd = MTFields + MTFlexTitle.length;
     let csvContent = '',useValue = '',k = 0,Cols = 0;
 
-    for (let i = 0; i < MTFlexTitle.length; i += 1) {
-        if(MTFlexTitle[i].isHidden == false) {
+    for (const Title of MTFlexTitle) {
+        if(Title.isHidden == false) {
             Cols+=1;
-            if(MTFlex.HideDetails != true) csvContent = csvContent + '"' + MTFlexTitle[i].Title + '"' + c;
+            if(MTFlex.HideDetails != true) csvContent = csvContent + '"' + Title.Title + '"' + c;
         }
     }
     if(MTFlex.HideDetails != true) {
@@ -574,7 +575,7 @@ function MT_GridDrawEmbed(inSection,inCol,inValue, inDesc) {
             }
             break;
         case 'MTAccounts':
-            if(MTFlex.Button2 < 7) {
+            if(MTFlex.Button2 == 0) {
                 if (inSection == 2 && inCol == 9) {return inValue < 0 ? css_red : inValue > 0 ? css_green : '';}
                 if (inSection == 2 && inCol == 11 && inValue < 0) {return css_red;}
                 if (inSection == 4 && inCol == 9) {return inValue > 0 ? css_red : inValue < 0 ? css_green : '';}
@@ -632,11 +633,7 @@ function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, 
 
 function MF_GridUpdateUID(inUID,inCol,inValue,addMissing) {
 
-    for (let i = 0; i < MTFlexRow.length; i += 1) {
-        if(MTFlexRow[i].UID == inUID) {
-            MTFlexRow[i][MTFields + inCol] = inValue;
-            return true;
-    }}
+    for (const Row of MTFlexRow) {if(Row.UID == inUID) {Row[MTFields + inCol] = inValue;return true;}}
     if(addMissing == true) {
         let p = [];
         p.UID = inUID;
@@ -666,6 +663,7 @@ function MF_GridRollup(inSection,inRoll,inBasedOn,inName) {
 function MF_GridRollDifference(inSection,inA,inB,inBasedOn,inName,inOp) {
 
     let p1 = null, p2 = null;
+    MTFlexTitle
     for (let i = 0; i < MTFlexRow.length; i += 1) {
         if(MTFlexRow[i].Section == inA) {p1 = i;}
         if(MTFlexRow[i].Section == inB) {p2 = i;}
@@ -828,12 +826,12 @@ function MenuReportsCustomUpdate(inValue) {
 
 function MenuReportsPanels(inType) {
 
-    let div = document.querySelectorAll('[class*="FlexContainer__Root-sc"]');
-    for (let i = 0; i < div.length; i += 1) {
-        if(div[i].innerText.startsWith('Clear')) {div[i].style=inType;break;}
+    let divs = document.querySelectorAll('[class*="FlexContainer__Root-sc"]');
+    for (const div of divs) {
+        if(div.innerText.startsWith('Clear')) {div.style=inType;break;}
     }
-    div = document.querySelector('[class*="Grid__GridStyled-"]');
-    if(div) {div.style=inType;}
+    divs = document.querySelector('[class*="Grid__GridStyled-"]');
+    if(divs) {divs.style=inType;}
 }
 
 function MenuReportsGo(inName) {
@@ -916,27 +914,27 @@ async function MenuReportsTagsGo() {
     } else {TagCols.sort((a, b) => a.ORDER - b.ORDER);}
 
     let totalCol = 0;
-    for (let i = 0; i < TagCols.length; i += 1) {
-        switch(TagCols[i].NAME) {
+    for (const TagCol of TagCols) {
+        switch(TagCol.NAME) {
             case '':
                 useTitle = 'Untagged';break;
             case '*':
                 useTitle = 'Multiple';break;
             default:
-                useTitle = TagCols[i].NAME;
+                useTitle = TagCol.NAME;
         }
         totalCol+=1;
         MTP = []; MTP.Column = totalCol; MTP.Title = useTitle; MTP.isSortable = 2; MTP.Format = 1;
-        if(TagCols[i].COLOR) {MTP.Indicator = TagCols[i].COLOR;}
+        if(TagCol.COLOR) {MTP.Indicator = TagCol.COLOR;}
         MF_QueueAddTitle(MTP);
     }
     totalCol+=1;
     MTP = []; MTP.Column = totalCol; MTP.Title = 'Total'; MTP.isSortable = 2; MTP.Format = 1; MF_QueueAddTitle(MTP);
 
-    for (let i = 0; i < TagQueue.length; i += 1) {
-        ii = TagsIndexQueue(TagQueue[i].TagName);
-        useID = TagQueue[i].ID;
-        if(MF_GridUpdateUID(useID,ii+1,TagQueue[i].Amt,false) == false) {
+    for (const Tag of TagQueue) {
+        ii = TagsIndexQueue(Tag.TagName);
+        useID = Tag.ID;
+        if(MF_GridUpdateUID(useID,ii+1,Tag.Amt,false) == false) {
             let retGroup = await getCategoryGroup(useID);
             if(retGroup.TYPE == 'transfer') {
 
@@ -980,7 +978,7 @@ async function MenuReportsTagsGo() {
                 MTP.SKExpand = '';
                 MF_QueueAddRow(MTP);
                 MTFlexRow[MTFlexCR][MTFields] = useTitle;
-                MTFlexRow[MTFlexCR][MTFields+ii+1] = TagQueue[i].Amt;
+                MTFlexRow[MTFlexCR][MTFields+ii+1] = Tag.Amt;
             }
         }
     }
@@ -1000,9 +998,9 @@ async function MenuReportsTagsGo() {
     MTSpawnProcess = 1;
 
     function TagsUpdateQueue(inID,inAmt,inTag, inOrder, inColor) {
-         for (let i = 0; i < TagQueue.length; i += 1) {
-             if(TagQueue[i].ID == inID && TagQueue[i].TagName == inTag) {
-                 TagQueue[i].Amt += inAmt;
+        for (const Tag of TagQueue) {
+             if(Tag.ID == inID && Tag.TagName == inTag) {
+                 Tag.Amt += inAmt;
                  return;
              }
          }
