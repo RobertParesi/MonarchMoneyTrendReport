@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.37
+// @version      3.38
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.37';
+const version = '3.38';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -663,7 +663,6 @@ function MF_GridRollup(inSection,inRoll,inBasedOn,inName) {
 function MF_GridRollDifference(inSection,inA,inB,inBasedOn,inName,inOp) {
 
     let p1 = null, p2 = null;
-    MTFlexTitle
     for (let i = 0; i < MTFlexRow.length; i += 1) {
         if(MTFlexRow[i].Section == inA) {p1 = i;}
         if(MTFlexRow[i].Section == inB) {p2 = i;}
@@ -682,6 +681,14 @@ function MF_GridRollDifference(inSection,inA,inB,inBasedOn,inName,inOp) {
             MTFlexRow[MTFlexCR][MTFields+j] = parseFloat(MTFlexRow[MTFlexCR][MTFields+j].toFixed(2));
         } else { MTFlexRow[MTFlexCR][MTFields+j] = ''; }
     }
+}
+
+function MF_GridGetValue(inSection,inCol) {
+
+    for (let i = 0; i < MTFlexRow.length; i += 1) {
+        if(MTFlexRow[i].Section == inSection) {return MTFlexRow[i][MTFields + inCol];}
+    }
+    return 0;
 }
 
 function MF_GridCalcDifference(inSection,in1,in2,inCols,inOp) {
@@ -900,7 +907,7 @@ async function MenuReportsTagsGo() {
             useAmt = rec.amount;
             if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
             if(MTFlex.Button2 == 3) {
-                TagsUpdateQueue(useID,useAmt,rec.notes.slice(2),rec.notes.slice(2),'')
+                TagsUpdateQueue(useID,useAmt,rec.notes.slice(2),rec.notes.slice(2),'');
             } else {
                 ii = rec.tags.length;
                 if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','');}
@@ -1651,7 +1658,6 @@ async function MenuReportsTrendsGo() {
         if(getCookie('MT_TrendHideNextMonth',true) == true) {MTP.isHidden = true;}
         MF_QueueAddTitle(MTP);
         await BuildTrendData('fu',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj);
-
         await WriteCompareData();
     }
     MTSpawnProcess = 1;
@@ -1738,7 +1744,6 @@ async function WriteByMonthData() {
         MF_GridAddCard(6,1,12,'HV','Highest Expense','',css_red,'',' was with ', ' in ');
         MF_GridAddCard(8,13,13,'HV','Total Savings','Total Overspent',css_green,css_red,'', '');
     }
-
 }
 
 async function WriteCompareData() {
@@ -1810,6 +1815,21 @@ async function WriteCompareData() {
     } else {
         MF_GridRollup(5,6,3,'Spending');
         MF_GridRollDifference(8,1,5,1,'Savings','Sub');
+    }
+
+    if(getCookie('MT_TrendCard1',true) == true) {
+        let a_Income = MF_GridGetValue(1,5);
+        let a_Fixed = MF_GridGetValue(3,5);
+        let a_Flexible = MF_GridGetValue(5,5);
+        let a_Savings = a_Income - a_Fixed - a_Flexible;
+        a_Fixed = (a_Fixed / a_Income) * 100;a_Fixed = Math.round(a_Fixed);
+        a_Flexible = (a_Flexible / a_Income) * 100;a_Flexible = Math.round(a_Flexible);
+        a_Savings = (a_Savings / a_Income) * 100;a_Savings = Math.round(a_Savings);
+        Numcards+=1;
+        MTP = [];MTP.Col = Numcards;
+        MTP.Title = a_Fixed + '% / ' + a_Flexible + '% / ' + a_Savings + '%';
+        MTP.Subtitle = 'Fixed/Flexible/Savings';
+        MF_QueueAddCard(MTP);
     }
 
     Numcards = Numcards + MF_GridAddCard(1,6,6,'HV','More Total Income YTD','Less Total Income YTD',css_green,css_red,'','');
@@ -2368,7 +2388,7 @@ function MenuHistory(OnFocus) {
 
 function MenuCategories(OnFocus) {
     if(SaveLocationPathName.startsWith('/categories')) {
-       if(OnFocus == false) {removeAllSections('.MTHistoryButton')}
+       if(OnFocus == false) {removeAllSections('.MTHistoryButton');}
     }
 }
 
@@ -2398,7 +2418,7 @@ function MenuSettings(OnFocus) {
         if(OnFocus == false) {accountGroups=[];}
         if(OnFocus == true) {
             let divs = document.querySelectorAll('[class*="ManageCategoryGroupCard__Header-"]');
-            if(divs.length == 0) {SaveLocationPathName = '';return}
+            if(divs.length == 0) {SaveLocationPathName = '';return;}
             let div = null,grp=null,isExp=null;
             for (let i = 0; i < divs.length; ++i) {
                 grp = divs[i].getAttribute('data-rbd-drag-handle-draggable-id');
@@ -2444,6 +2464,7 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('By Month "Avg" ignores Current Month','MT_TrendIgnoreCurrent','checkbox');
             MenuDisplay_Input('Hide percentages not in Difference columns','MT_TrendHidePer1','checkbox');
             MenuDisplay_Input('Hide percentages in Difference columns','MT_TrendHidePer2','checkbox');
+            MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
             MenuDisplay_Input('Hide next month (Based on last year)','MT_TrendHideNextMonth','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
