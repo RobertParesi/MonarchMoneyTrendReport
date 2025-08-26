@@ -1,3 +1,7 @@
+**Version 3.38:**
+
+* NEW: Reports / Trends can now have Fixed/Flexible/Savings ratio card. (Settings)
+
 **Version 3.36:**
 
 * NEW: Reports / Trends can now have expenses broken down by "Fixed Expenses" and "Flexible Expenses".
