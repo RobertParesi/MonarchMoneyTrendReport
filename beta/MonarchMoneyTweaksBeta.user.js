@@ -1819,17 +1819,19 @@ async function WriteCompareData() {
 
     if(getCookie('MT_TrendCard1',true) == true) {
         let a_Income = MF_GridGetValue(1,5);
-        let a_Fixed = MF_GridGetValue(3,5);
-        let a_Flexible = MF_GridGetValue(5,5);
-        let a_Savings = a_Income - a_Fixed - a_Flexible;
-        a_Fixed = (a_Fixed / a_Income) * 100;a_Fixed = Math.round(a_Fixed);
-        a_Flexible = (a_Flexible / a_Income) * 100;a_Flexible = Math.round(a_Flexible);
-        a_Savings = (a_Savings / a_Income) * 100;a_Savings = Math.round(a_Savings);
-        Numcards+=1;
-        MTP = [];MTP.Col = Numcards;
-        MTP.Title = a_Fixed + '% / ' + a_Flexible + '% / ' + a_Savings + '%';
-        MTP.Subtitle = 'Fixed/Flexible/Savings';
-        MF_QueueAddCard(MTP);
+        if(a_Income > 0) {
+            let a_Fixed = MF_GridGetValue(3,5);
+            let a_Flexible = MF_GridGetValue(5,5);
+            let a_Savings = a_Income - a_Fixed - a_Flexible;
+            a_Fixed = (a_Fixed / a_Income) * 100;a_Fixed = Math.round(a_Fixed);
+            a_Flexible = (a_Flexible / a_Income) * 100;a_Flexible = Math.round(a_Flexible);
+            a_Savings = (a_Savings / a_Income) * 100;a_Savings = Math.round(a_Savings);
+            Numcards+=1;
+            MTP = [];MTP.Col = Numcards;
+            MTP.Title = a_Fixed + '% / ' + a_Flexible + '% / ' + a_Savings + '%';
+            MTP.Subtitle = 'Fixed/Flexible/Savings';
+            MF_QueueAddCard(MTP);
+        }
     }
 
     Numcards = Numcards + MF_GridAddCard(1,6,6,'HV','More Total Income YTD','Less Total Income YTD',css_green,css_red,'','');
