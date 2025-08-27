@@ -2,7 +2,7 @@
 
 [Click here to update to Latest Version - V3.38](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
 
-(I am currently working on a regression with the SPENDING not appearing in Trends.  Please give me 24 hours to correct)
+(I am currently working on a regression with the SPENDING not appearing in Trends. This error only happens if you have not designated any Fixed vs Flexible spending categories. Please give me 24 hours to correct)
 
 
 # Monarch Money Tweaks - Get Started! 
