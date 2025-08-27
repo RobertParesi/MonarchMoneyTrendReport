@@ -2,6 +2,8 @@
 
 [Click here to update to Latest Version - V3.38](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
 
+(I am currently working on a regression with the SPENDING not appearing in Trends.  Please give me 24 hours to correct)
+
 
 # Monarch Money Tweaks - Get Started! 
 
