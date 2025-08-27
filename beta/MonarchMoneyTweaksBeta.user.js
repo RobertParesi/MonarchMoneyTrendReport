@@ -342,8 +342,14 @@ function MT_GridDrawDetails() {
                                 pct = MT_GridPercent(useRow[j + MTFields - 5],useRow[j + MTFields - 1],MTFlexTitle[j].ShowPercentShade,1,useRow.IgnoreShade);
                                 break;
                             case 2:
-                                rowNdx = useRow.BasedOn -1;rowNdx = Subtotals[rowNdx];workValue = MTFlexRow[rowNdx][j + MTFields];
-                                pct = MT_GridPercent(workValue,useValue,MTFlexTitle[j].ShowPercentShade,2,useRow.IgnoreShade);
+                                rowNdx = useRow.BasedOn -1;
+                                rowNdx = Subtotals[rowNdx];
+                                if(MTFlexRow[rowNdx] != undefined) {
+                                    workValue = MTFlexRow[rowNdx][j + MTFields];
+                                    pct = MT_GridPercent(workValue,useValue,MTFlexTitle[j].ShowPercentShade,2,useRow.IgnoreShade);
+                                } else {
+                                    console.log('undefined',rowNdx,useRow.BasedOn,MTFlexTitle[j].Title);
+                                }
                                 break;
                         }
                         useValue2 = useValue2 + ' ' + pct[0];
