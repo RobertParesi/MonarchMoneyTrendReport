@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.38
+// @version      3.39
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.38';
+const version = '3.39';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -342,8 +342,12 @@ function MT_GridDrawDetails() {
                                 pct = MT_GridPercent(useRow[j + MTFields - 5],useRow[j + MTFields - 1],MTFlexTitle[j].ShowPercentShade,1,useRow.IgnoreShade);
                                 break;
                             case 2:
-                                rowNdx = useRow.BasedOn -1;rowNdx = Subtotals[rowNdx];workValue = MTFlexRow[rowNdx][j + MTFields];
-                                pct = MT_GridPercent(workValue,useValue,MTFlexTitle[j].ShowPercentShade,2,useRow.IgnoreShade);
+                                rowNdx = useRow.BasedOn -1;
+                                rowNdx = Subtotals[rowNdx];
+                                if(MTFlexRow[rowNdx] != undefined) {
+                                    workValue = MTFlexRow[rowNdx][j + MTFields];
+                                    pct = MT_GridPercent(workValue,useValue,MTFlexTitle[j].ShowPercentShade,2,useRow.IgnoreShade);
+                                }
                                 break;
                         }
                         useValue2 = useValue2 + ' ' + pct[0];
@@ -990,18 +994,11 @@ async function MenuReportsTagsGo() {
         }
     }
     MF_GridRollup(1,2,1,'Income');
-    if(accountsHasFixed == false) {
-        MF_GridRollup(3,4,2,'Spending');
-        MF_GridRollDifference(5,1,3,1,'Savings','Sub');
-        MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
-    } else {
-        MF_GridRollup(3,4,2,'Fixed Spending');
-        MF_GridRollup(5,6,3,'Flexible Spending');
-        MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
-        MF_GridRollDifference(8,1,7,1,'Savings','Sub');
-        MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
-    }
-
+    MF_GridRollup(3,4,2,'Fixed Spending');
+    MF_GridRollup(5,6,3,'Flexible Spending');
+    MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
+    MF_GridRollDifference(8,1,7,1,'Savings','Sub');
+    MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
     MTSpawnProcess = 1;
 
     function TagsUpdateQueue(inID,inAmt,inTag, inOrder, inColor) {
@@ -1717,16 +1714,10 @@ async function WriteByMonthData() {
         MTFlex.Title2 = MTFlex.Title2.substring(0, 7) + MTFlexTitle[lowestMonth].Title + MTFlex.Title2.substring(11);
     }
     MF_GridRollup(1,2,1,'Income');
-    if(accountsHasFixed == true) {
-        MF_GridRollup(3,4,2,'Fixed Spending');
-        MF_GridRollup(5,6,3,'Flexible Spending');
-        MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
-        MF_GridRollDifference(8,1,7,1,'Savings','Sub');
-    } else {
-        MF_GridRollup(5,6,3,'Spending');
-        MF_GridRollDifference(8,1,5,1,'Savings','Sub');
-    }
-
+    MF_GridRollup(3,4,2,'Fixed Spending');
+    MF_GridRollup(5,6,3,'Flexible Spending');
+    MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
+    MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     MF_GridCalcRange(13,1,12,'Add');
 
     lowestMonth = 12;
@@ -1807,15 +1798,10 @@ async function WriteCompareData() {
          }
     }
     MF_GridRollup(1,2,1,'Income');
-    if(accountsHasFixed == true) {
-        MF_GridRollup(3,4,2,'Fixed Spending');
-        MF_GridRollup(5,6,3,'Flexible Spending');
-        MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
-        MF_GridRollDifference(8,1,7,1,'Savings','Sub');
-    } else {
-        MF_GridRollup(5,6,3,'Spending');
-        MF_GridRollDifference(8,1,5,1,'Savings','Sub');
-    }
+    MF_GridRollup(3,4,2,'Fixed Spending');
+    MF_GridRollup(5,6,3,'Flexible Spending');
+    MF_GridRollDifference(7,3,5,1,'Total Spending','Add');
+    MF_GridRollDifference(8,1,7,1,'Savings','Sub');
 
     if(getCookie('MT_TrendCard1',true) == true) {
         let a_Income = MF_GridGetValue(1,5);
