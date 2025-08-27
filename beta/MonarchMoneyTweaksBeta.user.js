@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.39
+// @version      3.40.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.39';
+const version = '3.40.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -639,10 +639,7 @@ function MF_GridUpdateUID(inUID,inCol,inValue,addMissing) {
 
     for (const Row of MTFlexRow) {if(Row.UID == inUID) {Row[MTFields + inCol] = inValue;return true;}}
     if(addMissing == true) {
-        let p = [];
-        p.UID = inUID;
-        MF_QueueAddRow(p);
-        MTFlexRow[MTFlexCR][MTFields + inCol] = inValue;
+        let p = [];p.UID = inUID;MF_QueueAddRow(p);MTFlexRow[MTFlexCR][MTFields + inCol] = inValue;
     }
     return false;
 }
@@ -1847,32 +1844,32 @@ async function BuildTrendData (inCol,inGrouping,inPeriod,lowerDate,higherDate,in
 
     if(inGrouping == 0) {snapshotData = await getMonthlySnapshotData(firstDate,lastDate,inPeriod,inAccounts);} else {
         snapshotData = await getMonthlySnapshotData2(firstDate,lastDate,inPeriod,inAccounts);}
-
-    for (let i = 0; i < snapshotData.aggregates.length; i += 1) {
+    let useDate = null,yy = null,mm=null,ndx=null,useAmount=null;
+    for (const ss of snapshotData.aggregates) {
         switch(inGrouping) {
-            case 0: useID = snapshotData.aggregates[i].groupBy.categoryGroup.id;break;
-            case 1: useID = snapshotData.aggregates[i].groupBy.category.id;break;
-            case 2: useID = snapshotData.aggregates[i].groupBy.category.id;break;
-            case 3: useID = snapshotData.aggregates[i].groupBy.category.id;
+            case 0: useID = ss.groupBy.categoryGroup.id;break;
+            case 1: useID = ss.groupBy.category.id;break;
+            case 2: useID = ss.groupBy.category.id;break;
+            case 3: useID = ss.groupBy.category.id;
                 retGroups = getCategoryGroup(useID);
                 useID = retGroups.GROUP;useType = retGroups.TYPE;break;
         }
         if(inID == '' || inID == useID) {
-            let useAmount = Number(snapshotData.aggregates[i].summary.sum);
+            useAmount = Number(ss.summary.sum);
             if(inID) {
-                let useDate = snapshotData.aggregates[i].groupBy.month;
-                let yy = useDate.substring(0,4);
-                let mm = useDate.substring(5,7);
+                useDate = ss.groupBy.month;
+                yy = useDate.substring(0,4);
+                mm = useDate.substring(5,7);
                 if(useType == 'expense') { useAmount = useAmount * -1;}
                 TrendQueue2.push({"YEAR": yy, "MONTH": mm,"AMOUNT": useAmount, "DESC": retGroups.NAME, "ID": retGroups.ID});
             } else if (inCol == 'oy') {
-                let useDate = snapshotData.aggregates[i].groupBy.year;
-                let ndx = Number(useDate.substring(0,4));
+                useDate = ss.groupBy.year;
+                ndx = Number(useDate.substring(0,4));
                 ndx = ndx - s_ndx;
                 MF_GridUpdateUID(useID,ndx,useAmount,true);}
             else if (inCol == 'ot') {
-                let useDate = snapshotData.aggregates[i].groupBy.month;
-                let ndx = Number(useDate.substring(5,7));
+                useDate = ss.groupBy.month;
+                ndx = Number(useDate.substring(5,7));
                 if(MTFlex.Button2 == 5 && s_ndx != 1) {
                     if(ndx >= s_ndx) {
                         ndx = ndx - s_ndx;
