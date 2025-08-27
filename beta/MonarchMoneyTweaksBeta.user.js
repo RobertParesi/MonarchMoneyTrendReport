@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.38
+// @version      3.39.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.38';
+const version = '3.39.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1814,7 +1814,7 @@ async function WriteCompareData() {
         MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     } else {
         MF_GridRollup(5,6,3,'Spending');
-        MF_GridRollDifference(8,1,5,1,'Savings','Sub');
+        MF_GridRollDifference(8,1,7,1,'Savings','Sub');
     }
 
     if(getCookie('MT_TrendCard1',true) == true) {
