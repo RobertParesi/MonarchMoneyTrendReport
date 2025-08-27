@@ -1,3 +1,7 @@
+**Version 3.39:**
+
+* REGRESSION: Reports / Trends could fail (not show Spending) when no Fixed Expenses are set. (Work in Progress)
+
 **Version 3.38:**
 
 * NEW: Reports / Trends can now have Fixed/Flexible/Savings ratio card. (Settings)
