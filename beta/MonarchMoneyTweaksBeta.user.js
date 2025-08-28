@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.40.01
+// @version      3.40.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.40.01';
+const version = '3.40.02';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -58,7 +58,7 @@ function MM_Init() {
     addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; height: 8px; border-bottom: 1px solid ' + lineForground +';}');
     addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
     addStyle('.MT' + FlexOptions.join(':hover, .MT') + ':hover {cursor:pointer;}');
-    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton {font-family: MonarchIcons, "Oracle", sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 12px;' + bdr + bs + ' 4px;cursor: pointer;}');
+    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton {font-family: MonarchIcons, "Oracle", sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 12px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTFlexContainer {display:block; padding: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 20px;  display: flex; }');
     addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
@@ -1833,10 +1833,7 @@ async function BuildTrendData (inCol,inGrouping,inPeriod,lowerDate,higherDate,in
 
     const firstDate = formatQueryDate(lowerDate);
     const lastDate = formatQueryDate(higherDate);
-    let useID = '', useType = '';
-    let snapshotData = null;
-    let retGroups = [];
-    let s_ndx = 0;
+    let useID = '', useType = '',snapshotData = null,retGroups = [],s_ndx = 0;
     if(MTFlex.Button2 > 7) {s_ndx = getDates('n_CurYear', MTFlexDate2) - 12;} else {s_ndx = getDates('n_CurMonth',lowerDate) + 1;}
 
     if(inID) { useType = getCategoryGroup(inID).TYPE; }
@@ -2424,7 +2421,9 @@ function MenuSettings(OnFocus) {
     if (SaveLocationPathName.startsWith('/settings/display')) {
         if(OnFocus == false) { }
         if(OnFocus == true) {
-            MenuDisplay_Input('Monarch Money Tweaks - ' + version,'','header');
+            const p = MenuDisplay_Input('Monarch Money Tweaks - ' + version,'','header');
+            MenuDisplay_Button(p,'Save Settings');
+            MenuDisplay_Button(p,'Restore Settings');
             MenuDisplay_Input('Lowest Calendar/Data year','','spacer');
             MenuDisplay_Input('','MT_LowCalendarYear','number');
             MenuDisplay_Input('Menu','','spacer');
@@ -2478,6 +2477,9 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('Debug data to console log (Only turn on if asked)','MT_Debug','checkbox');
         }
     }
+    function MenuDisplay_Button(inDiv,inText) {
+        cec('button','MTSettingsButton',inDiv,inText,'','float:right;margin-left: 0px; margin-right:24px;');
+    }
     function MenuDisplay_Input(inValue,inCookie,inType,inStyle,optValue) {
 
         let qs = document.querySelector('.SettingsCard__Placeholder-sc-189f681-2');
@@ -2497,13 +2499,9 @@ function MenuSettings(OnFocus) {
             }
             switch(inType) {
                 case 'header':
-                    e1.innerText = inValue;
-                    e1.style = 'font-size: 18px; font-weight: 500; margin-left:24px;padding-bottom:12px;';
-                    break;
+                    e1.innerText = inValue; e1.style = 'font-size: 18px; font-weight: 500; margin-left:24px;padding-bottom:12px;'; break;
                 case 'dropdown':
-                    e1.style = 'margin: 11px 25px; display:flex;column-gap: 10px;';
-                    dropDowns+=1;
-                    break;
+                    e1.style = 'margin: 11px 25px; display:flex;column-gap: 10px;'; dropDowns+=1; break;
                 default:
                     e1.style = 'margin: 11px 25px;';
             }
@@ -2543,10 +2541,11 @@ function MenuSettings(OnFocus) {
                 e3 = cec('div','MTFlexdown-content',e2,'','','','id','MTDropdown'+dropDowns);
                 for (let i = 0; i < optValue.length; i++) {
                     mtObj = optValue[i].split('|');if(mtObj[1] == null) mtObj[1] = mtObj[0];
-                    e2 = cec('a','MTSetupButton',e3,mtObj[0],'','','MTSetupOption',inCookie);
+                    e2 = cec('a','MTSetupDropdown',e3,mtObj[0],'','','MTSetupOption',inCookie);
                     e2.setAttribute('MTSetupValue',mtObj[1]);
                 }
             }
+            return e1;
         }
     }
 }
@@ -2624,8 +2623,9 @@ window.onclick = function(event) {
                 event.target.innerText = ['',''][MM_flipSideElement(MTFlex.Name + '_SidePanel')];
                 return;
             case 'MTPanelLink':
-                MenuTrendsHistoryExport();
-                return;
+                MenuTrendsHistoryExport();return;
+            case 'MTSettingsButton':
+                onClickMTSettings();return;
             case 'MTFlexBig':
                 onClickMTFlexBig();return;
             case 'MThRefClass2':
@@ -2660,7 +2660,7 @@ window.onclick = function(event) {
                 return;
             case 'MTFlexButtonExport':
                 MT_GridExport(); break;
-            case 'MTSetupButton':
+            case 'MTSetupDropdown':
                 onClickSetupDropdown(event.target); break;
             case 'MTBub1':
                 switch (startsInList(event.target.textContent,['SUM','AVG','CNT'])) {
@@ -2819,6 +2819,23 @@ function onClickMTDropdownRelease() {
         if(li) {li.className = 'MTFlexdown-content';}
         r_FlexButtonActive = 0;
     }
+}
+
+function onClickMTSettings() {
+    const bt = event.target.innerText;
+    const CRLF = String.fromCharCode(13,10);
+    if(bt == 'Save Settings') {
+        let csvContent = 'Monarch Money Tweaks Configuration File' + CRLF;
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const value = localStorage.getItem(key);
+            if(key.startsWith('MT')) {
+                csvContent = csvContent + key + '||' + value + CRLF;
+            }
+        }
+        downloadFile('Monarch Money Tweaks Settings',csvContent);
+    }
+    if(bt == 'Restore Settings') { uploadfileSettings(); }
 }
 
 function onClickMTFlexBig() {
@@ -3092,6 +3109,39 @@ function downloadFile(inTitle,inData) {
     const link = cec('a','',document.body,'',encodedUri,'','download',inTitle + '.csv');
     link.click();
     document.body.removeChild(link);
+}
+
+function uploadfileSettings() {
+    const CRLF = String.fromCharCode(13,10);
+    const link = cec('input','',document.body,'','','display:none;','type','file');
+    link.setAttribute('accept','.csv');
+    link.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        let csvContent = [];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const contents = e.target.result;
+                const lines = contents.split(/\r?\n/);
+                lines.forEach((line, index) => {
+                    csvContent.push(line);
+                });
+                if(csvContent[0] == null || csvContent[0] != 'Monarch Money Tweaks Configuration File') {
+                    alert('Invalid Monarch Money Tweaks Configuration File');
+                } else {
+                    for (let i = 1; i < csvContent.length; i++) {
+                        const line = csvContent[i];
+                        const key = line.split('||')[0];
+                        const value = line.split('||')[1];
+                        if(key != '') {setCookie(key,value);}
+                    }
+                    location.reload()
+                }
+            };
+            reader.readAsText(file);
+        }
+    });
+    link.click();
 }
 
 function setCookie(cName, cValue) { localStorage.setItem(cName,cValue); }
