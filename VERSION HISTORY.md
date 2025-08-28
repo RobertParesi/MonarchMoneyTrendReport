@@ -1,6 +1,10 @@
+**Version 3.40 (beta):**
+
+* NEW: Ability to Save and Restore Monarch Money Tweaks settings.
+
 **Version 3.39:**
 
-* REGRESSION: Reports / Trends could fail (not show Spending) when no Fixed Expenses are set. (Work in Progress)
+* REGRESSION: Reports / Trends could fail (not show Spending) when no Fixed Expenses are set. 
 
 **Version 3.38:**
 
