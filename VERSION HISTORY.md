@@ -1,4 +1,4 @@
-**Version 3.40 (beta):**
+**Version 3.40:**
 
 * NEW: Ability to Save and Restore Monarch Money Tweaks settings.
 
