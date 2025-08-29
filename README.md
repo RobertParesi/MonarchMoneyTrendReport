@@ -1,6 +1,6 @@
 # Already have Monarch Money Tweaks?
 
-[Click here to update to Latest Version - V3.39](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
+[Click here to update to Latest Version - V3.40](https://github.com/RobertParesi/MonarchMoneyTrendReport/raw/refs/heads/main/MonarchMoneyTweaks.user.js) 
 
 # Monarch Money Tweaks - Get Started! 
 
@@ -57,6 +57,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
 * Correct the Calendar Year dropdown to display only years with available data (instead of starting from 2000).
 * Hide the Accounts Net Worth Graph Panel for a simplified view.
 * Highlight pending transactions when the Allow Edits to Pending Transactions setting is set to "Off."
+* Save and Restore Monarch Money Tweaks settings (use between browsers)
 
 # Quotes from Monarch Money users  
 - _This is fantastic! I just installed Monarch Money Tweaks and it makes up for some serious gaps in Monarch Money reporting. The trends report is exactly what I was looking for and probably the main reason I continue to run Quicken in parallel (which I have used for 15+ yrs). Thanks so much for doing this!_
