@@ -2,7 +2,7 @@
 
 * FIX: Removed orphaned account groups (if the account was deleted)
 
-* **Version 3.40:**
+**Version 3.40:**
 
 * NEW: Ability to Save and Restore Monarch Money Tweaks settings.
 
