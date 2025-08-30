@@ -112,6 +112,9 @@ Enjoy!
 **Monarch Tweaks Settings**
 ![Settings](/images/MT_V3_01.png)
 
+**Monarch Tweaks - Set Groups that are Fixed vs Flexible**
+![Settings](/images/MTFixed.png)
+
 **Monarch Tweaks Spit Transaction 50/50**
 ![Settings](/images/MT_V3_03.png)
 
