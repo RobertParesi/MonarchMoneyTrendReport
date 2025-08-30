@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.40
+// @version      3.41.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.40';
+const version = '3.41.01';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1041,7 +1041,7 @@ async function MenuReportsAccountsGo() {
 
     async function MenuReportsAccountsGoExt(){
 
-        let snapshotData = null, snapshotData3 = null;
+        let snapshotData = null, snapshotData3 = null,aSelected = false;
         let CurMonth = getDates('n_CurMonth',MTFlexDate2),CurYear = 0;
         let NumMonths = (MTFlex.Button2 == 2) ? 6 : 12;
         let useDate = getDates('d_Minus1Year',MTFlexDate2);
@@ -1080,6 +1080,7 @@ async function MenuReportsAccountsGo() {
         if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
         for (let i = 0; i < snapshotData.accounts.length; i += 1) {
             if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + snapshotData.accounts[i].id,false)) {
+                aSelected = true;
                 if(snapshotData.accounts[i].hideFromList == false || skipHidden == 0) {
                     if(snapshotData.accounts[i].includeInNetWorth == true || skipHidden2 == 0) {
                         MTP = [];
@@ -1099,6 +1100,7 @@ async function MenuReportsAccountsGo() {
                 }
             }
         }
+        if(aSelected == false && AccountGroupFilter) {getAccountGroupInfo(AccountGroupFilter,true);}
         if(debug == 1) console.log('MenuReportsAccountsGoExt',snapshotData,MTFlexRow,MTFlex);
         let workDate = null;
         for (let i = 0; i < 12; i += 1) {
@@ -1138,7 +1140,7 @@ async function MenuReportsAccountsGo() {
 
     async function MenuReportsAccountsGoStd(){
 
-        let snapshotData = null, snapshotData2 = null, snapshotData3 = null,snapshotData4 = null;
+        let snapshotData = null, snapshotData2 = null, snapshotData3 = null,snapshotData4 = null,aSelected = false;
         let cards = 0,acard=[0,0,0,0,0];
         let isToday = getDates('isToday',MTFlexDate2);
         let NetWorthLit = 'Net Worth/Totals';
@@ -1187,6 +1189,7 @@ async function MenuReportsAccountsGo() {
         if(debug == 1) console.log('MenuReportsAccountsGoStd',snapshotData,snapshotData2,AccountGroupFilter);
         for (let i = 0; i < snapshotData.accounts.length; i += 1) {
             if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + snapshotData.accounts[i].id,false)) {
+                aSelected = true;
                 if(snapshotData.accounts[i].hideFromList == false || skipHidden == 0) {
                     if(snapshotData.accounts[i].includeInNetWorth == true || skipHidden2 == 0) {
                         MTP = [];
@@ -1260,7 +1263,7 @@ async function MenuReportsAccountsGo() {
                 }
             }
         }
-
+        if(aSelected == false && AccountGroupFilter) {getAccountGroupInfo(AccountGroupFilter,true);}
         cards=0;
         for (let i = 0; i < 5; i += 1) {
             if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {
@@ -1334,7 +1337,7 @@ async function MenuReportsAccountsGo() {
     }
 }
 
-function getAccountGroupInfo(inName) {
+function getAccountGroupInfo(inName,inDelete) {
     let items = [],value = '',key='',keyid='';
     for (let i = 0; i < localStorage.length; i++) {
         key = localStorage.key(i);
@@ -1343,11 +1346,8 @@ function getAccountGroupInfo(inName) {
             if(value != '') {
                 if(inName) {
                     if(inName == value) {
-                        keyid = localStorage.key(i).slice(11);items.push(keyid);
-                    }
-                } else {
-                    if(!items.includes(value)) {items.push(value);}
-                }
+                        if(inDelete == true) { localStorage.removeItem(key);} else {keyid = localStorage.key(i).slice(11);items.push(keyid);}}
+                } else {if(!items.includes(value)) {items.push(value);}}
             }
         }
     }
