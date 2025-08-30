@@ -1,5 +1,7 @@
 **Version 3.41 (beta):**
 
+* NEW: Reports / Accounts added account images/logos
+  
 * FIX: Removed orphaned account groups (if the account was deleted)
 
 **Version 3.40:**
