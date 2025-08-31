@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.41.03
+// @version      3.41.04
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.41.03';
+const version = '3.41.04';
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -45,7 +45,7 @@ function MM_Init() {
 
     MTFlexDate1 = getDates('d_StartofMonth');MTFlexDate2 = getDates('d_Today');
 
-    if(getCookie('MT_PlanCompressed',true) == 1) {addStyle('.joBqTh, .jsBiA-d {padding-bottom: 0px; padding-top: 0px; !important;}'); addStyle('.earyfo, .fxLfmT {height: 42px;}'); addStyle('.bmeuLc, .dVgTYt, .exoRCJ, .bgDnMb, .zoivW {font-size: 15px;}');}
+    if(getCookie('MT_PlanCompressed',true) == 1) {addStyle('.earyfo, .gwrczp, .hIruVD, .jduSPT {height: 36px; font-size: 14px;}');addStyle('.dzNuLu, .fgtPHG {height: 26px; font-size: 14px;}');}
     if(getCookie('MT_CompressedTx',true) == 1) {addStyle('.dnAUzj {padding-top: 1px; padding-bottom: 1px;}');addStyle('.dHdtJt,.bmeuLc,.dUcLPZ,.hNpQPw,.iRHwlh {font-size:14px;}');}
     if(getCookie('MT_PendingIsRed',true) == 1) {addStyle('.bmeuLc {color:' + accentColor + '}');}
     addStyle('.MTBub {margin-bottom: 12px;}');
@@ -146,7 +146,6 @@ function MM_flipSideElement(inCookie) {
 
 // [ Flex Queue MF_ Called externally, MT_ used internally]
 function MF_SetupDates() {
-
     let ckd = getCookie(MTFlex.Name + 'LowerDate',false);
     if(MTFlex.TriggerEvent == 2) {
         if(ckd == '') ckd = 'd_StartofMonth';
@@ -173,7 +172,6 @@ function MF_QueueAddCard(p) {
     MTFlexCard.push({"Col": p.Col, "Title": p.Title,"Subtitle": p.Subtitle, "Style": p.Style});}
 
 async function MF_GridInit(inName, inDesc) {
-
     document.body.style.cursor = "wait";
     let topDiv = document.querySelector('[class*="Scroll__Root-sc"]');
     if(topDiv) {
@@ -192,14 +190,12 @@ async function MF_GridInit(inName, inDesc) {
 }
 
 function MF_GridOptions(Num,Options) {
-
     const buttonName = 'Button' + Num;
     MTFlex[`${buttonName}Options`] = Options;
     if (MTFlex[buttonName] >= MTFlex[`${buttonName}Options`].length) { MTFlex[buttonName] = 0; }
 }
 
 function MF_GridDraw(inRedraw) {
-
     removeAllSections('div.MTWait');
     removeAllSections(['div.MTFlexContainer','table.MTFlexGrid'][inRedraw]);
     if(inRedraw == false) {MT_GridDrawContainer();}
@@ -211,7 +207,6 @@ function MF_GridDraw(inRedraw) {
 }
 
 function MT_GridDrawDetails() {
-
     let el = null, elx = null;
     let Header = null, pct = null;
     let useDesc = '', useStyle = '', useStyle2 = '';
@@ -239,7 +234,6 @@ function MT_GridDrawDetails() {
     function MT_GridDrawClear() {RecsInc = 0; for (let j=0; j < MTFlexTitle.length; j += 1) {Grouptotals[j] = null;}}
 
     function MT_GridDrawTitles() {
-
         Header = cec('table','MTFlexGrid',MTFlexDetails,'','',FontFamily);
         if(MTFlex.HideDetails == true) return;
         el = cec('tr','MTFlexGridTitleRow',Header);
@@ -260,9 +254,7 @@ function MT_GridDrawDetails() {
     }
 
     function MT_GridDrawRow(isSubTotal) {
-
         let useRow = Object.assign({}, MTFlexRow[RowI]);
-
         if(isSubTotal == false) {
             if (MTFlex.RequiredCols.length > 0) {
                 let allow = false;
@@ -393,7 +385,6 @@ function MT_GridDrawDetails() {
 }
 
 function MT_GridDrawExpand() {
-
     const trS = document.querySelectorAll('tr[MTsection]');
     let x = null, xBefore = null, cv = null;
     trS.forEach((tr) => {
@@ -411,7 +402,6 @@ function MT_GridDrawExpand() {
 }
 
 function MT_GridDrawSort() {
-
     let cn = MTFlex.Name + 'Sort' + (MTFlex.SortSeq ? MTFlex.SortSeq[MTFlex.Button2] : '');
     let useSort = getCookie(cn, true);
     useSort = Math.abs(useSort) >= MTFlexTitle.length ? 0 : useSort;
@@ -436,7 +426,6 @@ function MT_GridDrawSort() {
 }
 
 function MT_GridDrawContainer() {
-
     let topDiv = document.querySelector('[class*="Scroll__Root-sc"]');
     if(topDiv) {
         let div2 = document.createElement('div');
@@ -488,7 +477,6 @@ function MT_GridDrawContainer() {
 }
 
 function MT_GridDrawCards() {
-
     if(MTFlexCard.length == 0) {return;}
     let topDiv = document.querySelector('[class*="Scroll__Root-sc"]');
     if(topDiv) {
@@ -506,7 +494,6 @@ function MT_GridDrawCards() {
     }
 }
 function MT_GridPercent(inA, inB, inHighlight, inPercent, inIgnoreShade) {
-
     if(isNaN(inA)) {inA = 0;}
     if(isNaN(inB)) {inB = 0;}
 
@@ -528,7 +515,6 @@ function MT_GridPercent(inA, inB, inHighlight, inPercent, inIgnoreShade) {
 }
 
 function MT_GridExport() {
-
     const CRLF = String.fromCharCode(13,10),c = ',';
     const MTFieldsEnd = MTFields + MTFlexTitle.length;
     let csvContent = '',useValue = '',k = 0,Cols = 0;
@@ -593,7 +579,6 @@ function MT_GridDrawEmbed(inSection,inCol,inValue, inDesc) {
 }
 
 function MT_GetInput(inputs) {
-
     let topDiv = MF_SidePanelOpen('','', false, MTFlex.Title1, '','','');
     let div = cec('span','MTSideDrawerHeader',topDiv,'','');
     for (let i = 0; i < inputs.length; i += 1) {
@@ -617,7 +602,6 @@ function MT_GetInput(inputs) {
 }
 
 function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, inURL ) {
-
     let topDiv = document.getElementById('root');
     if(topDiv) {
         topDiv = topDiv.childNodes[0];
@@ -638,7 +622,6 @@ function MF_SidePanelOpen(inType, inType2, inToggle, inBig, inSmall, inURLText, 
 }
 
 function MF_GridUpdateUID(inUID,inCol,inValue,addMissing) {
-
     for (const Row of MTFlexRow) {if(Row.UID == inUID) {Row[MTFields + inCol] = inValue;return true;}}
     if(addMissing == true) {
         let p = [];p.UID = inUID;MF_QueueAddRow(p);MTFlexRow[MTFlexCR][MTFields + inCol] = inValue;
@@ -647,7 +630,6 @@ function MF_GridUpdateUID(inUID,inCol,inValue,addMissing) {
 }
 
 function MF_GridRollup(inSection,inRoll,inBasedOn,inName) {
-
     if(MTFlexRow.length == 0) {return;}
     let Subtotals = [];
     for (let i = 0; i < MTFlexTitle.length; i += 1) {Subtotals[i] = 0;}
@@ -664,7 +646,6 @@ function MF_GridRollup(inSection,inRoll,inBasedOn,inName) {
 }
 
 function MF_GridRollDifference(inSection,inA,inB,inBasedOn,inName,inOp) {
-
     let p1 = null, p2 = null;
     for (let i = 0; i < MTFlexRow.length; i += 1) {
         if(MTFlexRow[i].Section == inA) {p1 = i;}
@@ -687,7 +668,6 @@ function MF_GridRollDifference(inSection,inA,inB,inBasedOn,inName,inOp) {
 }
 
 function MF_GridGetValue(inSection,inCol) {
-
     for (let i = 0; i < MTFlexRow.length; i += 1) {
         if(MTFlexRow[i].Section == inSection) {return MTFlexRow[i][MTFields + inCol];}
     }
@@ -695,9 +675,7 @@ function MF_GridGetValue(inSection,inCol) {
 }
 
 function MF_GridCalcDifference(inSection,in1,in2,inCols,inOp) {
-
     let p1 = null, p2 = null, p3 = null;
-
     for (let i = 0; i < MTFlexRow.length; i += 1) {
         if(MTFlexRow[i].Section == inSection) {p1 = i;}
         if(MTFlexRow[i].Section == in1) {p2 = i;}
@@ -712,7 +690,6 @@ function MF_GridCalcDifference(inSection,in1,in2,inCols,inOp) {
     }
 }
 function MF_GridCalcRange(inColumn,inStart,inEnd,inOp) {
-
     let useValue = 0, useCols = 0;
     for (let i = 0; i < MTFlexRow.length; i += 1) {
         useValue = 0;useCols = 0;
@@ -730,7 +707,6 @@ function MF_GridCalcRange(inColumn,inStart,inEnd,inOp) {
 }
 
 function MF_GridAddCard (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,inNegColor,inAddRowTitle,inAddColTitle) {
-
     let useValue = 0,useCells = 0,useRow='',useCol='';
     for (let i = 0; i < MTFlexRow.length; i += 1) {
         if(MTFlexRow[i].Section == inSec) {
@@ -764,7 +740,6 @@ function MF_GridAddCard (inSec,inStart,inEnd,inOp,inPosMsg,inNegMsg,inPosColor,i
 
 // [ Reports Menu ]
 function MenuReports(OnFocus) {
-
     if (SaveLocationPathName.startsWith('/reports/')) {
         if(OnFocus == false) {MTFlex = [];}
         if(OnFocus == true) {MenuReportsCustom();}
@@ -772,7 +747,6 @@ function MenuReports(OnFocus) {
 }
 
 function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
-
     let reportsObj = localStorage.getItem('persist:reports');
     let startDate = formatQueryDate(getDates('d_Minus3Years'));
     let endDate = formatQueryDate(getDates('d_Today'));
@@ -801,7 +775,6 @@ function MenuReportsFix() {
 }
 
 function MenuReportsCustom() {
-
     let div = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
     if(div) {
         const mItems = div.childNodes.length;
@@ -818,7 +791,6 @@ function MenuReportsCustom() {
 }
 
 function MenuReportsCustomUpdate(inValue) {
-
     let div = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
     for (let i = 0; i < FlexOptions.length + 3; i += 1) {
         let useClass = div.childNodes[i].className;
@@ -835,7 +807,6 @@ function MenuReportsCustomUpdate(inValue) {
 }
 
 function MenuReportsPanels(inType) {
-
     let divs = document.querySelectorAll('[class*="FlexContainer__Root-sc"]');
     for (const div of divs) {
         if(div.innerText.startsWith('Clear')) {div.style=inType;break;}
@@ -845,7 +816,6 @@ function MenuReportsPanels(inType) {
 }
 
 function MenuReportsGo(inName) {
-
     let topDiv = document.querySelector('div.MTWait');
     if(!topDiv) {
         document.body.style.cursor = "wait";
@@ -869,7 +839,6 @@ function MenuReportsGo(inName) {
 }
 
 async function MenuReportsTagsGo() {
-
     let snapshotData4 = null,rec = null;
     let TagQueue = [],TagCols = [];
     let useID = '',useAmt = 0, useTitle='',useURL = '';
@@ -1002,10 +971,7 @@ async function MenuReportsTagsGo() {
 
     function TagsUpdateQueue(inID,inAmt,inTag, inOrder, inColor) {
         for (const Tag of TagQueue) {
-             if(Tag.ID == inID && Tag.TagName == inTag) {
-                 Tag.Amt += inAmt;
-                 return;
-             }
+             if(Tag.ID == inID && Tag.TagName == inTag) {Tag.Amt += inAmt; return;}
          }
         TagQueue.push({"ID": inID, "TagName": inTag ,"Amt": inAmt });
         if(TagsIndexQueue(inTag) === -1) {TagCols.push({"NAME": inTag, "ORDER": inOrder, "COLOR": inColor});}
@@ -1018,7 +984,6 @@ async function MenuReportsTagsGo() {
 }
 
 async function MenuReportsAccountsGo() {
-
     await MF_GridInit('MTAccounts', 'Accounts');
     MTFlex.Title1 = 'Accounts Report';
     MTFlex.SortSeq = ['1','2','3','4','5','6'];
@@ -1301,7 +1266,6 @@ async function MenuReportsAccountsGo() {
             }
             amt = amt * -1;return amt;
         }
-
     }
 
     function getAccountPrevBalance(inId) {
@@ -1370,12 +1334,10 @@ function getAccountGroupFilter() {
 }
 
 async function MenuAccountsSummary() {
-
     const topDiv = document.querySelector('div.MTAccountSummary');
     if(topDiv) return;
 
     let aSummary = [];
-
     const elements = document.querySelectorAll('[class*="AccountSummaryCardGroup__CardSection"]');
     if(elements.length > 1) {
         let snapshotData = await getAccountsData();
@@ -1391,7 +1353,6 @@ async function MenuAccountsSummary() {
     } else { MTSpawnProcess = 4; }
 
     function MenuAccountSummaryShow(inParent,isAsset) {
-
         let cn = inParent.childNodes[0];
         let cnClass = cn.className;
         let div = document.createElement('div');
@@ -1486,8 +1447,7 @@ async function MenuReportsTrendsGo() {
             if(getCookie('MT_TrendIgnoreCurrent',true) == 1) { MTFlex.Title3 = '* Average ignores Current Month'; }
             for (let i = 0; i < 12; i += 1) {
                 MTP.Column = newCol; MTP.Title = getMonthName(i,true);
-                newCol+=1;
-                if(i > month2) {MTP.isHidden = true;}
+                newCol+=1;if(i > month2) {MTP.isHidden = true;}
                 MF_QueueAddTitle(MTP);
             }
         } else if (MTFlex.Button2 == 4 || MTFlex.Button2 == 6 || MTFlex.Button2 == 7) {
@@ -1497,27 +1457,23 @@ async function MenuReportsTrendsGo() {
             lowerDate.setFullYear(year);
             higherDate.setFullYear(year,11,31);
             for (let i = 0; i < 12; i += 1) {
-                MTP.Column = newCol; MTP.Title = getMonthName(i,true);
-                newCol+=1;
+                MTP.Column = newCol; MTP.Title = getMonthName(i,true);newCol+=1;
                 MF_QueueAddTitle(MTP);
             }
         } else if (MTFlex.Button2 > 7) {
             lowerDate.setFullYear(year - 12);
             for (let i = year - 11; i <= year; i += 1) {
-                MTP.Column = newCol; MTP.Title = i.toString();
-                newCol+=1;
+                MTP.Column = newCol; MTP.Title = i.toString();newCol+=1;
                 MF_QueueAddTitle(MTP);
             }
         } else if (MTFlex.Button2 == 5) {
             if(getCookie('MT_TrendIgnoreCurrent',true) == 1) { MTFlex.Title3 = '* Average ignores Current Month'; }
             for (let i = month2 + 1; i < 12; i += 1) {
-                MTP.Column = newCol; MTP.Title = getMonthName(i,true);
-                newCol+=1;
+                MTP.Column = newCol; MTP.Title = getMonthName(i,true);newCol+=1;
                 MF_QueueAddTitle(MTP);
             }
             for (let i = 0; i <= month2; i += 1) {
-                MTP.Column = newCol; MTP.Title = getMonthName(i,true);
-                newCol+=1;
+                MTP.Column = newCol; MTP.Title = getMonthName(i,true);newCol+=1;
                 MF_QueueAddTitle(MTP);
             }
             if(month2 < 11) {
@@ -1670,11 +1626,9 @@ async function WriteByMonthData() {
         } else {
             if(retGroup.TYPE == 'expense') {
                 if(retGroup.ISFIXED == true) {
-                    MTFlexRow[i].BasedOn = 2;
-                    MTFlexRow[i].Section = 4;
+                    MTFlexRow[i].BasedOn = 2;MTFlexRow[i].Section = 4;
                 } else {
-                    MTFlexRow[i].BasedOn = 3;
-                    MTFlexRow[i].Section = 6;
+                    MTFlexRow[i].BasedOn = 3;MTFlexRow[i].Section = 6;
                 }
                 for (let j = 1; j < MTFlexTitle.length; j += 1) {
                     if(MTFlexRow[i][MTFields + j] != 0) {
@@ -1684,8 +1638,7 @@ async function WriteByMonthData() {
                 }
                  useURL = '#|spending|';
             } else {
-                MTFlexRow[i].BasedOn = 1;
-                MTFlexRow[i].Section = 2;
+                MTFlexRow[i].BasedOn = 1;MTFlexRow[i].Section = 2;
                 useURL = '#|income|';
             }
             if(MTFlex.Button1 > 0) {
@@ -1754,17 +1707,14 @@ async function WriteCompareData() {
                  TrendQueue[i].N_LASTM = TrendQueue[i].N_LASTM * -1;
                  TrendQueue[i].N_FUTURE = TrendQueue[i].N_FUTURE * -1;
                  if(retGroup.ISFIXED == true) {
-                     MTP.BasedOn = 2;
-                     MTP.Section = 4;
+                     MTP.BasedOn = 2;MTP.Section = 4;
                  } else {
-                     MTP.BasedOn = 3;
-                     MTP.Section = 6;
+                     MTP.BasedOn = 3;MTP.Section = 6;
                  }
                  useURL = '#|spending|';
              }
              if(retGroup.TYPE == 'income') {
-                 MTP.BasedOn = 1;
-                 MTP.Section = 2;
+                 MTP.BasedOn = 1;MTP.Section = 2;
                  MTP.IgnoreShade = true;
                  useURL = '#|income|';
              }
@@ -3115,8 +3065,8 @@ function downloadFile(inTitle,inData) {
 }
 
 function uploadfileSettings() {
-    const CRLF = String.fromCharCode(13,10);
     const link = cec('input','',document.body,'','','display:none;','type','file');
+    const cf = 'Monarch Money Tweaks Configuration File';
     link.setAttribute('accept','.csv');
     link.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -3129,16 +3079,15 @@ function uploadfileSettings() {
                 lines.forEach((line, index) => {
                     csvContent.push(line);
                 });
-                if(csvContent[0] == null || csvContent[0] != 'Monarch Money Tweaks Configuration File') {
-                    alert('Invalid Monarch Money Tweaks Configuration File');
-                } else {
+                if(csvContent[0] == null || csvContent[0] != cf) {alert('Invalid ' + cf);}
+                else {
                     for (let i = 1; i < csvContent.length; i++) {
                         const line = csvContent[i];
                         const key = line.split('||')[0];
                         const value = line.split('||')[1];
                         if(key != '') {setCookie(key,value);}
                     }
-                    location.reload()
+                    location.reload();
                 }
             };
             reader.readAsText(file);
