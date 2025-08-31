@@ -136,8 +136,11 @@ Enjoy!
 **Monarch Tweaks Reports / Accounts**
 ![Settings](/images/MT_V3_08.png)
 
-**Monarch Tweaks Reports / Tags**
+**Monarch Tweaks Reports / Tags (based on Tags)**
 ![Settings](/images/MT_V3_09.png)
+
+**Monarch Tweaks Reports / Tags (based on Notes Field)**
+![Settings](/images/MT_TagsNotes.png)
 
 **Monarch Tweaks Reports tag multiple cells**
 ![Settings](/images/MT_V3_10.png)
