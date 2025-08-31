@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.42
+// @version      3.43.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.42',CRLF = String.fromCharCode(13,10);
-const css_currency = 'USD';
+const version = '3.43.01';
+const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
 let SaveLocationPathName = '',css_reload = false, css_cec = false;
@@ -17,7 +17,7 @@ let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=8, debug=0;
 let accountGroups = [],accountsHasFixed = false,TrendQueue = [], TrendQueue2 = [];
 
 // flex container
-const FlexOptions = ['Trends','Accounts','Tags'];
+const FlexOptions = ['Trends','Accounts','Transactions'];
 const MTFields = 13;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexCR = 0, MTFlexDetails = null, MTP = null, MTFlexSum = [0,0];
@@ -750,7 +750,7 @@ function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
     let reportsObj = localStorage.getItem('persist:reports');
     let startDate = formatQueryDate(getDates('d_Minus3Years'));
     let endDate = formatQueryDate(getDates('d_Today'));
-    if(MTFlex.Name == 'MTTags') {
+    if(MTFlex.Name == 'MTTransactions') {
         startDate = formatQueryDate(MTFlexDate1);
         endDate = formatQueryDate(MTFlexDate2);
     }
@@ -830,7 +830,7 @@ function MenuReportsGo(inName) {
                 MenuReportsCustomUpdate(4);
                 MenuReportsAccountsGo();
                 break;
-            case 'MTTags':
+            case 'MTTransactions':
                 MenuReportsCustomUpdate(5);
                 MenuReportsTagsGo();
                 break;
@@ -845,14 +845,13 @@ async function MenuReportsTagsGo() {
     let ii = 0;
     let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false,hasNotes = false;
 
-    MF_GridInit('MTTags', 'Tags');
-    MTFlex.Title1 = 'Net Income Report by Tags';
+    MF_GridInit('MTTransactions', 'Transactions');
     MTFlex.TriggerEvent = 2;
     MTFlex.TriggerEvents = false;
     MF_SetupDates();
     MF_GridOptions(1,['By group','By category','By both']);
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
-    MF_GridOptions(2,['Ignore hidden transactions','Include hidden transactions','Only hidden transactions','Only Notes starting with *']);
+    MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (starting with asterisk)','by Goals']);
     MF_GridOptions(4,getAccountGroupInfo());
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTFlex.Title3 = '';
@@ -863,23 +862,50 @@ async function MenuReportsTagsGo() {
         CurrentFilter = getAccountGroupFilter();
         CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
     }
-    if(MTFlex.Button2 == 1) {HiddenFilter = null;}
-    else if(MTFlex.Button2 == 2) {HiddenFilter = true;}
-    else if(MTFlex.Button2 == 3) {HiddenFilter = null; hasNotes = true;}
+    MTFlex.Title1 = 'Net Income Report ';
+    switch(Number(MTFlex.Button2)) {
+        case 0:
+            MTFlex.Title1 += 'by Tags';
+            break;
+        case 1:
+            HiddenFilter = null;
+            MTFlex.Title1 += 'by Tags (Include Hidden)';
+            break;
+        case 2:
+            HiddenFilter = true;
+            MTFlex.Title1 += 'by Tags (Only Hidden)';
+            break;
+        case 3:
+            HiddenFilter = null; hasNotes = true;
+            MTFlex.Title1 += 'by Notes';
+            break;
+        case 4:
+            HiddenFilter = null; hasNotes = true;
+            MTFlex.Title1 += 'by Goals';
+            break;
+    }
+   // if(MTFlex.Button2 == 1) {HiddenFilter = null;}
+   // else if(MTFlex.Button2 == 2) {HiddenFilter = true;}
+   // else if(MTFlex.Button2 == 3) {HiddenFilter = null; hasNotes = true;}
 
     let recIdx = 0, recCnt = 0,useTag = '';
     do {
         recCnt = 0;
         snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj,HiddenFilter,hasNotes);
+        console.log(snapshotData4);
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt+=1;recIdx+=1;
             if(MTFlex.Button2 == 3) {if(rec.notes.startsWith('*') == false) continue;}
+            if(MTFlex.Button2 == 4) {if(rec.goal == null) continue;}
             if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
             useAmt = rec.amount;
             if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
             if(MTFlex.Button2 == 3) {
                 useTag = getStringPart(rec.notes.slice(2).split('\n')[0]);
+                TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
+            } else if (MTFlex.Button2 == 4) {
+                useTag = rec.goal.name;
                 TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
             } else {
                 ii = rec.tags.length;
@@ -2228,7 +2254,7 @@ function MTUpdateAccountPartner() {
         let li2 = li.childNodes[4];
         let div = document.createElement('div');
         div = li.insertBefore(div, li2);
-        cec('div','',div,'Account Group (Reports / [Trends, Accounts, Tags] and Accounts / Summary)','','font-size: 14px;font-weight: 500;');
+        cec('div','',div,'Account Group (Reports / [Trends, Accounts, Transactions] and Accounts / Summary)','','font-size: 14px;font-weight: 500;');
         div = cec('input','MTInputClass',div,'','','margin-bottom: 12px;width: 100%;');
         const p = SaveLocationPathName.split('/');
         if(p.length > 2) {div.value = getCookie('MTAccounts:' + p[3],false);}
@@ -2565,7 +2591,7 @@ window.onclick = function(event) {
                 if(event.target.innerText == 'Budget') { MTSpawnProcess = 3;} return;
             case 'MTTrends':
             case 'MTAccounts':
-            case 'MTTags':
+            case 'MTTransactions':
                 MTFlexDate1 = getDates('d_Today');MTFlexDate2 = getDates('d_Today');
                 MenuReportsGo(cn);return;
             case 'MTSideDrawerRoot':
@@ -3186,7 +3212,7 @@ async function GetTransactions(startDate,endDate, offset, isPending, inAccounts,
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
     const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true})};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
-          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id }  \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
+          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id } \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
     return fetch(graphql, options)
         .then((response) => response.json())
