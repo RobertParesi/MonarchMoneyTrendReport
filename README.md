@@ -6,7 +6,7 @@
 
 # Monarch Money Tweaks - Get Started! 
 
-Hello!  I use **Monarch Money**.  
+👋 Hello!  I use **Monarch Money**.  
 
 I found there were opportunities to enhance the Monarch Money web application with more functionality and configuration options.
 
