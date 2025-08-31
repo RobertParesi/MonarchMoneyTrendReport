@@ -1,3 +1,7 @@
+**Version 3.50 (beta):**
+
+* ENHANCEMENT: Reports / Tags now called Reports / Transactions with more flexibility including "by Goals"
+
 **Version 3.42:**
 
 * ENHANCEMENT: Reports / Tags - Notes tagged with * can have notes as well (starting on second line)
