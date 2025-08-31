@@ -1,3 +1,7 @@
+**Version 3.42 (beta):**
+
+* ENHANCEMENT: Reports / Tags - Notes tagged with * can have notes as well (starting on second line)
+
 **Version 3.41:**
 
 * NEW: Reports / Accounts added account images/logos
