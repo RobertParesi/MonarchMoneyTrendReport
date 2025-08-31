@@ -36,7 +36,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
      - Generate a simple Personal Net Worth report for Loan Applications.
      - Click on date header to change date range. 
        
-* **Reports / Transactions **
+* **Reports / Transactions**
      - Summarize your Monarch Money Income/Spending history by Tags, Notes and Goals.
      - Compare to Untagged or Multiple Tagged transactions.
      - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
