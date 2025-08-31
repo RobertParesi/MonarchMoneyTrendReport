@@ -2,6 +2,8 @@
 
 * ENHANCEMENT: Reports / Tags now called Reports / Transactions with more flexibility including "by Goals"
 
+* ENHANCEMENT: Added "This Year" to date selection.
+
 **Version 3.42:**
 
 * ENHANCEMENT: Reports / Tags - Notes tagged with * can have notes as well (starting on second line)
