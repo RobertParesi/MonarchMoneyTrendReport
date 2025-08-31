@@ -1,4 +1,4 @@
-**Version 3.42 (beta):**
+**Version 3.42:**
 
 * ENHANCEMENT: Reports / Tags - Notes tagged with * can have notes as well (starting on second line)
 
