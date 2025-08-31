@@ -79,7 +79,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
 - _Monarch Money on Steroids!_  
 
 
-# Installing MONARCH MONEY TWEAKS:
+# 💻 Installing MONARCH MONEY TWEAKS:
 
 You can install the script by using the **Tampermonkey** app extension in Chrome, Microsoft Edge, Safari, Firefox and Opera Next.  For the iPad, use the **Safari </> Userscripts** app.
 
@@ -109,7 +109,7 @@ Enjoy!
 
 ![Settings](/images/MM_SettingsDeveloper.png)
 
-## Screenshots:
+## 📈 Screenshots:
 
 **Monarch Tweaks Settings**
 ![Settings](/images/MT_V3_01.png)
