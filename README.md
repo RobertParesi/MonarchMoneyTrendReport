@@ -141,6 +141,7 @@ Enjoy!
 
 **Monarch Tweaks Reports / Tags (based on Notes Field)**
 ![Settings](/images/MT_TagsNotes.png)
+![Settings](/images/MT_TagsNotes2.png)
 
 **Monarch Tweaks Reports tag multiple cells**
 ![Settings](/images/MT_V3_10.png)
