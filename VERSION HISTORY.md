@@ -1,4 +1,4 @@
-**Version 3.41 (beta):**
+**Version 3.41:**
 
 * NEW: Reports / Accounts added account images/logos
   
