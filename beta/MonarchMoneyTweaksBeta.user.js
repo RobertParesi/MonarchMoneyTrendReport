@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.41
+// @version      3.42
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.41';
+const version = '3.42',CRLF = String.fromCharCode(13,10);
 const css_currency = 'USD';
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -515,7 +515,7 @@ function MT_GridPercent(inA, inB, inHighlight, inPercent, inIgnoreShade) {
 }
 
 function MT_GridExport() {
-    const CRLF = String.fromCharCode(13,10),c = ',';
+    const c = ',';
     const MTFieldsEnd = MTFields + MTFlexTitle.length;
     let csvContent = '',useValue = '',k = 0,Cols = 0;
 
@@ -867,7 +867,7 @@ async function MenuReportsTagsGo() {
     else if(MTFlex.Button2 == 2) {HiddenFilter = true;}
     else if(MTFlex.Button2 == 3) {HiddenFilter = null; hasNotes = true;}
 
-    let recIdx = 0, recCnt = 0;
+    let recIdx = 0, recCnt = 0,useTag = '';
     do {
         recCnt = 0;
         snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj,HiddenFilter,hasNotes);
@@ -879,7 +879,8 @@ async function MenuReportsTagsGo() {
             useAmt = rec.amount;
             if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
             if(MTFlex.Button2 == 3) {
-                TagsUpdateQueue(useID,useAmt,rec.notes.slice(2),rec.notes.slice(2),'');
+                useTag = getStringPart(rec.notes.slice(2).split('\n')[0]);
+                TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
             } else {
                 ii = rec.tags.length;
                 if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','');}
@@ -2072,7 +2073,7 @@ function MenuTrendsHistoryDraw() {
 
 function MenuTrendsHistoryExport() {
 
-    const CRLF = String.fromCharCode(13,10),c = ',';
+    const c = ',';
     let csvContent = '',j = 0,Cols = 0;
     const spans = document.querySelectorAll('span.MTSideDrawerDetail' + [',span.MTSideDrawerDetail2,a.MTSideDrawerDetail4',''][getCookie(MTFlex.Name + '_SidePanel',true)]);
     spans.forEach(span => {
@@ -2776,7 +2777,6 @@ function onClickMTDropdownRelease() {
 
 function onClickMTSettings() {
     const bt = event.target.innerText;
-    const CRLF = String.fromCharCode(13,10);
     if(bt == 'Save Settings') {
         let csvContent = 'Monarch Money Tweaks Configuration File' + CRLF;
         for (let i = 0; i < localStorage.length; i++) {
