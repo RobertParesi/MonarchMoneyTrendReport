@@ -4,6 +4,8 @@
   
 * FIX: Removed orphaned account groups (if the account was deleted)
 
+* REGRESSION: "Budget panel has smaller font & compressed grid" stop working.
+
 **Version 3.40:**
 
 * NEW: Ability to Save and Restore Monarch Money Tweaks settings.
