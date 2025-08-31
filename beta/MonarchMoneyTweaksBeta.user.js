@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.43.02
+// @version      3.43.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.43.02';
+const version = '3.43.03';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -82,6 +82,7 @@ function MM_Init() {
     addStyle('.MTFlexGridDCell2 { text-align: right; }');
     addStyle('.MTFlexGridSCell,.MTFlexGridS3Cell, .MTFlexGridSCell2 {  background-color: ' + detailLine + ';height: 34px;' + standardText + ' font-weight: 600; }');
     addStyle('.MTFlexGridSCell2 { text-align: right !important;}');
+    addStyle('.MTFlexError {text-align: center;  font-weight: bold; border: 0px; border-radius: 4px; line-height: 36px; color: white; background-color: ' + accentColor + '}');
     addStyle('.MTFlexCardBig, .MTFlexBig {font-size: 20px; ' + standardText + 'font-weight: 500; padding-top: 8px;}');
     addStyle('.MTFlexBig {font-size: 18px !important;}');
     addStyle('.MTFlexSmall, .MTFlexLittle {font-size: 12px;' + panelText + 'font-weight: 600; padding-top: 8px; text-transform: uppercase; line-height: 150%; letter-spacing: 1.2px;}');
@@ -230,6 +231,7 @@ function MT_GridDrawDetails() {
             MT_GridDrawClear();
         }
     }
+    if(MTFlex.Error) {cec('td','MTFlexError',Header,MTFlex.Error);}
 
     function MT_GridDrawClear() {RecsInc = 0; for (let j=0; j < MTFlexTitle.length; j += 1) {Grouptotals[j] = null;}}
 
@@ -844,7 +846,7 @@ async function MenuReportsTagsGo() {
     let TagQueue = [],TagCols = [];
     let useID = '',useAmt = 0, useTitle='',useURL = '';
     let ii = 0;
-    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false,hasNotes = false;
+    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false,hasNotes = false, hasGoals = [];
 
     MF_GridInit('MTTransactions', 'Transactions');
     MTFlex.TriggerEvent = 2;
@@ -854,6 +856,7 @@ async function MenuReportsTagsGo() {
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (starting with asterisk)','by Goals']);
     MF_GridOptions(4,getAccountGroupInfo());
+    MTFlex.SortSeq = ['1','1','1','2','3'];
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTFlex.Title3 = '';
     MTP = [];MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
@@ -881,24 +884,21 @@ async function MenuReportsTagsGo() {
             MTFlex.Title1 += 'by Notes';
             break;
         case 4:
-            HiddenFilter = null; hasNotes = true;
+            snapshotData4 = await GetGoals();
+            for (let i = 0; i < snapshotData4.goalsV2.length; i += 1) {hasGoals.push(snapshotData4.goalsV2[i].id);}
             MTFlex.Title1 += 'by Goals';
+            if(hasGoals.length < 1) {MTFlex.Error = 'You have no Goals assigned'; MTSpawnProcess = 1; return;}
             break;
     }
-   // if(MTFlex.Button2 == 1) {HiddenFilter = null;}
-   // else if(MTFlex.Button2 == 2) {HiddenFilter = true;}
-   // else if(MTFlex.Button2 == 3) {HiddenFilter = null; hasNotes = true;}
 
     let recIdx = 0, recCnt = 0,useTag = '';
     do {
         recCnt = 0;
-        snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj,HiddenFilter,hasNotes);
-        console.log(snapshotData4);
+        snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj,HiddenFilter,hasNotes,hasGoals);
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt+=1;recIdx+=1;
             if(MTFlex.Button2 == 3) {if(rec.notes.startsWith('*') == false) continue;}
-            if(MTFlex.Button2 == 4) {if(rec.goal == null) continue;}
             if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
             useAmt = rec.amount;
             if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
@@ -3213,12 +3213,24 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
     .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
 }
 
-async function GetTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes) {
+async function GetTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals) {
     const limit = 5000;
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
-    const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true})};
+    if(inGoals == undefined || inGoals == null) inGoals = [];
+    const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true}), ...(inGoals.length > 0 && { goals: inGoals })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
           query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id } \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
+    });
+    return fetch(graphql, options)
+        .then((response) => response.json())
+        .then((data) => { return data.data; }).catch((error) => { console.error(version,error);});
+}
+
+async function GetGoals() {
+    const limit = 5000;
+    const filters = { };
+    const options = callGraphQL({operationName: 'Web_GoalsV2', variables: { },
+          query: "query Web_GoalsV2 {\n goalsV2 {\n id\}}\n"
     });
     return fetch(graphql, options)
         .then((response) => response.json())
