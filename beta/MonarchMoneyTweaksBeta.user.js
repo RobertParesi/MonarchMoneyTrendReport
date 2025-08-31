@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.43.01
+// @version      3.43.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.43.01';
+const version = '3.43.02';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -597,6 +597,7 @@ function MT_GetInput(inputs) {
     div = cec('span','MTSideDrawerHeader',topDiv,'','');
     cec('button','MTInputButton',div,'Last Month','','float:left;margin-left: 0px;');
     cec('button','MTInputButton',div,'This Month','','float:left;');
+    cec('button','MTInputButton',div,'This Year','','float:left;');
     cec('button','MTInputButton',div,'Apply','','float:right;');
     cec('button','MTInputButton',div,'Cancel','','float:right;' );
 }
@@ -2738,6 +2739,11 @@ function onClickCloseDrawer() {
             setCookie(MTFlex.Name + 'HigherDate','d_Today');
             returnV = true;
             break;
+        case 'This Year':
+            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_StartofYear');}
+            setCookie(MTFlex.Name + 'HigherDate','d_Today');
+            returnV = true;
+            break;
     }
     removeAllSections('div.MTHistoryPanel');
     return returnV;
@@ -2943,7 +2949,7 @@ function getDates(InValue,InDate) {
         case 'd_EndofMonth':day = daysInMonth(month,year); d.setDate(day);return d;
         case 'd_StartofNextMonthLY':month+=1;d.setMonth(month);d.setDate(1);d.setYear(year-1);return d;
         case 'd_EndofNextMonthLY':month+=1;day = daysInMonth(month,year); d.setMonth(month);d.setDate(day);d.setYear(year-1);return d;
-        case 'd_StartOfYear':d.setDate(1);d.setMonth(0);return d;
+        case 'd_StartofYear':d.setDate(1);d.setMonth(0);return d;
         case 's_FullDate':return(getMonthName(month,true) + ' ' + day + ', ' + year );
         case 's_ShortDate':return(getMonthName(month,true) + ' ' + day);
         case 's_MidDate':return(getMonthName(month,true) + ' ' + year);
