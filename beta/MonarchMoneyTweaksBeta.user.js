@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.43.05
+// @version      3.43.06
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.43.05';
+const version = '3.43.06';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -785,11 +785,8 @@ function MenuReportsCustom() {
         let useClass = div.childNodes[0].className;
         useClass = useClass.replace(' tab-nav-item-active','');
         for (let i = 0; i < FlexOptions.length; i += 1) {
-            if(mItems == 3) {
-                cec('a','MT' + FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' '));
-            } else {
-                div.childNodes[i + 3].className = 'MT' + FlexOptions[i] + ' ' + useClass;
-            }
+            if(mItems == 3) { cec('a','MT' + FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' '));}
+            else {div.childNodes[i + 3].className = 'MT' + FlexOptions[i] + ' ' + useClass;}
         }
     }
 }
@@ -799,12 +796,8 @@ function MenuReportsCustomUpdate(inValue) {
     for (let i = 0; i < FlexOptions.length + 3; i += 1) {
         let useClass = div.childNodes[i].className;
         if(inValue == i) {
-            if(!useClass.includes(' tab-nav-item-active')) {
-                useClass = useClass + ' tab-nav-item-active';
-            }
-        } else {
-            useClass = useClass.replace(' tab-nav-item-active','');
-        }
+            if(!useClass.includes(' tab-nav-item-active')) {useClass = useClass + ' tab-nav-item-active';}
+        } else {useClass = useClass.replace(' tab-nav-item-active','');}
         div.childNodes[i].className = useClass;
     }
     if(inValue < 3) {MTFlex = [];}
@@ -812,9 +805,7 @@ function MenuReportsCustomUpdate(inValue) {
 
 function MenuReportsPanels(inType) {
     let divs = document.querySelectorAll('[class*="FlexContainer__Root-sc"]');
-    for (const div of divs) {
-        if(div.innerText.startsWith('Clear')) {div.style=inType;break;}
-    }
+    for (const div of divs) { if(div.innerText.startsWith('Clear')) {div.style=inType;break;}}
     divs = document.querySelector('[class*="Grid__GridStyled-"]');
     if(divs) {divs.style=inType;}
 }
@@ -843,7 +834,7 @@ function MenuReportsGo(inName) {
 }
 
 async function MenuReportsNetIncomeGo() {
-    let snapshotData4 = null,rec = null;
+    let snapshotData4 = null,snapshotData = null, rec = null;
     let TagQueue = [],TagCols = [];
     let useID = '',useAmt = 0, useTitle='',useURL = '';
     let ii = 0;
@@ -855,7 +846,7 @@ async function MenuReportsNetIncomeGo() {
     MF_SetupDates();
     MF_GridOptions(1,['By group','By category','By both']);
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
-    MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (starting with asterisk)','by Goals']);
+    MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (starting with asterisk)','by Accounts','by Goals']);
     MF_GridOptions(4,getAccountGroupInfo());
     MTFlex.SortSeq = ['1','1','1','2','3'];
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
@@ -885,6 +876,10 @@ async function MenuReportsNetIncomeGo() {
             MTFlex.Title1 += 'by Notes';
             break;
         case 4:
+            MTFlex.Title1 += 'by Accounts';
+            snapshotData = await getAccountsData();
+            break;
+        case 5:
             snapshotData4 = await GetGoals();
             for (let i = 0; i < snapshotData4.goalsV2.length; i += 1) {hasGoals.push(snapshotData4.goalsV2[i].id);}
             MTFlex.Title1 += 'by Goals';
@@ -896,6 +891,7 @@ async function MenuReportsNetIncomeGo() {
     do {
         recCnt = 0;
         snapshotData4 = await GetTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj,HiddenFilter,hasNotes,hasGoals);
+        if(debug == 1) console.log('MenuReportsNetIncomeGo',snapshotData4,MTFlex.Button2);
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt+=1;recIdx+=1;
@@ -903,10 +899,13 @@ async function MenuReportsNetIncomeGo() {
             if(MTFlex.Button1 == 0) {useID = rec.category.group.id; } else {useID = rec.category.id;}
             useAmt = rec.amount;
             if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
-            if(MTFlex.Button2 == 3) {
+            if(MTFlex.Button2 == 4) {
+                useTag = getStringPart(rec.account.id);
+                TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
+            } else if(MTFlex.Button2 == 3) {
                 useTag = getStringPart(rec.notes.slice(2).split('\n')[0]);
                 TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
-            } else if (MTFlex.Button2 == 4) {
+            } else if (MTFlex.Button2 == 5) {
                 useTag = rec.goal.name;
                 TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
             } else {
@@ -924,13 +923,17 @@ async function MenuReportsNetIncomeGo() {
 
     let totalCol = 0;
     for (const TagCol of TagCols) {
-        switch(TagCol.NAME) {
-            case '':
-                useTitle = 'Untagged';break;
-            case '*':
-                useTitle = 'Multiple';break;
-            default:
-                useTitle = TagCol.NAME;
+        if(MTFlex.Button2 == 4) {
+            useTitle = TagsGetAccountName(TagCol.NAME);
+        } else {
+            switch(TagCol.NAME) {
+                case '':
+                    useTitle = 'Untagged';break;
+                case '*':
+                    useTitle = 'Multiple';break;
+                default:
+                    useTitle = TagCol.NAME;
+            }
         }
         totalCol+=1;
         MTP = []; MTP.Column = totalCol; MTP.Title = useTitle; MTP.isSortable = 2; MTP.Format = 1;
@@ -1010,6 +1013,13 @@ async function MenuReportsNetIncomeGo() {
     function TagsIndexQueue(inTag) {
         for (let k = 0; k < TagCols.length; k += 1) {if(TagCols[k].NAME == inTag) return k;}
         return -1;
+    }
+
+    function TagsGetAccountName(inID) {
+        for (let l = 0; l < snapshotData.accounts.length; l += 1) {
+            if(snapshotData.accounts[l].id == inID) return snapshotData.accounts[l].displayName;
+        }
+        return '';
     }
 }
 
@@ -3221,7 +3231,7 @@ async function GetTransactions(startDate,endDate, offset, isPending, inAccounts,
     if(inGoals == undefined || inGoals == null) inGoals = [];
     const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true}), ...(inGoals.length > 0 && { goals: inGoals })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
-          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id } \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
+          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
     return fetch(graphql, options)
         .then((response) => response.json())
