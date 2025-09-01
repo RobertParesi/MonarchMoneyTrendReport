@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.43.03
+// @version      3.43.04
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.43.03';
+const version = '3.43.04';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -173,14 +173,15 @@ function MF_QueueAddCard(p) {
     MTFlexCard.push({"Col": p.Col, "Title": p.Title,"Subtitle": p.Subtitle, "Style": p.Style});}
 
 async function MF_GridInit(inName, inDesc) {
+
+    MTFlex = [];MTFlexTitle = [];MTFlexRow = []; MTFlexCR = 0;MTFlexCard = [];
     document.body.style.cursor = "wait";
     let topDiv = document.querySelector('[class*="Scroll__Root-sc"]');
     if(topDiv) {
         let div = cec('div','MTWait',topDiv);
         div = cec('div','MTWait2',div,'Please Wait');
-        div = cec('p','',div,' Loading ' + inDesc + ' ...');
+        MTFlex.Loading = cec('p','',div,' Loading ' + inDesc + ' ...');
     }
-    MTFlex = [];MTFlexTitle = [];MTFlexRow = []; MTFlexCR = 0;MTFlexCard = [];
     MTSpawnProcess = 0;MTFlex.Name = inName;
     MTFlex.Button1 = getCookie(inName + 'Button1',true);
     MTFlex.Button2 = getCookie(inName + 'Button2',true);
@@ -915,7 +916,8 @@ async function MenuReportsTagsGo() {
                 else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order+2).padStart(3, '0'),rec.tags[0].color);}
             }
         }
-    } while (recCnt > 999);
+        MTFlex.Loading.innerText += '.';
+    } while (recCnt >= 2500);
 
     if(MTFlex.Button2 == 3) {TagCols.sort((a, b) => a.ORDER.toString().localeCompare(b.ORDER.toString(), undefined, { numeric: true }));
     } else {TagCols.sort((a, b) => a.ORDER - b.ORDER);}
@@ -3214,7 +3216,7 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
 }
 
 async function GetTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals) {
-    const limit = 5000;
+    const limit = 2500;
     if(inAccounts == undefined || inAccounts == null) inAccounts = [];
     if(inGoals == undefined || inGoals == null) inGoals = [];
     const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true}), ...(inGoals.length > 0 && { goals: inGoals })};
