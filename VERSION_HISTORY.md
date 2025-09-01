@@ -1,6 +1,6 @@
 **Version 3.50 (beta):**
 
-* ENHANCEMENT: Reports / Tags now called Reports / Transactions with more flexibility including "by Goals"
+* ENHANCEMENT: Reports / Tags now called Reports / Net Income with more flexibility including "by Goals"
 
 * ENHANCEMENT: Added "This Year" to date selection.
 
