@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.43.04
+// @version      3.43.05
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.43.04';
+const version = '3.43.05';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -17,7 +17,7 @@ let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=8, debug=0;
 let accountGroups = [],accountsHasFixed = false,TrendQueue = [], TrendQueue2 = [];
 
 // flex container
-const FlexOptions = ['Trends','Accounts','Transactions'];
+const FlexOptions = ['Trends','Accounts','Net_Income'];
 const MTFields = 13;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexCR = 0, MTFlexDetails = null, MTP = null, MTFlexSum = [0,0];
@@ -754,7 +754,7 @@ function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
     let reportsObj = localStorage.getItem('persist:reports');
     let startDate = formatQueryDate(getDates('d_Minus3Years'));
     let endDate = formatQueryDate(getDates('d_Today'));
-    if(MTFlex.Name == 'MTTransactions') {
+    if(MTFlex.Name == 'MTNet_Income') {
         startDate = formatQueryDate(MTFlexDate1);
         endDate = formatQueryDate(MTFlexDate2);
     }
@@ -786,7 +786,7 @@ function MenuReportsCustom() {
         useClass = useClass.replace(' tab-nav-item-active','');
         for (let i = 0; i < FlexOptions.length; i += 1) {
             if(mItems == 3) {
-                cec('a','MT' + FlexOptions[i] + ' ' + useClass,div,FlexOptions[i]);
+                cec('a','MT' + FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' '));
             } else {
                 div.childNodes[i + 3].className = 'MT' + FlexOptions[i] + ' ' + useClass;
             }
@@ -834,22 +834,22 @@ function MenuReportsGo(inName) {
                 MenuReportsCustomUpdate(4);
                 MenuReportsAccountsGo();
                 break;
-            case 'MTTransactions':
+            case 'MTNet_Income':
                 MenuReportsCustomUpdate(5);
-                MenuReportsTagsGo();
+                MenuReportsNetIncomeGo();
                 break;
         }
     }
 }
 
-async function MenuReportsTagsGo() {
+async function MenuReportsNetIncomeGo() {
     let snapshotData4 = null,rec = null;
     let TagQueue = [],TagCols = [];
     let useID = '',useAmt = 0, useTitle='',useURL = '';
     let ii = 0;
     let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false,hasNotes = false, hasGoals = [];
 
-    MF_GridInit('MTTransactions', 'Transactions');
+    MF_GridInit('MTNet_Income', 'Net Income');
     MTFlex.TriggerEvent = 2;
     MTFlex.TriggerEvents = false;
     MF_SetupDates();
@@ -2594,7 +2594,7 @@ window.onclick = function(event) {
                 if(event.target.innerText == 'Budget') { MTSpawnProcess = 3;} return;
             case 'MTTrends':
             case 'MTAccounts':
-            case 'MTTransactions':
+            case 'MTNet_Income':
                 MTFlexDate1 = getDates('d_Today');MTFlexDate2 = getDates('d_Today');
                 MenuReportsGo(cn);return;
             case 'MTSideDrawerRoot':
