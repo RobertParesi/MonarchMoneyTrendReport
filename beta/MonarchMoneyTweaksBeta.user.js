@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.43.06
+// @version      3.43.07
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.43.06';
+const version = '3.43.07';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -901,7 +901,7 @@ async function MenuReportsNetIncomeGo() {
             if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
             if(MTFlex.Button2 == 4) {
                 useTag = getStringPart(rec.account.id);
-                TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
+                TagsUpdateQueue(useID,useAmt,useTag,String(rec.account.order).padStart(3, '0'),'');
             } else if(MTFlex.Button2 == 3) {
                 useTag = getStringPart(rec.notes.slice(2).split('\n')[0]);
                 TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
@@ -955,17 +955,11 @@ async function MenuReportsNetIncomeGo() {
                 MTP.isHeader = false;
                 MTP.UID = useID;
                 if(retGroup.TYPE == 'expense') {
-                    if(retGroup.ISFIXED == true) {
-                        MTP.BasedOn = 2;
-                        MTP.Section = 4;
-                    } else {
-                        MTP.BasedOn = 3;
-                        MTP.Section = 6;
-                    }
+                    if(retGroup.ISFIXED == true) {MTP.BasedOn = 2;MTP.Section = 4;
+                    } else {MTP.BasedOn = 3;MTP.Section = 6;}
                     useURL = '#|spending|';
                 } else {
-                    MTP.BasedOn = 1;
-                    MTP.Section = 2;
+                    MTP.BasedOn = 1;MTP.Section = 2;
                     useURL = '#|income|';
                 }
 
@@ -3231,7 +3225,7 @@ async function GetTransactions(startDate,endDate, offset, isPending, inAccounts,
     if(inGoals == undefined || inGoals == null) inGoals = [];
     const filters = {startDate: startDate, endDate: endDate, hideFromReports: inHideReports, isPending: isPending, ...(inAccounts.length > 0 && { accounts: inAccounts }), ...(inNotes == true && {hasNotes: true}), ...(inGoals.length > 0 && { goals: inGoals })};
     const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
-          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
+          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id\n amount\n pending\n date\n hideFromReports \n notes \n tags {\n id\n name\n color\n order\n } \n account {\n id \n order} \n goal { \n id \n name} \n category {\n id\n name \n group {\n id\n name\n type }}}}}\n"
     });
     return fetch(graphql, options)
         .then((response) => response.json())
