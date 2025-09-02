@@ -2,7 +2,7 @@
 
 * ENHANCEMENT: Reports / Tags now called Reports / Net Income with more flexibility including "by Goals" & "by Accounts" (Work in Progress)
 
-* FIX: In some cases, the Monarch Money upper-right header (Dates, Filers, Reports) would not hide when running MM Tweaks reports.
+* FIX: In some cases, the Monarch Money upper-right header (Dates, Filters, Reports) would not hide when running MM Tweaks reports.
 
 * ENHANCEMENT: Added "This Year" to date selection.
 
