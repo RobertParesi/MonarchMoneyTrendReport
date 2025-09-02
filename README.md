@@ -140,7 +140,7 @@ Enjoy!
 ![Settings](/images/MT_V3_09.png)
 
 **Monarch Tweaks Reports / Net Income (based on Notes Field)**
-![Settings](/images/MT_TagsNotes.png)
+![Settings](/images/MT_TagNotes.png)
 ![Settings](/images/MT_TagsNotes2.png)
 
 **Monarch Tweaks Reports / Accounts**
