@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.43.07
+// @version      3.43.08
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.43.07';
+const version = '3.43.08';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -17,7 +17,7 @@ let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=8, debug=0;
 let accountGroups = [],accountsHasFixed = false,TrendQueue = [], TrendQueue2 = [];
 
 // flex container
-const FlexOptions = ['Trends','Accounts','Net_Income'];
+const FlexOptions = ['Trends','Net_Income','Accounts'];
 const MTFields = 13;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexCR = 0, MTFlexDetails = null, MTP = null, MTFlexSum = [0,0];
@@ -821,13 +821,13 @@ function MenuReportsGo(inName) {
                 MenuReportsCustomUpdate(3);
                 MenuReportsTrendsGo();
                 break;
-            case 'MTAccounts':
-                MenuReportsCustomUpdate(4);
-                MenuReportsAccountsGo();
-                break;
             case 'MTNet_Income':
-                MenuReportsCustomUpdate(5);
+                MenuReportsCustomUpdate(4);
                 MenuReportsNetIncomeGo();
+                break;
+            case 'MTAccounts':
+                MenuReportsCustomUpdate(5);
+                MenuReportsAccountsGo();
                 break;
         }
     }
@@ -861,31 +861,22 @@ async function MenuReportsNetIncomeGo() {
     MTFlex.Title1 = 'Net Income Report ';
     switch(Number(MTFlex.Button2)) {
         case 0:
-            MTFlex.Title1 += 'by Tags';
             break;
         case 1:
-            HiddenFilter = null;
-            MTFlex.Title1 += 'by Tags (Include Hidden)';
-            break;
+            HiddenFilter = null;break;
         case 2:
-            HiddenFilter = true;
-            MTFlex.Title1 += 'by Tags (Only Hidden)';
-            break;
+            HiddenFilter = true;break;
         case 3:
-            HiddenFilter = null; hasNotes = true;
-            MTFlex.Title1 += 'by Notes';
-            break;
+            HiddenFilter = null; hasNotes = true;break;
         case 4:
-            MTFlex.Title1 += 'by Accounts';
-            snapshotData = await getAccountsData();
-            break;
+            snapshotData = await getAccountsData();break;
         case 5:
             snapshotData4 = await GetGoals();
             for (let i = 0; i < snapshotData4.goalsV2.length; i += 1) {hasGoals.push(snapshotData4.goalsV2[i].id);}
-            MTFlex.Title1 += 'by Goals';
             if(hasGoals.length < 1) {MTFlex.Error = 'You have no Goals assigned'; MTSpawnProcess = 1; return;}
             break;
     }
+    MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
 
     let recIdx = 0, recCnt = 0,useTag = '';
     do {
@@ -1464,7 +1455,7 @@ async function MenuReportsTrendsGo() {
         CurrentFilterObj = getAccountGroupInfo(CurrentFilter);
     }
 
-    MTFlex.Title1 = 'Net Income Trend Report';
+    MTFlex.Title1 = 'Trends Report';
 
     MTP = [];
     MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
@@ -2261,7 +2252,7 @@ function MTUpdateAccountPartner() {
         let li2 = li.childNodes[4];
         let div = document.createElement('div');
         div = li.insertBefore(div, li2);
-        cec('div','',div,'Account Group (Reports / [Trends, Accounts, Transactions] and Accounts / Summary)','','font-size: 14px;font-weight: 500;');
+        cec('div','',div,'Account Group [Trends, Net Income, Accounts] - (MM Tweaks)','','font-size: 14px;font-weight: 500;');
         div = cec('input','MTInputClass',div,'','','margin-bottom: 12px;width: 100%;');
         const p = SaveLocationPathName.split('/');
         if(p.length > 2) {div.value = getCookie('MTAccounts:' + p[3],false);}
