@@ -133,6 +133,9 @@ Enjoy!
 **Monarch Tweaks Reports / Trends Yearly Breakdown**
 ![Settings](/images/MT_V3_06.png)
 
+**Monarch Tweaks Reports / History Drill-down**
+![Settings](/images/MT_V3_History.png)
+
 **Monarch Tweaks Reports / Net Income (based on Tags)**
 ![Settings](/images/MT_V3_09.png)
 
