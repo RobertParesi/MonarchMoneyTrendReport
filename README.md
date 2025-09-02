@@ -24,6 +24,18 @@ I found there were opportunities to enhance the Monarch Money web application wi
     - Export to Excel or Numbers.
     - Customize comparisons and averages whether to include the current month if desired.
     - Click on date header to go back to End of Last Month
+ 
+* **Reports / Net Income**
+     - Summarize your Monarch Money Income/Spending history by Tags, Notes and Goals.
+     - Compare to Untagged or Multiple Tagged transactions.
+     - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
+     - Sort summarized data by any column
+     - Breakdown tagged expenses by "Fixed Expenses" and "Flexible Expenses".
+     - Export it to Excel or Numbers.
+     - Select to include or exclude Hidden Tagged Transactions.
+     - Group transactions where transaction note starts with an asterisk. (ie: "* Hawaii 2025" or "* Wedding")
+     - Group transactions by Goals.
+     - Click on date header to change date range.
 
 * **Reports / Accounts**
      - Summarize your Monarch Money Account balances
@@ -35,19 +47,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
      - Export to Excel or Numbers.
      - Generate a simple Personal Net Worth report for Loan Applications.
      - Click on date header to change date range. 
-       
-* **Reports / Transactions**
-     - Summarize your Monarch Money Income/Spending history by Tags, Notes and Goals.
-     - Compare to Untagged or Multiple Tagged transactions.
-     - Filter by a custom Account Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Personal, Business").
-     - Sort summarized data by any column
-     - Breakdown tagged expenses by "Fixed Expenses" and "Flexible Expenses".
-     - Export it to Excel or Numbers.
-     - Select to include or exclude Hidden Tagged Transactions.
-     - Group transactions where transaction note starts with an asterisk. (ie: "* Hawaii 2025" or "* Wedding")
-     - Group transactions by Goals.
-     - Click on date header to change date range.
-       
+             
 * Make assigning merchants an easier task by auto-populating the Search Merchant field with a smart assistant. (Removes AplPay, GglPay, *TST, etc. when assigning merchant)
 * Breakdown Assets & Liabilities Account Summary by a custom Group (e.g., "Parents, Children" or "Partner 1, Partner 2, Both" or "Taxable, Tax Deferred" etc).
 * Apply a compressed and smaller font in the Transactions grid to display more items.
@@ -133,18 +133,18 @@ Enjoy!
 **Monarch Tweaks Reports / Trends Yearly Breakdown**
 ![Settings](/images/MT_V3_06.png)
 
+**Monarch Tweaks Reports / Net Income (based on Tags)**
+![Settings](/images/MT_V3_09.png)
+
+**Monarch Tweaks Reports / Net Income (based on Notes Field)**
+![Settings](/images/MT_TagsNotes.png)
+![Settings](/images/MT_TagsNotes2.png)
+
 **Monarch Tweaks Reports / Accounts**
 ![Settings](/images/MT_V3_07.png)
 
 **Monarch Tweaks Reports / Accounts**
 ![Settings](/images/MT_V3_08.png)
-
-**Monarch Tweaks Reports / Tags (based on Tags)**
-![Settings](/images/MT_V3_09.png)
-
-**Monarch Tweaks Reports / Tags (based on Notes Field)**
-![Settings](/images/MT_TagsNotes.png)
-![Settings](/images/MT_TagsNotes2.png)
 
 **Monarch Tweaks Reports tag multiple cells**
 ![Settings](/images/MT_V3_10.png)
