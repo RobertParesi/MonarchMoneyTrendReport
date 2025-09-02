@@ -10,7 +10,7 @@
 
 I found there were opportunities to enhance the Monarch Money web application with more functionality and configuration options.
 
-# Features:
+# ✨ Features:
 
 * **Reports / Trends**
     - Summarize your Monarch Money Income/Spending history.
