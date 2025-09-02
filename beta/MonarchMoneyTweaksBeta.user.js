@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.43.08
+// @version      3.43.09
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.43.08';
+const version = '3.43.09';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -805,7 +805,7 @@ function MenuReportsCustomUpdate(inValue) {
 
 function MenuReportsPanels(inType) {
     let divs = document.querySelectorAll('[class*="FlexContainer__Root-sc"]');
-    for (const div of divs) { if(div.innerText.startsWith('Clear')) {div.style=inType;break;}}
+    for (const div of divs) { if(div.innerText.startsWith('Clear') || div.innerText.includes('Filters')) {div.style=inType;break;}}
     divs = document.querySelector('[class*="Grid__GridStyled-"]');
     if(divs) {divs.style=inType;}
 }
