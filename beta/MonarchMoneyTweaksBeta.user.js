@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.43.09
+// @version      3.43.10
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.43.09';
+const version = '3.43.10';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -56,6 +56,7 @@ function MM_Init() {
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240);}');
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {width: 19px; height: 19px; margin-right: 10px;float: inline-start; color: #FFFFFF; accent-color: ' + accentColor + '}');
     addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; height: 8px; border-bottom: 1px solid ' + lineForground +';}');
+    addStyle('.MTWarningClass {margin: 4px 24px 4px 24px; height: 36px; border-radius: 4px; padding: 8px; color:white; font-weight: 600; background-color:' + accentColor + '}');
     addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
     addStyle('.MT' + FlexOptions.join(':hover, .MT') + ':hover {cursor:pointer;}');
     addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton {font-family: MonarchIcons, "Oracle", sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 12px;' + bdr + bs + ' 4px;cursor: pointer;}');
@@ -2464,20 +2465,24 @@ function MenuSettings(OnFocus) {
         if(qs != null) {
             qs = qs.firstChild.lastChild;
             let e1 = document.createElement('div'),e2=null,e3=null;
-            if(inType == 'spacer') {
-                e1.className = 'MTSpacerClass';
-                qs.after(e1);
-                qs = document.querySelector('.SettingsCard__Placeholder-sc-189f681-2');
-                qs = qs.firstChild.lastChild;
-                e1 = document.createElement('div');
-                e1.style = 'font-size: 17px; font-weight: 500;margin-left:24px;';
-                e1.innerText = inValue;
-                qs.after(e1);
-                return;
-            }
             switch(inType) {
+                case 'spacer':
+                    e1.className = 'MTSpacerClass';
+                    qs.after(e1);
+                    qs = document.querySelector('.SettingsCard__Placeholder-sc-189f681-2');
+                    qs = qs.firstChild.lastChild;
+                    e1 = document.createElement('div');
+                    e1.style = 'font-size: 17px; font-weight: 500;margin-left:24px;';
+                    e1.innerText = inValue;
+                    qs.after(e1);
+                    return;
+                case 'warning':
+                    e1.className = 'MTWarningClass';
+                    e1.innerText = inValue;
+                    qs.after(e1);
+                    return;
                 case 'header':
-                    e1.innerText = inValue; e1.style = 'font-size: 18px; font-weight: 500; margin-left:24px;padding-bottom:12px;'; break;
+                    e1.hRef = e1.innerText = inValue; e1.style = 'font-size: 18px; font-weight: 500; margin-left:24px;padding-bottom:12px;'; break;
                 case 'dropdown':
                     e1.style = 'margin: 11px 25px; display:flex;column-gap: 10px;'; dropDowns+=1; break;
                 default:
@@ -3064,7 +3069,6 @@ function replaceBetweenWith(InValue,InStart,InEnd,InReplaceWith) {
 }
 
 function getCleanValue(inValue,inDec) {
-
     if(inValue.startsWith('$') || inValue.startsWith('-') || inValue.startsWith('+')) {
         inValue = inValue.split(" ")[0];
         inValue = replaceBetweenWith(inValue,'(',')','');
@@ -3077,7 +3081,6 @@ function getCleanValue(inValue,inDec) {
 }
 
 function getDollarValue(InValue,ignoreCents) {
-
     if(InValue == null) {return '';}
     if(InValue === -0 || isNaN(InValue)) {InValue = 0;}
     if(ignoreCents == true) { InValue = Math.round(InValue);}
