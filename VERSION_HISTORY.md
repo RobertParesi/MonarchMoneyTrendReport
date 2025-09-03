@@ -1,6 +1,6 @@
 **Version 3.50 (beta):**
 
-* ENHANCEMENT: Reports / Tags now called Reports / Net Income with more flexibility including "by Goals" & "by Accounts" (Work in Progress)
+* ENHANCEMENT: Reports / Tags now called Reports / Net Income with more flexibility including "by Goals" & "by Accounts" 
 
 * ENHANCEMENT: Reports / Net Income can have Decimals ignored as well as sort columns by Value vs Monarch Money Ranking.
 
