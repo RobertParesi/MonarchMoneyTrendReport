@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.43.10
+// @version      3.43.11
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.43.10';
+const version = '3.43.11';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -184,10 +184,7 @@ async function MF_GridInit(inName, inDesc) {
         MTFlex.Loading = cec('p','',div,' Loading ' + inDesc + ' ...');
     }
     MTSpawnProcess = 0;MTFlex.Name = inName;
-    MTFlex.Button1 = getCookie(inName + 'Button1',true);
-    MTFlex.Button2 = getCookie(inName + 'Button2',true);
-    MTFlex.Button3 = getCookie(inName + 'Button3',false);
-    MTFlex.Button4 = getCookie(inName + 'Button4',true);
+    ['Button1', 'Button2', 'Button3', 'Button4'].forEach(btn => {MTFlex[btn] = getCookie(inName + btn, btn !== 'Button3');});
     MTFlex.RequiredCols = [];
     await buildCategoryGroups();
 }
@@ -851,7 +848,6 @@ async function MenuReportsNetIncomeGo() {
     MF_GridOptions(4,getAccountGroupInfo());
     MTFlex.SortSeq = ['1','1','1','2','3'];
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
-    MTFlex.Title3 = '';
     MTP = [];MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(MTP);
 
@@ -910,9 +906,12 @@ async function MenuReportsNetIncomeGo() {
         MTFlex.Loading.innerText += '.';
     } while (recCnt >= 2500);
 
-    if(MTFlex.Button2 == 3) {TagCols.sort((a, b) => a.ORDER.toString().localeCompare(b.ORDER.toString(), undefined, { numeric: true }));
-    } else {TagCols.sort((a, b) => a.ORDER - b.ORDER);}
-
+    if(getCookie('MT_NetIncomeRankOrder',true) == 1) {
+        TagCols.sort((a, b) => a.ORDER - b.ORDER);
+    } else {
+        if(MTFlex.Button2 > 2) { TagCols.sort((a, b) => b.SORTV - a.SORTV) } else {TagCols.sort((a, b) => a.ORDER - b.ORDER); }
+    }
+    MTP = [];MTP.Format = [1,2][getCookie('MT_NetIncomeNoDecimals',true)];
     let totalCol = 0;
     for (const TagCol of TagCols) {
         if(MTFlex.Button2 == 4) {
@@ -928,12 +927,12 @@ async function MenuReportsNetIncomeGo() {
             }
         }
         totalCol+=1;
-        MTP = []; MTP.Column = totalCol; MTP.Title = useTitle; MTP.isSortable = 2; MTP.Format = 1;
+        MTP.Column = totalCol; MTP.Title = useTitle; MTP.isSortable = 2;
         if(TagCol.COLOR) {MTP.Indicator = TagCol.COLOR;}
         MF_QueueAddTitle(MTP);
     }
     totalCol+=1;
-    MTP = []; MTP.Column = totalCol; MTP.Title = 'Total'; MTP.isSortable = 2; MTP.Format = 1; MF_QueueAddTitle(MTP);
+    MTP.Column = totalCol; MTP.Title = 'Total'; MTP.isSortable = 2; MF_QueueAddTitle(MTP);
 
     for (const Tag of TagQueue) {
         ii = TagsIndexQueue(Tag.TagName);
@@ -988,12 +987,17 @@ async function MenuReportsNetIncomeGo() {
     MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
     MTSpawnProcess = 1;
 
-    function TagsUpdateQueue(inID,inAmt,inTag, inOrder, inColor) {
+    function TagsUpdateQueue(inID,inAmt,inTag,inOrder,inColor) {
         for (const Tag of TagQueue) {
-             if(Tag.ID == inID && Tag.TagName == inTag) {Tag.Amt += inAmt; return;}
+             if(Tag.ID == inID && Tag.TagName == inTag) {Tag.Amt += inAmt; TagsSortQueue(inTag, inAmt); return;}
          }
         TagQueue.push({"ID": inID, "TagName": inTag ,"Amt": inAmt });
-        if(TagsIndexQueue(inTag) === -1) {TagCols.push({"NAME": inTag, "ORDER": inOrder, "COLOR": inColor});}
+        if(TagsIndexQueue(inTag) === -1) {TagCols.push({"NAME": inTag, "ORDER": inOrder, "COLOR": inColor, "SORTV": inAmt});}
+    }
+
+    function TagsSortQueue(inTag, inValue) {
+        for (let k = 0; k < TagCols.length; k += 1) {if(TagCols[k].NAME == inTag) TagCols[k].SORTV+=inValue;}
+        return -1;
     }
 
     function TagsIndexQueue(inTag) {
@@ -2430,6 +2434,9 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('Show Fixed/Flexible/Savings percentage card','MT_TrendCard1','checkbox');
             MenuDisplay_Input('Hide next month (Based on last year)','MT_TrendHideNextMonth','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
+            MenuDisplay_Input('Reports / Net Income','','spacer');
+            MenuDisplay_Input('Sort column results by Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
+            MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
             MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
             MenuDisplay_Input('Hide accounts marked as "Hide this account in list"','MT_AccountsHidden','checkbox');
