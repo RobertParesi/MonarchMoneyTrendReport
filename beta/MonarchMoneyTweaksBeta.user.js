@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.50.02
+// @version      3.50
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.50.02';
+const version = '3.50';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -597,6 +597,7 @@ function MT_GetInput(inputs) {
     div = cec('span','MTSideDrawerHeader',topDiv,'','');
     cec('button','MTInputButton',div,'Last Month','','float:left;margin-left: 0px;');
     cec('button','MTInputButton',div,'This Month','','float:left;');
+    cec('button','MTInputButton',div,'This Quarter','','float:left;');
     cec('button','MTInputButton',div,'This Year','','float:left;');
     cec('button','MTInputButton',div,'Apply','','float:right;');
     cec('button','MTInputButton',div,'Cancel','','float:right;' );
@@ -2426,7 +2427,7 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('Hide next month (Based on last year)','MT_TrendHideNextMonth','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
             MenuDisplay_Input('Reports / Net Income','','spacer');
-            MenuDisplay_Input('Sort column results by Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
+            MenuDisplay_Input('Sort column results by Tag/Account Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
             MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
@@ -2731,6 +2732,11 @@ function onClickCloseDrawer() {
             break;
         case 'This Month':
             if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_StartofMonth');}
+            setCookie(MTFlex.Name + 'HigherDate','d_Today');
+            returnV = true;
+            break;
+        case 'This Quarter':
+            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_ThisQTRs');}
             setCookie(MTFlex.Name + 'HigherDate','d_Today');
             returnV = true;
             break;
