@@ -10,7 +10,7 @@
 
 **Version 3.42:**
 
-* NEW: Reports / Tags - Notes tagged with * can have notes as well (starting on second line)
+* NEW: Reports / Net Income - Notes tagged with * can have notes as well (starting on second line)
 
 **Version 3.41:**
 
