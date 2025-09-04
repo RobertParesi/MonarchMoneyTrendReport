@@ -1,16 +1,16 @@
 **Version 3.50 (beta):**
 
-* ENHANCEMENT: Reports / Tags now called Reports / Net Income with more flexibility including "by Goals" & "by Accounts" 
+* NEW: Reports / Tags now called Reports / Net Income with more flexibility including "by Goals" & "by Accounts" 
 
-* ENHANCEMENT: Reports / Net Income can have Decimals ignored as well as sort columns by Value vs Monarch Money Tag/Account Ranking. (Settings)
+* NEW: Reports / Net Income can have Decimals ignored as well as sort columns by Value vs Monarch Money Tag/Account Ranking. (Settings)
 
-* ENHANCEMENT: Added "This Quarter" and "This Year" to date selection.
+* NEW: Added "This Quarter" and "This Year" to date selection.
 
 * FIX: In some cases, the Monarch Money upper-right header (Dates, Filters, Reports) would not hide when running MM Tweaks reports.
 
 **Version 3.42:**
 
-* ENHANCEMENT: Reports / Tags - Notes tagged with * can have notes as well (starting on second line)
+* NEW: Reports / Tags - Notes tagged with * can have notes as well (starting on second line)
 
 **Version 3.41:**
 
@@ -78,7 +78,7 @@
 
 * NEW: Reports / Accounts — Added ability to hide the Net Change column (Settings).
 * NEW: Reports / Accounts — Added ability to hide the Last Updated column (Settings).
-* ENHANCEMENT: Sub-Total highlighting (Light & Dark mode) for easier reading of reports with subtotals.
+* NEW: Sub-Total highlighting (Light & Dark mode) for easier reading of reports with subtotals.
 
 **Version 3.28:**
 
@@ -97,7 +97,7 @@
 
 **Version 3.24:**
 
-* ENHANCEMENT: Added Income, Expenses, and Transfers options to more Reports / Accounts.
+* NEW: Added Income, Expenses, and Transfers options to more Reports / Accounts.
 
 **Version 3.23:**
 
