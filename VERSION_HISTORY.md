@@ -1,4 +1,4 @@
-**Version 3.50 (beta):**
+**Version 3.50:**
 
 * NEW: Reports / Tags now called Reports / Net Income with more flexibility including "by Goals" & "by Accounts" 
 
