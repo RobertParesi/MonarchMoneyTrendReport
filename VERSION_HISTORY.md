@@ -4,7 +4,7 @@
 
 * ENHANCEMENT: Reports / Net Income can have Decimals ignored as well as sort columns by Value vs Monarch Money Ranking.
 
-* ENHANCEMENT: Added "This Year" to date selection.
+* ENHANCEMENT: Added "This Quarter" and "This Year" to date selection.
 
 * FIX: In some cases, the Monarch Money upper-right header (Dates, Filters, Reports) would not hide when running MM Tweaks reports.
 
