@@ -2,7 +2,7 @@
 
 * ENHANCEMENT: Reports / Tags now called Reports / Net Income with more flexibility including "by Goals" & "by Accounts" 
 
-* ENHANCEMENT: Reports / Net Income can have Decimals ignored as well as sort columns by Value vs Monarch Money Ranking.
+* ENHANCEMENT: Reports / Net Income can have Decimals ignored as well as sort columns by Value vs Monarch Money Tag/Account Ranking.
 
 * ENHANCEMENT: Added "This Quarter" and "This Year" to date selection.
 
