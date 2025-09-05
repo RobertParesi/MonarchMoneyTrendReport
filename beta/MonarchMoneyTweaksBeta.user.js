@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.50
+// @version      3.51.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.50';
+const version = '3.51.02';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -58,7 +58,7 @@ function MM_Init() {
     addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; height: 8px; border-bottom: 1px solid ' + lineForground +';}');
     addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
     addStyle('.MT' + FlexOptions.join(':hover, .MT') + ':hover {cursor:pointer;}');
-    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton {font-family: MonarchIcons, "Oracle", sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 12px;' + bdr + bs + ' 4px;cursor: pointer;}');
+    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {font-family: MonarchIcons, "Oracle", sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 12px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTFlexContainer {display:block; padding: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 20px;  display: flex; }');
     addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
@@ -834,9 +834,8 @@ function MenuReportsGo(inName) {
 async function MenuReportsNetIncomeGo() {
     let snapshotData4 = null,snapshotData = null, rec = null;
     let TagQueue = [],TagCols = [];
-    let useID = '',useAmt = 0, useTitle='',useURL = '';
-    let ii = 0;
-    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false,hasNotes = false, hasGoals = [];
+    let useID = '',useAmt = 0, ii = 0, useTitle='',useURL = '';
+    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false, hasNotes = false, hasGoals = [];
 
     MF_GridInit('MTNet_Income', 'Net Income');
     MTFlex.TriggerEvent = 2;
@@ -846,7 +845,7 @@ async function MenuReportsNetIncomeGo() {
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (starting with asterisk)','by Accounts','by Goals']);
     MF_GridOptions(4,getAccountGroupInfo());
-    MTFlex.SortSeq = ['1','1','1','2','3'];
+    MTFlex.SortSeq = ['1','1','1','2','3','4'];
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTP = [];MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(MTP);
@@ -889,28 +888,24 @@ async function MenuReportsNetIncomeGo() {
             if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
             if(MTFlex.Button2 == 4) {
                 useTag = getStringPart(rec.account.id);
-                TagsUpdateQueue(useID,useAmt,useTag,String(rec.account.order).padStart(3, '0'),'');
+                TagsUpdateQueue(useID,useAmt,useTag,String(rec.account.order).padStart(3, '0'),'',0);
             } else if(MTFlex.Button2 == 3) {
                 useTag = getStringPart(rec.notes.slice(2).split('\n')[0]);
-                TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
+                TagsUpdateQueue(useID,useAmt,useTag,useTag,'',0);
             } else if (MTFlex.Button2 == 5) {
                 useTag = rec.goal.name;
-                TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
+                TagsUpdateQueue(useID,useAmt,useTag,useTag,'',0);
             } else {
                 ii = rec.tags.length;
-                if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','');}
-                else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*','001','');}
-                else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order+2).padStart(3, '0'),rec.tags[0].color);}
+                if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','',9000000);}
+                else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*','001','',8000000);}
+                else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order+2).padStart(3, '0'),rec.tags[0].color,0);}
             }
         }
         MTFlex.Loading.innerText += '.';
     } while (recCnt >= 2500);
 
-    if(getCookie('MT_NetIncomeRankOrder',true) == 1) {
-        TagCols.sort((a, b) => a.ORDER - b.ORDER);
-    } else {
-        if(MTFlex.Button2 > 2) {TagCols.sort((a, b) => b.SORTV - a.SORTV);} else {TagCols.sort((a, b) => a.ORDER - b.ORDER);}
-    }
+    if(getCookie('MT_NetIncomeRankOrder',true) == 1) { TagCols.sort((a, b) => a.ORDER - b.ORDER);} else {TagCols.sort((a, b) => b.SORTV - a.SORTV); }
     MTP = [];MTP.Format = [1,2][getCookie('MT_NetIncomeNoDecimals',true)];
     let totalCol = 0;
     for (const TagCol of TagCols) {
@@ -987,12 +982,13 @@ async function MenuReportsNetIncomeGo() {
     MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
     MTSpawnProcess = 1;
 
-    function TagsUpdateQueue(inID,inAmt,inTag,inOrder,inColor) {
+    function TagsUpdateQueue(inID,inAmt,inTag,inOrder,inColor,inFirstPass) {
         for (const Tag of TagQueue) {
              if(Tag.ID == inID && Tag.TagName == inTag) {Tag.Amt += inAmt; TagsSortQueue(inTag, inAmt); return;}
          }
         TagQueue.push({"ID": inID, "TagName": inTag ,"Amt": inAmt });
-        if(TagsIndexQueue(inTag) === -1) {TagCols.push({"NAME": inTag, "ORDER": inOrder, "COLOR": inColor, "SORTV": inAmt});}
+        if(inFirstPass == null) inFirstPass = 0;
+        if(TagsIndexQueue(inTag) === -1) {TagCols.push({"NAME": inTag, "ORDER": inOrder, "COLOR": inColor, "SORTV": inAmt + inFirstPass});}
     }
 
     function TagsSortQueue(inTag, inValue) {
@@ -1005,9 +1001,7 @@ async function MenuReportsNetIncomeGo() {
     }
 
     function TagsGetAccountName(inID) {
-        for (let l = 0; l < snapshotData.accounts.length; l += 1) {
-            if(snapshotData.accounts[l].id == inID) return snapshotData.accounts[l].displayName;
-        }
+        for (let l = 0; l < snapshotData.accounts.length; l += 1) { if(snapshotData.accounts[l].id == inID) return snapshotData.accounts[l].displayName; }
         return '';
     }
 }
@@ -2299,6 +2293,20 @@ function MM_SplitTransaction() {
         div.addEventListener('click', () => { inputTwoFields('input.CurrencyInput__Input-ay6xtd-0',AmtA,AmtB); });
     }
 }
+// [ Fix Note Popup ]
+function MM_NoteTag(i) {
+
+    const divs = document.querySelectorAll('[class*="TransactionDrawerFieldRow__StyledFlexContainer-"]');
+    if(divs.length == 0) { MTSpawnProcess = 9; return; }
+    for (const div of divs) {
+        if(div.innerText == 'Notes') {
+            const ntdiv = cec('button','MTNoteTagButton',div.parentNode,'Note Tags');
+            cec('div','MTFlexdown-content MTdropdown',ntdiv,'','','','id','MTNoteTagButton');
+            break;
+        }
+    }
+}
+
 // [ Fix Merchant Popper ]
 function MM_SearchMerchants(inDiv) {
 
@@ -2355,6 +2363,13 @@ function MenuCategories(OnFocus) {
 function MenuPlan(OnFocus) {
     if (SaveLocationPathName.startsWith('/plan') || SaveLocationPathName.startsWith('/dashboard')) {
         if(OnFocus == true) {MTSpawnProcess = 3;}
+    }
+}
+function MenuTransactions(OnFocus) {
+    if (SaveLocationPathName.startsWith('/transactions')) {
+        if(OnFocus == true) {
+            if(SaveLocationPathName.split('/')[2] != undefined) { MTSpawnProcess = 9; }
+        }
     }
 }
 
@@ -2537,27 +2552,25 @@ function MenuCheckSpawnProcess() {
                 MenuReportsFix();
                 break;
             case 1:
-                MF_GridDraw(0);
-                break;
+                MF_GridDraw(0); break;
             case 2:
-                MenuTrendsHistoryDraw();
-                break;
+                MenuTrendsHistoryDraw(); break;
             case 3:
                 MenuPlanRefresh();
                 MenuPlanBudgetReorder();
                 MenuCreditScore();
                 break;
             case 4:
-                MenuAccountsSummary();
-                break;
+                MenuAccountsSummary();break;
             case 6:
-                if(getCookie('MT_MerAssist',true)) {onClickContainer();}
-                break;
+                if(getCookie('MT_MerAssist',true)) {onClickContainer();};break;
             case 7:
                 MM_SplitTransaction();
                 break;
             case 8:
                 break;
+            case 9:
+                MM_NoteTag();break;
         }
     }
 }
@@ -2607,6 +2620,10 @@ window.onclick = function(event) {
                 onClickMTFlexBig();return;
             case 'MThRefClass2':
                 onClickMTFlexExpand();return;
+            case 'MTNoteTagButton':
+                onClickNoteTagButton();return;
+            case 'MTNoteTagDropdown':
+                onClickNoteTagDropdown();return;
             case 'MTFlexButton1':
             case 'MTFlexButton2':
             case 'MTFlexButton4':
@@ -2768,6 +2785,38 @@ function onClickSetupDropdown(et) {
     setCookie(cn,cvalue);
     const pDiv = et.parentNode.parentNode;
     pDiv.childNodes[0].textContent = et.innerText + ' ';
+}
+
+
+async function onClickNoteTagButton() {
+
+    const noteTags = await getNoteTagList();
+    const divNotetag = document.querySelector('div#MTNoteTagButton');
+    if(divNotetag && divNotetag.childNodes.length == 0) {
+        for (let i = 0; i < noteTags.length; ++i) {cec('a','MTNoteTagDropdown',divNotetag,noteTags[i]);}
+    }
+    divNotetag.classList.toggle("show");
+}
+
+function onClickNoteTagDropdown() {
+    const divNotetag = document.querySelector('div#MTNoteTagButton');
+    divNotetag.classList.toggle("show");
+    const useNoteTag = event.target.innerText;
+    let noteDiv = event.target.parentNode.parentNode.parentNode.parentNode;
+    if(noteDiv) {
+        noteDiv = noteDiv.childNodes[1];
+        if(noteDiv) {
+            noteDiv = noteDiv.childNodes[0];
+            let currentNotes = noteDiv.textContent;
+            // remove old tag
+            if(currentNotes.startsWith('*')) {currentNotes = getStringPart(currentNotes,'\n','right');}
+            // add new tag
+            currentNotes = '* ' + useNoteTag + '\n' + currentNotes;
+            noteDiv.focus();
+            noteDiv.value = '';
+            document.execCommand('insertText', false, currentNotes);
+        }
+    }
 }
 
 function onClickLastNumber() {
@@ -3169,6 +3218,7 @@ function MM_MenuRun(onFocus) {
     MenuHistory(onFocus);
     MenuSettings(onFocus);
     MenuCategories(onFocus);
+    MenuTransactions(onFocus);
 }
 // Query functions
 function getGraphqlToken() {
@@ -3209,6 +3259,17 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
   return fetch(graphql, options)
     .then((response) => response.json())
     .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
+}
+
+async function GetTransactionNotes(startDate,endDate) {
+    const limit = 2500, offset = 0;
+    const filters = {startDate: startDate, endDate: endDate, hasNotes: true};
+    const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
+          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id \n notes }}}\n"
+    });
+    return fetch(graphql, options)
+        .then((response) => response.json())
+        .then((data) => { return data.data; }).catch((error) => { console.error(version,error);});
 }
 
 async function GetTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals) {
@@ -3280,6 +3341,21 @@ async function buildCategoryGroups() {
         }
     }
 }
+
+async function getNoteTagList() {
+    const snapshotData = await GetTransactionNotes(formatQueryDate(getDates('d_Minus2Years')),formatQueryDate(getDates('d_Today')));
+    let rv = [], useTag = '';
+    for (let i = 0; i < snapshotData.allTransactions.results.length; i++) {
+        useTag = snapshotData.allTransactions.results[i].notes;
+        if(useTag.startsWith('*')) {
+            useTag = getStringPart(useTag.slice(2).split('\n')[0]);
+            if (!rv.includes(useTag)) {rv.push(useTag); }
+        }
+    }
+    rv.sort();
+    return rv;
+}
+
 function getCategoryGroupList(InId) {
     let cl = '';
     buildCategoryGroups();
