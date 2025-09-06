@@ -79,6 +79,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 - _Monarch Money on Steroids!_  
 
+- _If you are a numbers person, you need this extension!_  
 
 # 💻 Installing MONARCH MONEY TWEAKS:
 
