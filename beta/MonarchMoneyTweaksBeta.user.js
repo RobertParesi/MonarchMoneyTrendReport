@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.51.02
+// @version      3.51.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.51.02';
+const version = '3.51.03';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -25,7 +25,6 @@ let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
 
 function MM_Init() {
 
-    MM_MenuFix();
     MM_RefreshAll();
 
     const a = isDarkMode();
@@ -102,9 +101,10 @@ function MM_Init() {
     addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 13px; font-family: MonarchIcons, sans-serif !important; }');
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
-    addStyle('.MTFlexdown-content div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
     addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto;' + bdr + bs + '8px ; right: 0; z-index: 1;}');
-    addStyle('.MTFlexdown-content a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
+    addStyle('.MTFlexdown-content2 {' + panelBackground + standardText + ';display:none; margin-bottom: 14px; padding: 12px; min-width: 270px; ' + bdr + bs + '8px ; z-index: 1;}');
+    addStyle('.MTFlexdown-content div,.MTFlexdown-content2 div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
+    addStyle('.MTFlexdown-content a,.MTFlexdown-content2 a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
     addStyle('.show {display: block;}');
     addStyle('.MTBudget {margin-top: 20px;font-size: 14px;');
     addStyle('.MTBudget2 {float: right;}');
@@ -118,7 +118,6 @@ function MM_Init() {
 }
 
 function MM_MenuFix() {
-
     const wbs = ['/advice','/investments','/objectives','/recurring','/plan'];
     const cks = ['MT_Advice','MT_Investments','MT_Goals','MT_Recurring','MT_Budget'];
     const divs = document.querySelectorAll('[class*="NavLink-sc"]');
@@ -2294,14 +2293,18 @@ function MM_SplitTransaction() {
     }
 }
 // [ Fix Note Popup ]
-function MM_NoteTag(i) {
+function MM_NoteTag() {
 
     const divs = document.querySelectorAll('[class*="TransactionDrawerFieldRow__StyledFlexContainer-"]');
     if(divs.length == 0) { MTSpawnProcess = 9; return; }
     for (const div of divs) {
         if(div.innerText == 'Notes') {
-            const ntdiv = cec('button','MTNoteTagButton',div.parentNode,'Note Tags');
-            cec('div','MTFlexdown-content MTdropdown',ntdiv,'','','','id','MTNoteTagButton');
+            cec('button','MTNoteTagButton',div.parentNode,'Note Tags ');
+            const div2 = div.parentNode.parentNode.children[1];
+            const newDiv = document.createElement('div');
+            newDiv.id = 'MTNoteTagButton';
+            newDiv.className = 'MTFlexdown-content2 MTdropdown';
+            div2.parentNode.insertBefore(newDiv, div2);
             break;
         }
     }
@@ -2727,7 +2730,6 @@ function onClickCloseDrawer() {
                 }
                 if(lv > hv) {divs[0].style = css_red;return;}
             }
-
             divs = document.querySelectorAll('input.MTInputClass');
             for (let i = 0; i < divs.length; ++i) {
                 let value = divs[i].value;
@@ -2740,31 +2742,24 @@ function onClickCloseDrawer() {
             }
             divs = document.querySelector('input.MTDateCheckbox');
             if(divs) {if(divs.checked == true) {setCookie(MTFlex.Name + 'HigherDate','d_Today');}}
-            returnV = true;
-            break;
+            returnV = true; break;
         case 'Last Month':
-            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_StartofLastMonth');}
-            setCookie(MTFlex.Name + 'HigherDate','d_EndofLastMonth');
-            returnV = true;
-            break;
         case 'This Month':
-            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_StartofMonth');}
-            setCookie(MTFlex.Name + 'HigherDate','d_Today');
-            returnV = true;
-            break;
         case 'This Quarter':
-            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_ThisQTRs');}
-            setCookie(MTFlex.Name + 'HigherDate','d_Today');
-            returnV = true;
-            break;
         case 'This Year':
-            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_StartofYear');}
-            setCookie(MTFlex.Name + 'HigherDate','d_Today');
+            onClickCloseDrawer2();
             returnV = true;
-            break;
     }
     removeAllSections('div.MTHistoryPanel');
     return returnV;
+}
+
+function onClickCloseDrawer2() {
+    const cases = {'Last Month': ['d_StartofLastMonth', 'd_EndofLastMonth'], 'This Month': ['d_StartofMonth', 'd_Today'], 'This Quarter': ['d_ThisQTRs', 'd_Today'], 'This Year': ['d_StartofYear', 'd_Today']};
+    if(cases[event.target.innerText]) {
+        const [lowerDate, higherDate] = cases[event.target.innerText];
+        if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate', lowerDate);}
+    }
 }
 
 function onClickContainer() {
@@ -2790,9 +2785,9 @@ function onClickSetupDropdown(et) {
 
 async function onClickNoteTagButton() {
 
-    const noteTags = await getNoteTagList();
     const divNotetag = document.querySelector('div#MTNoteTagButton');
     if(divNotetag && divNotetag.childNodes.length == 0) {
+        const noteTags = await getNoteTagList();
         for (let i = 0; i < noteTags.length; ++i) {cec('a','MTNoteTagDropdown',divNotetag,noteTags[i]);}
     }
     divNotetag.classList.toggle("show");
@@ -2801,21 +2796,19 @@ async function onClickNoteTagButton() {
 function onClickNoteTagDropdown() {
     const divNotetag = document.querySelector('div#MTNoteTagButton');
     divNotetag.classList.toggle("show");
-    const useNoteTag = event.target.innerText;
-    let noteDiv = event.target.parentNode.parentNode.parentNode.parentNode;
+    const newNoteTag = event.target.innerText;
+    let noteDiv = event.target.parentNode.parentNode.childNodes[2];
     if(noteDiv) {
-        noteDiv = noteDiv.childNodes[1];
-        if(noteDiv) {
-            noteDiv = noteDiv.childNodes[0];
-            let currentNotes = noteDiv.textContent;
-            // remove old tag
-            if(currentNotes.startsWith('*')) {currentNotes = getStringPart(currentNotes,'\n','right');}
-            // add new tag
-            currentNotes = '* ' + useNoteTag + '\n' + currentNotes;
-            noteDiv.focus();
-            noteDiv.value = '';
-            document.execCommand('insertText', false, currentNotes);
-        }
+        noteDiv = noteDiv.childNodes[0];
+        let noteField = noteDiv.textContent;
+        // remove old tag
+        if(noteField.startsWith('*')) {noteField = getStringPart(noteField,'\n','right',true);}
+        // add new tag
+        let newNoteField = '* ' + newNoteTag;
+        if(noteField != '') { newNoteField = newNoteField + '\n' + noteField;}
+        noteDiv.focus();
+        noteDiv.value = '';
+        document.execCommand('insertText', false, newNoteField);
     }
 }
 
@@ -3093,10 +3086,12 @@ function inList(v,p,sW) {
     return 0;
 }
 
-function getStringPart(inValue, inChr, inDirection) {
+function getStringPart(inValue, inChr, inDirection,inNotFoundBlank) {
     const idx = inValue.indexOf(inChr);
-    if (idx === -1) {return inValue;}
-    if (inDirection === 'right') { return inValue.slice(idx + 1); } else {return inValue.slice(0, idx);}
+    if (idx === -1) {
+        if(inNotFoundBlank == true) {return '';} else {return inValue;}
+    }
+    if (inDirection === 'right') {return inValue.slice(idx + 1); } else {return inValue.slice(0, idx);}
 }
 
 function replaceBetweenWith(InValue,InStart,InEnd,InReplaceWith) {
@@ -3197,14 +3192,13 @@ function getChecked(InA,InB) {
 
 // Main Execution Loop
 (function() {
-    MM_Init();
+    MM_MenuFix();MM_Init()
     setInterval(() => {
         if(css_reload == true) {css_reload = false;MM_Init();}
         if(window.location.pathname != SaveLocationPathName) {
             if(SaveLocationPathName) {MM_MenuRun(false);}
             SaveLocationPathName = window.location.pathname;
-            MM_MenuRun(true);
-            MM_MenuFix();
+            MM_MenuFix();MM_MenuRun(true);
         }
         MenuCheckSpawnProcess();
     },400);
