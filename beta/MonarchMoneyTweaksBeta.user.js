@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.51.03
+// @version      3.51.04
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.51.03';
+const version = '3.51.04';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2446,6 +2446,7 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
             MenuDisplay_Input('Reports / Net Income','','spacer');
             MenuDisplay_Input('Sort column results by Tag/Account Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
+            MenuDisplay_Input('Show Note Tags drop-down button on Transaction screen (Used if Tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
             MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
@@ -2573,7 +2574,8 @@ function MenuCheckSpawnProcess() {
             case 8:
                 break;
             case 9:
-                MM_NoteTag();break;
+                if(getCookie('MT_NetIncomeNoteTags',true) == 1) {MM_NoteTag()}
+                break;
         }
     }
 }
