@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.51.04
+// @version      3.51.06
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.51.04';
+const version = '3.51.06';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -96,9 +96,9 @@ function MM_Init() {
     addStyle('.MTSideDrawerHeader { ' + standardText + ' padding: 12px; }');
     addStyle('.MTSideDrawerItem { font-size: 14px;  padding-top: 8px;  place-content: stretch space-between;  display: flex;');
     addStyle('.MTSideDrawerItem2 { padding-top: 0px !important;');
-    addStyle('.MTSideDrawerDetail { ' + standardText + ' width: 24%; text-align: right; font-size: 13px; }');
-    addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 12px; }');
-    addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 13px; font-family: MonarchIcons, sans-serif !important; }');
+    addStyle('.MTSideDrawerDetail { ' + standardText + ' width: 24%; text-align: right; font-size: 14px; }');
+    addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 13px; }');
+    addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 14px; font-family: MonarchIcons, sans-serif !important; }');
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
     addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto;' + bdr + bs + '8px ; right: 0; z-index: 1;}');
@@ -1914,10 +1914,11 @@ function MenuTrendsHistory(inType,inID) {
 function MenuTrendsHistoryDraw() {
 
     let sumQue = [], detailQue = [];
-    const os = 'text-align:left; font-weight: 600;';
     const os2 = 'font-weight: 600;';
-    const os3 = 'text-align:left; font-weight: 200; font-size: 12px;';
+    const os = os2 + 'text-align:left;';
+    const os3 = 'text-align:left; font-weight: 300; font-size: 13px;';
     const os4 = 'display: ' + getDisplay(getCookie(MTFlex.Name + '_SidePanel',true),'');
+    const osTotal = os2 + 'padding-top: 4px;';
     const startYear = getDates('n_CurYear') - 2;
     const curYear = getDates('n_CurYear');
     const curMonth = getDates('n_CurMonth');
@@ -2022,10 +2023,10 @@ function MenuTrendsHistoryDraw() {
         if(tot != 0) { T[4] = tot / curYears; }
 
         if(inTitle.includes('Total')) {
-            div2 = cec('div','MTSideDrawerItem',div,'','',os2);
+            div2 = cec('div','MTSideDrawerItem',div,'','',osTotal);
             div3 = cec('span','MTFlexSpacer',div2);
         }
-        div2 = cec('div','MTSideDrawerItem',div,'','',os2);
+        div2 = cec('div','MTSideDrawerItem',div,'','',osTotal);
         div3 = cec('span','MTSideDrawerDetail',div2,inTitle,'',os+inStyle);
         for (let i = 1; i < 5; i++) {
             if(skiprow == false || i > 1) {
