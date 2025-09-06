@@ -1,6 +1,8 @@
 **Version 3.51 (beta):**
 
 * NEW: Note Tags pull-down for easier Note Tagging. (Settings - Reports / Net Income)"
+
+* CHANGE: Clean Up and better styling of Trends side panel.
   
 **Version 3.50:**
 
