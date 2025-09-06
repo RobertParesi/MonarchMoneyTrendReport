@@ -1,6 +1,6 @@
 **Version 3.51 (beta):**
 
-* NEW: Note Tags pull-down for easier Note Tagging. (Has to be turned on in (Settings - Reports / Net Income)"
+* NEW: Note Tags pull-down for easier Note Tagging. (Settings - Reports / Net Income)"
   
 **Version 3.50:**
 
