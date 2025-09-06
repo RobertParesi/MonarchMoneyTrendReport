@@ -1,12 +1,12 @@
 **Version 3.51 (beta):**
 
-* NEW: Note Tags pull-down for easier Note Tagging.
+* NEW: Note Tags pull-down for easier Note Tagging. (Has to be turned on in (Settings - Reports / Net Income)"
   
 **Version 3.50:**
 
 * NEW: Reports / Tags now called Reports / Net Income with more flexibility including "by Goals" & "by Accounts" 
 
-* NEW: Reports / Net Income can have Decimals ignored as well as sort columns by Value vs Monarch Money Tag/Account Ranking. (Settings)
+* NEW: Reports / Net Income can have Decimals ignored as well as sort columns by Value vs Monarch Money Tag/Account Ranking. (Settings - Reports / Net Income)
 
 * NEW: Added "This Quarter" and "This Year" to date selection.
 
