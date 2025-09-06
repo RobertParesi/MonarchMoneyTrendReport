@@ -1,3 +1,7 @@
+**Version 3.51 (beta):**
+
+* NEW: Note Tags pull-down for easier Note Tagging.
+  
 **Version 3.50:**
 
 * NEW: Reports / Tags now called Reports / Net Income with more flexibility including "by Goals" & "by Accounts" 
