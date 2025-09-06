@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.50
+// @version      3.51
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.50';
+const version = '3.51';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -25,7 +25,6 @@ let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
 
 function MM_Init() {
 
-    MM_MenuFix();
     MM_RefreshAll();
 
     const a = isDarkMode();
@@ -58,7 +57,7 @@ function MM_Init() {
     addStyle('.MTSpacerClass {margin: 4px 24px 4px 24px; height: 8px; border-bottom: 1px solid ' + lineForground +';}');
     addStyle('.MTInputClass { padding: 6px 12px; border-radius: 4px; background-color: transparent; ' + bdr + standardText +'}');
     addStyle('.MT' + FlexOptions.join(':hover, .MT') + ':hover {cursor:pointer;}');
-    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton {font-family: MonarchIcons, "Oracle", sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 12px;' + bdr + bs + ' 4px;cursor: pointer;}');
+    addStyle('.MTFlexButtonExport, .MTFlexButton1, .MTFlexButton2, .MTFlexButton4, .MTSettButton1, .MTSettButton2, .MTHistoryButton, .MTSplitButton, .MTInputButton, .MTSettingsButton, .MTNoteTagButton {font-family: MonarchIcons, "Oracle", sans-serif; font-size: 14px;font-weight: 500; padding: 7.5px 12px;' + panelBackground + standardText + 'margin-left: 12px;' + bdr + bs + ' 4px;cursor: pointer;}');
     addStyle('.MTFlexContainer {display:block; padding: 20px;}');
     addStyle('.MTFlexContainer2 {margin: 0px;  gap: 20px;  display: flex; }');
     addStyle('.MTFlexContainerPanel { display: flex; flex-flow: column; place-content: stretch flex-start; ' + panelBackground + bs + ' 8px;}');
@@ -97,14 +96,15 @@ function MM_Init() {
     addStyle('.MTSideDrawerHeader { ' + standardText + ' padding: 12px; }');
     addStyle('.MTSideDrawerItem { font-size: 14px;  padding-top: 8px;  place-content: stretch space-between;  display: flex;');
     addStyle('.MTSideDrawerItem2 { padding-top: 0px !important;');
-    addStyle('.MTSideDrawerDetail { ' + standardText + ' width: 24%; text-align: right; font-size: 13px; }');
-    addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 12px; }');
-    addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 13px; font-family: MonarchIcons, sans-serif !important; }');
+    addStyle('.MTSideDrawerDetail { ' + standardText + ' width: 24%; text-align: right; font-size: 14px; }');
+    addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 13px; }');
+    addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 14px; font-family: MonarchIcons, sans-serif !important; }');
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
-    addStyle('.MTFlexdown-content div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
     addStyle('.MTFlexdown-content {' + panelBackground + standardText + ';display:none; margin-top: 12px; padding: 12px; position: absolute; min-width: 270px; overflow: auto;' + bdr + bs + '8px ; right: 0; z-index: 1;}');
-    addStyle('.MTFlexdown-content a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
+    addStyle('.MTFlexdown-content2 {' + panelBackground + standardText + ';display:none; margin-bottom: 14px; padding: 12px; min-width: 270px; ' + bdr + bs + '8px ; z-index: 1;}');
+    addStyle('.MTFlexdown-content div,.MTFlexdown-content2 div {font-size: 0px; line-height: 2px; background-color: #ff7369;}');
+    addStyle('.MTFlexdown-content a,.MTFlexdown-content2 a {' + panelBackground + standardText + ';font-size: 16px; text-align: left; border-radius: 4px; font-weight: 200; padding: 10px 10px; display: block;}');
     addStyle('.show {display: block;}');
     addStyle('.MTBudget {margin-top: 20px;font-size: 14px;');
     addStyle('.MTBudget2 {float: right;}');
@@ -118,7 +118,6 @@ function MM_Init() {
 }
 
 function MM_MenuFix() {
-
     const wbs = ['/advice','/investments','/objectives','/recurring','/plan'];
     const cks = ['MT_Advice','MT_Investments','MT_Goals','MT_Recurring','MT_Budget'];
     const divs = document.querySelectorAll('[class*="NavLink-sc"]');
@@ -834,9 +833,8 @@ function MenuReportsGo(inName) {
 async function MenuReportsNetIncomeGo() {
     let snapshotData4 = null,snapshotData = null, rec = null;
     let TagQueue = [],TagCols = [];
-    let useID = '',useAmt = 0, useTitle='',useURL = '';
-    let ii = 0;
-    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false,hasNotes = false, hasGoals = [];
+    let useID = '',useAmt = 0, ii = 0, useTitle='',useURL = '';
+    let CurrentFilter = '', CurrentFilterObj = [], HiddenFilter = false, hasNotes = false, hasGoals = [];
 
     MF_GridInit('MTNet_Income', 'Net Income');
     MTFlex.TriggerEvent = 2;
@@ -846,7 +844,7 @@ async function MenuReportsNetIncomeGo() {
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MF_GridOptions(2,['by Tags (Ignore hidden)','by Tags (Include hidden)','by Tags (Only hidden)','by Notes (starting with asterisk)','by Accounts','by Goals']);
     MF_GridOptions(4,getAccountGroupInfo());
-    MTFlex.SortSeq = ['1','1','1','2','3'];
+    MTFlex.SortSeq = ['1','1','1','2','3','4'];
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTP = [];MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(MTP);
@@ -889,28 +887,24 @@ async function MenuReportsNetIncomeGo() {
             if(rec.category.group.type == 'expense') {useAmt = useAmt * -1;}
             if(MTFlex.Button2 == 4) {
                 useTag = getStringPart(rec.account.id);
-                TagsUpdateQueue(useID,useAmt,useTag,String(rec.account.order).padStart(3, '0'),'');
+                TagsUpdateQueue(useID,useAmt,useTag,String(rec.account.order).padStart(3, '0'),'',0);
             } else if(MTFlex.Button2 == 3) {
                 useTag = getStringPart(rec.notes.slice(2).split('\n')[0]);
-                TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
+                TagsUpdateQueue(useID,useAmt,useTag,useTag,'',0);
             } else if (MTFlex.Button2 == 5) {
                 useTag = rec.goal.name;
-                TagsUpdateQueue(useID,useAmt,useTag,useTag,'');
+                TagsUpdateQueue(useID,useAmt,useTag,useTag,'',0);
             } else {
                 ii = rec.tags.length;
-                if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','');}
-                else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*','001','');}
-                else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order+2).padStart(3, '0'),rec.tags[0].color);}
+                if(ii == 0) { TagsUpdateQueue(useID,useAmt,'','000','',9000000);}
+                else if (ii > 1) { TagsUpdateQueue(useID,useAmt,'*','001','',8000000);}
+                else {TagsUpdateQueue(useID,useAmt,rec.tags[0].name,String(rec.tags[0].order+2).padStart(3, '0'),rec.tags[0].color,0);}
             }
         }
         MTFlex.Loading.innerText += '.';
     } while (recCnt >= 2500);
 
-    if(getCookie('MT_NetIncomeRankOrder',true) == 1) {
-        TagCols.sort((a, b) => a.ORDER - b.ORDER);
-    } else {
-        if(MTFlex.Button2 > 2) {TagCols.sort((a, b) => b.SORTV - a.SORTV);} else {TagCols.sort((a, b) => a.ORDER - b.ORDER);}
-    }
+    if(getCookie('MT_NetIncomeRankOrder',true) == 1) { TagCols.sort((a, b) => a.ORDER - b.ORDER);} else {TagCols.sort((a, b) => b.SORTV - a.SORTV); }
     MTP = [];MTP.Format = [1,2][getCookie('MT_NetIncomeNoDecimals',true)];
     let totalCol = 0;
     for (const TagCol of TagCols) {
@@ -987,12 +981,13 @@ async function MenuReportsNetIncomeGo() {
     MF_GridCalcRange(totalCol,1, totalCol-1,'Add');
     MTSpawnProcess = 1;
 
-    function TagsUpdateQueue(inID,inAmt,inTag,inOrder,inColor) {
+    function TagsUpdateQueue(inID,inAmt,inTag,inOrder,inColor,inFirstPass) {
         for (const Tag of TagQueue) {
              if(Tag.ID == inID && Tag.TagName == inTag) {Tag.Amt += inAmt; TagsSortQueue(inTag, inAmt); return;}
          }
         TagQueue.push({"ID": inID, "TagName": inTag ,"Amt": inAmt });
-        if(TagsIndexQueue(inTag) === -1) {TagCols.push({"NAME": inTag, "ORDER": inOrder, "COLOR": inColor, "SORTV": inAmt});}
+        if(inFirstPass == null) inFirstPass = 0;
+        if(TagsIndexQueue(inTag) === -1) {TagCols.push({"NAME": inTag, "ORDER": inOrder, "COLOR": inColor, "SORTV": inAmt + inFirstPass});}
     }
 
     function TagsSortQueue(inTag, inValue) {
@@ -1005,9 +1000,7 @@ async function MenuReportsNetIncomeGo() {
     }
 
     function TagsGetAccountName(inID) {
-        for (let l = 0; l < snapshotData.accounts.length; l += 1) {
-            if(snapshotData.accounts[l].id == inID) return snapshotData.accounts[l].displayName;
-        }
+        for (let l = 0; l < snapshotData.accounts.length; l += 1) { if(snapshotData.accounts[l].id == inID) return snapshotData.accounts[l].displayName; }
         return '';
     }
 }
@@ -1921,10 +1914,11 @@ function MenuTrendsHistory(inType,inID) {
 function MenuTrendsHistoryDraw() {
 
     let sumQue = [], detailQue = [];
-    const os = 'text-align:left; font-weight: 600;';
     const os2 = 'font-weight: 600;';
-    const os3 = 'text-align:left; font-weight: 200; font-size: 12px;';
+    const os = os2 + 'text-align:left;';
+    const os3 = 'text-align:left; font-weight: 300; font-size: 13px;';
     const os4 = 'display: ' + getDisplay(getCookie(MTFlex.Name + '_SidePanel',true),'');
+    const osTotal = os2 + 'padding-top: 4px;';
     const startYear = getDates('n_CurYear') - 2;
     const curYear = getDates('n_CurYear');
     const curMonth = getDates('n_CurMonth');
@@ -2029,10 +2023,10 @@ function MenuTrendsHistoryDraw() {
         if(tot != 0) { T[4] = tot / curYears; }
 
         if(inTitle.includes('Total')) {
-            div2 = cec('div','MTSideDrawerItem',div,'','',os2);
+            div2 = cec('div','MTSideDrawerItem',div,'','',osTotal);
             div3 = cec('span','MTFlexSpacer',div2);
         }
-        div2 = cec('div','MTSideDrawerItem',div,'','',os2);
+        div2 = cec('div','MTSideDrawerItem',div,'','',osTotal);
         div3 = cec('span','MTSideDrawerDetail',div2,inTitle,'',os+inStyle);
         for (let i = 1; i < 5; i++) {
             if(skiprow == false || i > 1) {
@@ -2299,6 +2293,24 @@ function MM_SplitTransaction() {
         div.addEventListener('click', () => { inputTwoFields('input.CurrencyInput__Input-ay6xtd-0',AmtA,AmtB); });
     }
 }
+// [ Fix Note Popup ]
+function MM_NoteTag() {
+
+    const divs = document.querySelectorAll('[class*="TransactionDrawerFieldRow__StyledFlexContainer-"]');
+    if(divs.length == 0) { MTSpawnProcess = 9; return; }
+    for (const div of divs) {
+        if(div.innerText == 'Notes') {
+            cec('button','MTNoteTagButton',div.parentNode,'Note Tags ');
+            const div2 = div.parentNode.parentNode.children[1];
+            const newDiv = document.createElement('div');
+            newDiv.id = 'MTNoteTagButton';
+            newDiv.className = 'MTFlexdown-content2 MTdropdown';
+            div2.parentNode.insertBefore(newDiv, div2);
+            break;
+        }
+    }
+}
+
 // [ Fix Merchant Popper ]
 function MM_SearchMerchants(inDiv) {
 
@@ -2355,6 +2367,13 @@ function MenuCategories(OnFocus) {
 function MenuPlan(OnFocus) {
     if (SaveLocationPathName.startsWith('/plan') || SaveLocationPathName.startsWith('/dashboard')) {
         if(OnFocus == true) {MTSpawnProcess = 3;}
+    }
+}
+function MenuTransactions(OnFocus) {
+    if (SaveLocationPathName.startsWith('/transactions')) {
+        if(OnFocus == true) {
+            if(SaveLocationPathName.split('/')[2] != undefined) { MTSpawnProcess = 9; }
+        }
     }
 }
 
@@ -2428,6 +2447,7 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('Always hide decimals','MT_NoDecimals','checkbox');
             MenuDisplay_Input('Reports / Net Income','','spacer');
             MenuDisplay_Input('Sort column results by Tag/Account Ranking rather than Value','MT_NetIncomeRankOrder','checkbox');
+            MenuDisplay_Input('Show Note Tags drop-down button on Transaction screen (Used if Tagging notes with "*")','MT_NetIncomeNoteTags','checkbox');
             MenuDisplay_Input('Always hide decimals','MT_NetIncomeNoDecimals','checkbox');
             MenuDisplay_Input('Reports / Accounts','','spacer');
             MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
@@ -2537,26 +2557,25 @@ function MenuCheckSpawnProcess() {
                 MenuReportsFix();
                 break;
             case 1:
-                MF_GridDraw(0);
-                break;
+                MF_GridDraw(0); break;
             case 2:
-                MenuTrendsHistoryDraw();
-                break;
+                MenuTrendsHistoryDraw(); break;
             case 3:
                 MenuPlanRefresh();
                 MenuPlanBudgetReorder();
                 MenuCreditScore();
                 break;
             case 4:
-                MenuAccountsSummary();
-                break;
+                MenuAccountsSummary();break;
             case 6:
-                if(getCookie('MT_MerAssist',true)) {onClickContainer();}
-                break;
+                if(getCookie('MT_MerAssist',true)) {onClickContainer();};break;
             case 7:
                 MM_SplitTransaction();
                 break;
             case 8:
+                break;
+            case 9:
+                if(getCookie('MT_NetIncomeNoteTags',true) == 1) {MM_NoteTag()}
                 break;
         }
     }
@@ -2607,6 +2626,10 @@ window.onclick = function(event) {
                 onClickMTFlexBig();return;
             case 'MThRefClass2':
                 onClickMTFlexExpand();return;
+            case 'MTNoteTagButton':
+                onClickNoteTagButton();return;
+            case 'MTNoteTagDropdown':
+                onClickNoteTagDropdown();return;
             case 'MTFlexButton1':
             case 'MTFlexButton2':
             case 'MTFlexButton4':
@@ -2710,7 +2733,6 @@ function onClickCloseDrawer() {
                 }
                 if(lv > hv) {divs[0].style = css_red;return;}
             }
-
             divs = document.querySelectorAll('input.MTInputClass');
             for (let i = 0; i < divs.length; ++i) {
                 let value = divs[i].value;
@@ -2723,31 +2745,24 @@ function onClickCloseDrawer() {
             }
             divs = document.querySelector('input.MTDateCheckbox');
             if(divs) {if(divs.checked == true) {setCookie(MTFlex.Name + 'HigherDate','d_Today');}}
-            returnV = true;
-            break;
+            returnV = true; break;
         case 'Last Month':
-            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_StartofLastMonth');}
-            setCookie(MTFlex.Name + 'HigherDate','d_EndofLastMonth');
-            returnV = true;
-            break;
         case 'This Month':
-            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_StartofMonth');}
-            setCookie(MTFlex.Name + 'HigherDate','d_Today');
-            returnV = true;
-            break;
         case 'This Quarter':
-            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_ThisQTRs');}
-            setCookie(MTFlex.Name + 'HigherDate','d_Today');
-            returnV = true;
-            break;
         case 'This Year':
-            if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate','d_StartofYear');}
-            setCookie(MTFlex.Name + 'HigherDate','d_Today');
+            onClickCloseDrawer2();
             returnV = true;
-            break;
     }
     removeAllSections('div.MTHistoryPanel');
     return returnV;
+}
+
+function onClickCloseDrawer2() {
+    const cases = {'Last Month': ['d_StartofLastMonth', 'd_EndofLastMonth'], 'This Month': ['d_StartofMonth', 'd_Today'], 'This Quarter': ['d_ThisQTRs', 'd_Today'], 'This Year': ['d_StartofYear', 'd_Today']};
+    if(cases[event.target.innerText]) {
+        const [lowerDate, higherDate] = cases[event.target.innerText];
+        if(MTFlex.TriggerEvent == 2) {setCookie(MTFlex.Name + 'LowerDate', lowerDate);}
+    }
 }
 
 function onClickContainer() {
@@ -2768,6 +2783,36 @@ function onClickSetupDropdown(et) {
     setCookie(cn,cvalue);
     const pDiv = et.parentNode.parentNode;
     pDiv.childNodes[0].textContent = et.innerText + ' ';
+}
+
+
+async function onClickNoteTagButton() {
+
+    const divNotetag = document.querySelector('div#MTNoteTagButton');
+    if(divNotetag && divNotetag.childNodes.length == 0) {
+        const noteTags = await getNoteTagList();
+        for (let i = 0; i < noteTags.length; ++i) {cec('a','MTNoteTagDropdown',divNotetag,noteTags[i]);}
+    }
+    divNotetag.classList.toggle("show");
+}
+
+function onClickNoteTagDropdown() {
+    const divNotetag = document.querySelector('div#MTNoteTagButton');
+    divNotetag.classList.toggle("show");
+    const newNoteTag = event.target.innerText;
+    let noteDiv = event.target.parentNode.parentNode.childNodes[2];
+    if(noteDiv) {
+        noteDiv = noteDiv.childNodes[0];
+        let noteField = noteDiv.textContent;
+        // remove old tag
+        if(noteField.startsWith('*')) {noteField = getStringPart(noteField,'\n','right',true);}
+        // add new tag
+        let newNoteField = '* ' + newNoteTag;
+        if(noteField != '') { newNoteField = newNoteField + '\n' + noteField;}
+        noteDiv.focus();
+        noteDiv.value = '';
+        document.execCommand('insertText', false, newNoteField);
+    }
 }
 
 function onClickLastNumber() {
@@ -3044,10 +3089,12 @@ function inList(v,p,sW) {
     return 0;
 }
 
-function getStringPart(inValue, inChr, inDirection) {
+function getStringPart(inValue, inChr, inDirection,inNotFoundBlank) {
     const idx = inValue.indexOf(inChr);
-    if (idx === -1) {return inValue;}
-    if (inDirection === 'right') { return inValue.slice(idx + 1); } else {return inValue.slice(0, idx);}
+    if (idx === -1) {
+        if(inNotFoundBlank == true) {return '';} else {return inValue;}
+    }
+    if (inDirection === 'right') {return inValue.slice(idx + 1); } else {return inValue.slice(0, idx);}
 }
 
 function replaceBetweenWith(InValue,InStart,InEnd,InReplaceWith) {
@@ -3148,14 +3195,13 @@ function getChecked(InA,InB) {
 
 // Main Execution Loop
 (function() {
-    MM_Init();
+    MM_MenuFix();MM_Init()
     setInterval(() => {
         if(css_reload == true) {css_reload = false;MM_Init();}
         if(window.location.pathname != SaveLocationPathName) {
             if(SaveLocationPathName) {MM_MenuRun(false);}
             SaveLocationPathName = window.location.pathname;
-            MM_MenuRun(true);
-            MM_MenuFix();
+            MM_MenuFix();MM_MenuRun(true);
         }
         MenuCheckSpawnProcess();
     },400);
@@ -3169,6 +3215,7 @@ function MM_MenuRun(onFocus) {
     MenuHistory(onFocus);
     MenuSettings(onFocus);
     MenuCategories(onFocus);
+    MenuTransactions(onFocus);
 }
 // Query functions
 function getGraphqlToken() {
@@ -3209,6 +3256,17 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
   return fetch(graphql, options)
     .then((response) => response.json())
     .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
+}
+
+async function GetTransactionNotes(startDate,endDate) {
+    const limit = 2500, offset = 0;
+    const filters = {startDate: startDate, endDate: endDate, hasNotes: true};
+    const options = callGraphQL({operationName: 'GetTransactions', variables: {offset: offset, limit: limit, filters: filters},
+          query: "query GetTransactions($offset: Int, $limit: Int, $filters: TransactionFilterInput) {\n allTransactions(filters: $filters) {\n totalCount\n results(offset: $offset, limit: $limit ) {\n id \n notes }}}\n"
+    });
+    return fetch(graphql, options)
+        .then((response) => response.json())
+        .then((data) => { return data.data; }).catch((error) => { console.error(version,error);});
 }
 
 async function GetTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals) {
@@ -3280,6 +3338,21 @@ async function buildCategoryGroups() {
         }
     }
 }
+
+async function getNoteTagList() {
+    const snapshotData = await GetTransactionNotes(formatQueryDate(getDates('d_Minus2Years')),formatQueryDate(getDates('d_Today')));
+    let rv = [], useTag = '';
+    for (let i = 0; i < snapshotData.allTransactions.results.length; i++) {
+        useTag = snapshotData.allTransactions.results[i].notes;
+        if(useTag.startsWith('*')) {
+            useTag = getStringPart(useTag.slice(2).split('\n')[0]);
+            if (!rv.includes(useTag)) {rv.push(useTag); }
+        }
+    }
+    rv.sort();
+    return rv;
+}
+
 function getCategoryGroupList(InId) {
     let cl = '';
     buildCategoryGroups();
