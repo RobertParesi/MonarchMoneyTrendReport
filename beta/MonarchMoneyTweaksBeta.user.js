@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.52.02
+// @version      3.52.05
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.52.02';
+const version = '3.52.05';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -32,7 +32,7 @@ function MM_Init() {
     const panelBackground = 'background-color: ' + ['#FFFFFF;','#222221;'][a];
     const panelText = 'color: ' + ['#777573;','#989691;'][a];
     const standardText = 'color: ' + ['#22201d;','#FFFFFF;'][a];
-    const sidepanelBackground = 'background: ' + ['#def7f9;','#2a2a28;'][a];
+    const sidepanelBackground = 'background: ' + ['#def7f9;','#373736;'][a];
     const selectBackground = 'background-color: ' + ['#def7f9;','#082c36;'][a];
     const selectForground = 'color: ' + ['#107d98;','#4ccce6;'][a];
     const lineForground = ['#e4e1de','#363532'][a];
@@ -100,9 +100,10 @@ function MM_Init() {
     addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 13px; padding-right: 5px; }');
     addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 14px; font-family: MonarchIcons, sans-serif !important; }');
     addStyle('.MTSideDrawerDetailS:hover {font-weight: 500  !important; cursor: pointer; color: rgb(50, 170, 240) !important;');
-    addStyle('.MTSideDrawerSummary {' + bs + ' 8px; height: 216px; padding: 6px; margin-top: 3px; margin-bottom: 10px; ' + panelBackground + ' overflow:auto;}');
+    addStyle('.MTSideDrawerSummary {' + bs + ' 8px; height: 210px; margin-top: 3px; margin-bottom: 10px; ' + panelBackground + ' overflow:auto;}');
     addStyle('.MTSideDrawerSummaryTag {background-color: ' + accentColor + 'border-right: 4px; border-top-left-radius: 8px;  border-bottom-left-radius: 0px;  border-bottom-right-radius: 0px;  border-top-right-radius: 8px;  color: white;  font-weight: bold;}');
     addStyle('.MTSideDrawerSummaryTable {font-size: 13px;text-align: left;}');
+    addStyle('.MTSideDrawerSummaryTableTH {font-weight:600;  position: sticky;top: 0; background: transparent; z-index: 1; ' + panelBackground + '}');
     addStyle('.MTSideDrawerSummaryData2 {text-align: right;}');
     addStyle('.MTdropdown a:hover {' + selectBackground + selectForground + ' }');
     addStyle('.MTFlexdown, .MTdropdown {float: right;  position: relative; display: inline-block; font-weight: 200;}');
@@ -1807,14 +1808,14 @@ async function BuildTrendData (inCol,inGrouping,inPeriod,lowerDate,higherDate,in
 
     const firstDate = formatQueryDate(lowerDate);
     const lastDate = formatQueryDate(higherDate);
-    let useID = '', useType = '',snapshotData = null,retGroups = [],s_ndx = 0;
+    let useID = '', useType = '',snapshotData = null,retGroups = [], retCats = [], s_ndx = 0;
     if(MTFlex.Button2 > 7) {s_ndx = getDates('n_CurYear', MTFlexDate2) - 12;} else {s_ndx = getDates('n_CurMonth',lowerDate) + 1;}
 
-    if(inID) { useType = rtnCategoryGroup(inID).TYPE; }
+    if(inID) { useType = rtnCategoryGroup(inID).TYPE; retCats = rtnCategoryGroupList(inID,true); }
     inGrouping = Number(inGrouping);
 
-    if(inGrouping == 0) {snapshotData = await getMonthlySnapshotData(firstDate,lastDate,inPeriod,inAccounts);} else {
-        snapshotData = await getMonthlySnapshotData2(firstDate,lastDate,inPeriod,inAccounts);}
+    if(inGrouping == 0) {snapshotData = await getMonthlySnapshotData(firstDate,lastDate,inPeriod,inAccounts,retCats);} else {
+        snapshotData = await getMonthlySnapshotData2(firstDate,lastDate,inPeriod,inAccounts,retCats);}
     let useDate = null,yy = null,mm=null,ndx=null,useAmount=null;
     for (const ss of snapshotData.aggregates) {
         switch(inGrouping) {
@@ -2089,7 +2090,7 @@ function MenuTrendsHistoryExport() {
 
     const c = ',';
     let csvContent = '',j = 0,Cols = 0;
-    const spans = document.querySelectorAll('span.MTSideDrawerDetail' + [',span.MTSideDrawerDetail2,a.MTSideDrawerDetail4',''][getCookie(MTFlex.Name + '_SidePanel',true)]);
+    const spans = document.querySelectorAll('span.MTSideDrawerDetail,span.MTSideDrawerDetailS,span.MTSideDrawerSummaryTag' + [',span.MTSideDrawerDetail2,a.MTSideDrawerDetail4',''][getCookie(MTFlex.Name + '_SidePanel',true)]);
     spans.forEach(span => {
         j=j+1;
         if(Cols == 0) { if(span.innerText.startsWith('Average')) { Cols = j;}}
@@ -2719,8 +2720,7 @@ async function onClickExpandHistory(useTarget) {
 
     removeAllSections('div.MTSideDrawerSummary');
     if(useTarget.className == 'MTSideDrawerSummaryTag') {
-        useTarget.classList.replace('MTSideDrawerSummaryTag','MTSideDrawerDetailS');
-        return;
+        useTarget.classList.replace('MTSideDrawerSummaryTag','MTSideDrawerDetailS');return;
     }
     const dataRow = useTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupid');
     if(dataRow == undefined) return;
@@ -2740,7 +2740,7 @@ async function onClickExpandHistory(useTarget) {
 
     const snapshotData4 = await getTransactions(ld,hd,0,false,CurrentFilterObj,null,null,null,rtnCategoryGroupList(dataRow,true));
     newDiv = cec('table','MTSideDrawerSummaryTable',newDiv);
-    let newRow = cec('tr','MTSideDrawerSummaryRow',newDiv,'','','font-weight:600;');
+    let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
     cec('td','MTSideDrawerSummaryData',newRow,'Date','','width: 88px;');
     cec('td','MTSideDrawerSummaryData',newRow,'Merchant','','width:240px;');
     cec('td','MTSideDrawerSummaryData',newRow,'Category','','width:136px;');
@@ -3275,9 +3275,10 @@ function callGraphQL(data) {
   };
 }
 
-async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccounts) {
+async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccounts, inCat) {
     if(inAccounts == undefined) inAccounts = [];
-    const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
+    if(inCat == undefined || inCat == null) inCat = [];
+    const filters = {startDate: startDate, endDate: endDate, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({operationName: 'GetAggregatesGraph', variables: {filters: filters },
           query: "query GetAggregatesGraph($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"category\", \"" + groupingType + "\"]\n  fillEmptyValues: false\n ) {\n groupBy {\n category {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
      });
@@ -3286,9 +3287,10 @@ async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccou
     .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
 }
 
-async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccounts) {
+async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccounts, inCat) {
     if(inAccounts == undefined) inAccounts = [];
-    const filters = {startDate: startDate, endDate: endDate, ...(inAccounts.length > 0 && { accounts: inAccounts })};
+    if(inCat == undefined || inCat == null) inCat = [];
+    const filters = {startDate: startDate, endDate: endDate, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({ operationName: 'GetAggregatesGraphCategoryGroup',variables: {filters: filters },
           query: "query GetAggregatesGraphCategoryGroup($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"categoryGroup\", \"" + groupingType + "\"]\n fillEmptyValues: false\n ) {\n groupBy {\n categoryGroup {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
       });
