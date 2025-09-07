@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.52.05
+// @version      3.52.06
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.52.05';
+const version = '3.52.06';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -98,8 +98,8 @@ function MM_Init() {
     addStyle('.MTSideDrawerItem2 { padding-top: 0px !important;');
     addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-top: 3px;  padding-right: 5px;  padding-bottom: 3px;' + standardText + ' width: 24%; text-align: right; font-size: 14px; }');
     addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 13px; padding-right: 5px; }');
-    addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 14px; font-family: MonarchIcons, sans-serif !important; }');
-    addStyle('.MTSideDrawerDetailS:hover {font-weight: 500  !important; cursor: pointer; color: rgb(50, 170, 240) !important;');
+    addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 14px; font-weight: 600; font-family: MonarchIcons, sans-serif !important; }');
+    addStyle('.MTSideDrawerDetailS:hover, .MTGeneralLink:hover {font-weight: 500  !important; cursor: pointer; color: rgb(50, 170, 240) !important;');
     addStyle('.MTSideDrawerSummary {' + bs + ' 8px; height: 210px; margin-top: 3px; margin-bottom: 10px; ' + panelBackground + ' overflow:auto;}');
     addStyle('.MTSideDrawerSummaryTag {background-color: ' + accentColor + 'border-right: 4px; border-top-left-radius: 8px;  border-bottom-left-radius: 0px;  border-bottom-right-radius: 0px;  border-top-right-radius: 8px;  color: white;  font-weight: bold;}');
     addStyle('.MTSideDrawerSummaryTable {font-size: 13px;text-align: left;}');
@@ -2591,6 +2591,9 @@ window.onclick = function(event) {
             case 'Text-qcxgyd-0':
                 if(event.target.innerText == 'Split') { MTSpawnProcess = 7;}
                 break;
+            case 'MTGeneralLink':
+                cn = event.target.getAttribute('link');
+                window.location.replace(cn);return;
             case 'DateInput_input':
                 MM_FixCalendarYears();return;
             case 'Tab__Root-ilk1fo-0':
@@ -2750,7 +2753,7 @@ async function onClickExpandHistory(useTarget) {
         rec = snapshotData4.allTransactions.results[j];
         newRow = cec('tr','MTSideDrawerSummaryRow',newDiv);
         useDate = unformatQueryDate(rec.date)
-        cec('td','MTSideDrawerSummaryData',newRow,getDates('s_FullDate',useDate))
+        cec('td','MTGeneralLink',newRow,getDates('s_FullDate',useDate),'','','link','/transactions/' + rec.id)
         cec('td','MTSideDrawerSummaryData',newRow,rec.merchant.name)
         cec('td','MTSideDrawerSummaryData',newRow,rec.category.name)
         if(dataType == 'expense') {useAmt = rec.amount * -1;} else {useAmt = rec.amount;}
