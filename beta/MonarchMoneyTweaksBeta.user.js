@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.52.06
+// @version      3.52.07
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.52.06';
+const version = '3.52.07';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -1948,7 +1948,7 @@ function MenuTrendsHistoryDraw() {
 
         for (let i = 0; i < 12; i++) {
             if(i > 0 && i == curMonth) {
-                MTHistoryTotals('Sub Total','height:26px;');
+                MTHistoryTotals('Sub Total','margin-bottom: 10px;');
                 curSubTotal = T[3];
             }
             if(sumQue[i].YR2 == sumQue[i].YR3){
@@ -1979,7 +1979,7 @@ function MenuTrendsHistoryDraw() {
             T[1] = T[1] + sumQue[i].YR1;T[2] = T[2] + sumQue[i].YR2;T[3] = T[3] + sumQue[i].YR3;
             if(inGroup == 2) { MTHistoryDrawDetail(i+1,div); }
         }
-        MTHistoryTotals('Total','');
+        MTHistoryTotals('Total','margin-bottom: 10px;');
         MTHistoryTotals('Average','');
         MTHistoryTotals('Highest','');
         MTHistoryTotals('Lowest','');
@@ -2016,11 +2016,11 @@ function MenuTrendsHistoryDraw() {
         if(tot != 0) { T[4] = tot / curYears; }
 
         if(inTitle.includes('Total')) {
-            div2 = cec('div','MTSideDrawerItem',div,'','',os2 ) ;
+            div2 = cec('div','MTSideDrawerItem',div,'','',os2) ;
             div3 = cec('span','MTFlexSpacer',div2);
         }
         div2 = cec('div','MTSideDrawerItem',div,'','',os2 + 'padding: 0px;');
-        div3 = cec('span','MTSideDrawerDetail',div2,inTitle,'',os+inStyle);
+        div3 = cec('span','MTSideDrawerDetail',div2,inTitle,'',os + inStyle);
         for (let i = 1; i < 5; i++) {
             if(skiprow == false || i > 1) {
                 if(i > maxCol) { div3 = cec('span','MTSideDrawerDetail',div2,''); } else {
