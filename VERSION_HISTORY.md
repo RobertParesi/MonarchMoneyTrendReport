@@ -1,6 +1,6 @@
 **Version 3.52: (Beta)**
 
-* NEW: History detail transaction drill-down (Reports / Trends / >)
+* NEW: History detail side panel drill-down (Reports / Trends / >)
 
 * ENHANCEMENT: History detail side panel opening more efficient / faster.
 
