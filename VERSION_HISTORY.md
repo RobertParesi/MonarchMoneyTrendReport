@@ -1,3 +1,8 @@
+**Version 3.52: (Beta)**
+
+* NEW: History detail transaction drill-down (Reports / Trends / >)
+
+
 **Version 3.51:**
 
 * NEW: Note Tags pull-down for easier Note Tagging. (Settings - Reports / Net Income)"
