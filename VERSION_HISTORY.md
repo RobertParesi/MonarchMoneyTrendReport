@@ -2,6 +2,7 @@
 
 * NEW: History detail transaction drill-down (Reports / Trends / >)
 
+* ENHANCEMENT: History detail side panel opening more efficient / faster opening.
 
 **Version 3.51:**
 
