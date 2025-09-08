@@ -1,19 +1,19 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.52.10
+// @version      3.52.12
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.52.10';
+const version = '3.52.12';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
 let SaveLocationPathName = '',css_reload = false, css_cec = false;
-let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=8, debug=0;
+let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=8, debug=false;
 let accountGroups = [],accountsHasFixed = false,TrendQueue = [], TrendQueue2 = [], CurrentFilterObj = {name: '', filter: []};
 
 // flex container
@@ -882,7 +882,6 @@ async function MenuReportsNetIncomeGo() {
     do {
         recCnt = 0;
         snapshotData4 = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj.filter,HiddenFilter,hasNotes,hasGoals);
-        if(debug == 1) console.log('MenuReportsNetIncomeGo',snapshotData4,MTFlex.Button2);
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt+=1;recIdx+=1;
@@ -1095,7 +1094,6 @@ async function MenuReportsAccountsGo() {
             }
         }
         if(aSelected == false && AccountGroupFilter) {getAccountGroupInfo(AccountGroupFilter,true);}
-        if(debug == 1) console.log('MenuReportsAccountsGoExt',snapshotData,MTFlexRow,MTFlex);
         let workDate = null;
         for (let i = 0; i < 12; i += 1) {
             let used = false;
@@ -1180,7 +1178,6 @@ async function MenuReportsAccountsGo() {
         if(isToday == false) {snapshotData5 = await getDisplayBalanceAtDateData(formatQueryDate(MTFlexDate2));}
 
         for (let i = 0; i < 5; i += 1) { if(getCookie('MT_AccountsCard' + i.toString(),true) == 1) {cards+=1;}}
-        if(debug == 1) console.log('MenuReportsAccountsGoStd',snapshotData,snapshotData2,AccountGroupFilter);
         for (let i = 0; i < snapshotData.accounts.length; i += 1) {
             if(AccountGroupFilter == '' || AccountGroupFilter == getCookie('MTAccounts:' + snapshotData.accounts[i].id,false)) {
                 aSelected = true;
@@ -1804,8 +1801,6 @@ async function WriteCompareData() {
 
 async function BuildTrendData (inCol,inGrouping,inPeriod,lowerDate,higherDate,inID,inAccounts) {
 
-    if(debug == 1) console.log('BuildTrendData',inCol,inGrouping,inPeriod,lowerDate,higherDate,inAccounts);
-
     const firstDate = formatQueryDate(lowerDate);
     const lastDate = formatQueryDate(higherDate);
     let useID = '', useType = '',snapshotData = null,retGroups = [], retCats = [], s_ndx = 0;
@@ -1902,7 +1897,6 @@ function MenuTrendsHistory(inType,inID) {
     MF_SidePanelOpen(inType,retGroups.TYPE,ExpandItems,useTitle, retGroups.TYPE,useURLText,useURL);
     TrendQueue2 = [];
     BuildTrendData('hs',inGroup,'month',lowerDate,higherDate,inID,CurrentFilterObj.filter);
-
 }
 
 function MenuTrendsHistoryDraw() {
@@ -1980,11 +1974,18 @@ function MenuTrendsHistoryDraw() {
             if(inGroup == 2) { MTHistoryDrawDetail(i+1,div); }
         }
         MTHistoryTotals('Total','margin-bottom: 10px;');
+        MTHistoryPending();
         MTHistoryTotals('Average','');
         MTHistoryTotals('Highest','');
         MTHistoryTotals('Lowest','');
         div = cec('div','MTSideDrawerHeader',topDiv);
         div2 = cec('div','MTPanelLink',div,'Download CSV','','padding: 0px; display:block; text-align:center;');
+    }
+
+    function MTHistoryPending() {
+        let ld = getDates('d_LastMonth'),hd = getDates('d_Today');
+        ld = formatQueryDate(ld);hd = formatQueryDate(hd);
+        const snapshotData4 = getTransactions(ld,hd,0,true,CurrentFilterObj.filter);
     }
 
     function MTHistoryTotals(inTitle,inStyle) {
@@ -3321,7 +3322,6 @@ function callGraphQL(data) {
     body: JSON.stringify(data),
   };
 }
-
 async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccounts, inCat) {
     if(inAccounts == undefined) inAccounts = [];
     if(inCat == undefined || inCat == null) inCat = [];
@@ -3331,7 +3331,7 @@ async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccou
      });
     return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => { if(debug) console.log('MT-Tweaks','getMonthlySnapshotData2',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccounts, inCat) {
@@ -3340,10 +3340,10 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
     const filters = {startDate: startDate, endDate: endDate, ...(inCat.length > 0 && { categories: inCat }), ...(inAccounts.length > 0 && { accounts: inAccounts })};
     const options = callGraphQL({ operationName: 'GetAggregatesGraphCategoryGroup',variables: {filters: filters },
           query: "query GetAggregatesGraphCategoryGroup($filters: TransactionFilterInput) {\n aggregates(\n filters: $filters \n groupBy: [\"categoryGroup\", \"" + groupingType + "\"]\n fillEmptyValues: false\n ) {\n groupBy {\n categoryGroup {\n id\n }\n " + groupingType + "\n }\n summary {\n sum\n }\n }\n }\n"
-      });
+    });
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(debug) console.log('MT-Tweaks','getMonthlySnapshotData',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function getTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
@@ -3357,7 +3357,7 @@ async function getTransactions(startDate,endDate, offset, isPending, inAccounts,
     });
     return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => { return data.data; }).catch((error) => { console.error(version,error);});
+        .then((data) => {return data.data;}).catch((error) => { console.error(version,error);});
 }
 
 async function getTransactionNotes(startDate,endDate) {
@@ -3368,51 +3368,47 @@ async function getTransactionNotes(startDate,endDate) {
     });
     return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => { return data.data; }).catch((error) => { console.error(version,error);});
+        .then((data) => {return data.data;}).catch((error) => { console.error(version,error);});
 }
 
 async function getGoals() {
     const options = callGraphQL({operationName: 'Web_GoalsV2', variables: { },
-          query: "query Web_GoalsV2 {\n goalsV2 {\n id\}}\n"
-    });
+          query: "query Web_GoalsV2 {\n goalsV2 {\n id\}}\n"});
     return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => { return data.data; }).catch((error) => { console.error(version,error);});
+        .then((data) => {return data.data;}).catch((error) => { console.error(version,error);});
 }
 
 async function getDisplayBalanceAtDateData(date) {
     const options = callGraphQL({ operationName: 'Common_GetDisplayBalanceAtDate',variables: {date: date, },
-          query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"
-      });
+          query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"});
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(debug) console.log('MT-Tweaks','getDisplayBalanceAtDateData',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function getAccountsData() {
     const options = callGraphQL({ operationName: 'GetAccounts',variables: { },
-          query: "query GetAccounts {\n accounts {\n id\n displayName\n deactivatedAt\n isHidden\n isAsset\n isManual\n mask\n displayLastUpdatedAt\n currentBalance\n displayBalance\n hideFromList\n hideTransactionsFromReports\n includeInNetWorth\n order\n icon\n logoUrl\n deactivatedAt \n type {\n  name\n  display\n  group\n  }\n subtype {\n name\n display\n }\n }}\n"
-      });
+          query: "query GetAccounts {\n accounts {\n id\n displayName\n deactivatedAt\n isHidden\n isAsset\n isManual\n mask\n displayLastUpdatedAt\n currentBalance\n displayBalance\n hideFromList\n hideTransactionsFromReports\n includeInNetWorth\n order\n icon\n logoUrl\n deactivatedAt \n type {\n  name\n  display\n  group\n  }\n subtype {\n name\n display\n }\n }}\n"});
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {return data.data;}).catch((error) => { console.error(version,error); });
 }
 
 async function refreshAccountsData() {
  const options = callGraphQL({operationName:"Common_ForceRefreshAccountsMutation",variables: { },
-         query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}" });
+         query: "mutation Common_ForceRefreshAccountsMutation {\n  forceRefreshAllAccounts {\n    success\n    errors {\n      ...PayloadErrorFields\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PayloadErrorFields on PayloadError {\n  fieldErrors {\n    field\n    messages\n    __typename\n  }\n  message\n  code\n  __typename\n}"});
     return fetch(graphql, options)
     .then((response) => setCookie('MT:LastRefresh', getDates('s_FullDate')))
-    .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {return data.data;}).catch((error) => { console.error(version,error); });
 }
 
 async function getCategoryData() {
     const options = callGraphQL({ operationName: 'GetCategorySelectOptions', variables: {},
-          query: "query GetCategorySelectOptions {categories {\n id\n name\n order\n icon\n group {\n id\n name \n type}}}"
-    });
+          query: "query GetCategorySelectOptions {categories {\n id\n name\n order\n icon\n group {\n id\n name \n type}}}"});
     return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => { return data.data; }).catch((error) => { console.error(version,error); });
+        .then((data) => {return data.data;}).catch((error) => { console.error(version,error); });
 }
 
 async function buildCategoryGroups() {
