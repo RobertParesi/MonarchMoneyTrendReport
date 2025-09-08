@@ -4,6 +4,8 @@
 
 * ENHANCEMENT: History detail side panel opening more efficient / faster.
 
+* CHANGE: A lot of clean up under the covers.
+
 **Version 3.51:**
 
 * NEW: Note Tags pull-down for easier Note Tagging. (Settings - Reports / Net Income)"
