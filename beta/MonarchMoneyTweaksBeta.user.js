@@ -3251,26 +3251,29 @@ function sortTableByColumn(inEvent) {
     const datatype = inEvent.getAttribute('datatype');
     const order = 'asc'
     const firstRowClassName = 'tr.' + inEvent.parentNode.className;
-    const secondRowClassName = 'tr.' + table.childNodes[1].className;
-    const headers = document.querySelectorAll(firstRowClassName);
-    const rows = Array.from(document.querySelectorAll(secondRowClassName));
     let dirModifier = 1;
     if(inEvent.innerText.includes('▲')) {dirModifier = -1;}
+    if(table.childNodes.length > 1) {
+        const secondRowClassName = 'tr.' + table.childNodes[1].className;
+        const headers = document.querySelectorAll(firstRowClassName);
+        const rows = Array.from(document.querySelectorAll(secondRowClassName));
 
-    const sortedRows = rows.sort((a, b) => {
-        const aText = a.children[columnIndex].innerText.trim();
-        const bText = b.children[columnIndex].innerText.trim();
-        switch (datatype) {
-            case 'date':
-                return (new Date(aText) - new Date(bText)) * dirModifier;
-            case 'amount':
-                return (parseFloat(aText.replace(/[$,]/g, '')) - parseFloat(bText.replace(/[$,]/g, ''))) * dirModifier;
-            default:
-                return aText.localeCompare(bText) * dirModifier;
-        }
-    });
-    rows.forEach(row => row.remove());
-    sortedRows.forEach(row => table.appendChild(row));
+
+        const sortedRows = rows.sort((a, b) => {
+            const aText = a.children[columnIndex].innerText.trim();
+            const bText = b.children[columnIndex].innerText.trim();
+            switch (datatype) {
+                case 'date':
+                    return (new Date(aText) - new Date(bText)) * dirModifier;
+                case 'amount':
+                    return (parseFloat(aText.replace(/[$,]/g, '')) - parseFloat(bText.replace(/[$,]/g, ''))) * dirModifier;
+                default:
+                    return aText.localeCompare(bText) * dirModifier;
+            }
+        });
+        rows.forEach(row => row.remove());
+        sortedRows.forEach(row => table.appendChild(row));
+    }
     const cols = document.querySelectorAll('td.MTSortTableByColumn');
     for (let i = 0; i < cols.length; i += 1) {
         cols[i].innerText = cols[i].innerText.replace(/[▲▼]/g, "");
