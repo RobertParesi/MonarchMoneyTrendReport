@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.52.09
+// @version      3.52.10
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.52.09';
+const version = '3.52.10';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2747,7 +2747,7 @@ async function onClickExpandHistory(useTarget) {
     const snapshotData4 = await getTransactions(ld,hd,0,false,CurrentFilterObj.filter,null,null,null,rtnCategoryGroupList(dataRow,true));
     newDiv = cec('table','MTSideDrawerSummaryTable',newDiv);
     let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
-    let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date','','width: 88px;','datatype','date');
+    let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date ▲','','width: 88px;','datatype','date');
     td.setAttribute('columnindex','0');
     td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Merchant','','width:240px;','datatype','alpha');
     td.setAttribute('columnindex','1');
@@ -3254,7 +3254,9 @@ function sortTableByColumn(inEvent) {
     const secondRowClassName = 'tr.' + table.childNodes[1].className;
     const headers = document.querySelectorAll(firstRowClassName);
     const rows = Array.from(document.querySelectorAll(secondRowClassName));
-    const dirModifier = order === 'asc' ? 1 : -1;
+    let dirModifier = 1;
+    if(inEvent.innerText.includes('▲')) {dirModifier = -1;}
+
     const sortedRows = rows.sort((a, b) => {
         const aText = a.children[columnIndex].innerText.trim();
         const bText = b.children[columnIndex].innerText.trim();
@@ -3269,7 +3271,11 @@ function sortTableByColumn(inEvent) {
     });
     rows.forEach(row => row.remove());
     sortedRows.forEach(row => table.appendChild(row));
-    table.querySelectorAll(firstRowClassName).forEach((td, idx) => {td.dataset.sortOrder = (idx === columnIndex && order === 'asc') ? 'desc' : 'asc';});
+    const cols = document.querySelectorAll('td.MTSortTableByColumn');
+    for (let i = 0; i < cols.length; i += 1) {
+        cols[i].innerText = cols[i].innerText.replace(/[▲▼]/g, "");
+        if(i == columnIndex) { if(dirModifier == -1) {cols[i].innerText += ' ▼';} else {cols[i].innerText += ' ▲';} }
+    }
 }
 
 // Main Execution Loop
