@@ -1,25 +1,26 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.52.12
+// @version      3.52.13
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.52.12';
+const version = '3.52.13';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
 let SaveLocationPathName = '',css_reload = false, css_cec = false;
 let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=8, debug=false;
-let accountGroups = [],accountsHasFixed = false,TrendQueue = [], TrendQueue2 = [], CurrentFilterObj = {name: '', filter: []};
+let accountGroups = [],accountsHasFixed = false,TrendQueue = [], TrendQueue2 = [];
 
 // flex container
 const FlexOptions = ['Trends','Net_Income','Accounts'];
 const MTFields = 13;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
+let MTFlexAccountFilter = {name: '', filter: []};
 let MTFlexCR = 0, MTFlexDetails = null, MTP = null, MTFlexSum = [0,0];
 let MTFlexDate1 = new Date(), MTFlexDate2 = new Date();
 
@@ -180,6 +181,7 @@ function MF_QueueAddCard(p) {
 async function MF_GridInit(inName, inDesc) {
 
     MTFlex = [];MTFlexTitle = [];MTFlexRow = []; MTFlexCR = 0;MTFlexCard = [];
+    MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
     document.body.style.cursor = "wait";
     let topDiv = document.querySelector('[class*="Scroll__Root-sc"]');
     if(topDiv) {
@@ -197,6 +199,12 @@ function MF_GridOptions(Num,Options) {
     const buttonName = 'Button' + Num;
     MTFlex[`${buttonName}Options`] = Options;
     if (MTFlex[buttonName] >= MTFlex[`${buttonName}Options`].length) { MTFlex[buttonName] = 0; }
+    if(Num == 4) {
+        if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
+            MTFlexAccountFilter.name = getAccountGroupFilter();
+            MTFlexAccountFilter.filter = getAccountGroupInfo(MTFlexAccountFilter.name);
+        }
+    }
 }
 
 function MF_GridDraw(inRedraw) {
@@ -857,7 +865,6 @@ async function MenuReportsNetIncomeGo() {
     MTFlex.Title2 = getDates('s_FullDate',MTFlexDate1) + ' - ' + getDates('s_FullDate',MTFlexDate2);
     MTP = [];MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
     MF_QueueAddTitle(MTP);
-    setCurrentFilterObj();
     MTFlex.Title1 = 'Net Income Report ';
     switch(Number(MTFlex.Button2)) {
         case 0:
@@ -881,7 +888,7 @@ async function MenuReportsNetIncomeGo() {
     let recIdx = 0, recCnt = 0,useTag = '';
     do {
         recCnt = 0;
-        snapshotData4 = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,CurrentFilterObj.filter,HiddenFilter,hasNotes,hasGoals);
+        snapshotData4 = await getTransactions(formatQueryDate(MTFlexDate1),formatQueryDate(MTFlexDate2),recIdx,false,MTFlexAccountFilter.filter,HiddenFilter,hasNotes,hasGoals);
         for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
             rec = snapshotData4.allTransactions.results[j];
             recCnt+=1;recIdx+=1;
@@ -1449,7 +1456,6 @@ async function MenuReportsTrendsGo() {
     MTFlex.SortSeq = ['1','1','1','2','2','2','2','2','2','2'];
     if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MTFlex.Title1 = 'Trends Report';
-    setCurrentFilterObj();
 
     MTP = [];
     MTP.Column = 0; MTP.Title = ['Group','Category','Group/Category'][MTFlex.Button1]; MTP.isSortable = 1; MTP.Format = 0;
@@ -1505,15 +1511,15 @@ async function MenuReportsTrendsGo() {
 
         MTFlex.Title2 = getDates('s_FullDate',lowerDate) + ' - ' + getDates('s_FullDate',higherDate);
         if(MTFlex.Button2 == 8) {
-            await BuildTrendData('oy',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj.filter);
+            await BuildTrendData('oy',MTFlex.Button1,'year',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
         } else if (MTFlex.Button2 == 9) {
             for (let i = year - 11; i <= year; i += 1) {
                 lowerDate.setFullYear(i,0,1);
                 higherDate.setFullYear(i,month2,day2);
-                await BuildTrendData('oy',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj.filter);
+                await BuildTrendData('oy',MTFlex.Button1,'year',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
             }
         } else {
-            await BuildTrendData('ot',MTFlex.Button1,'month',lowerDate,higherDate,'',CurrentFilterObj.filter);
+            await BuildTrendData('ot',MTFlex.Button1,'month',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
         }
         MTFlex.Title3 = MTFlex.Button2Options[MTFlex.Button2];
         await WriteByMonthData();
@@ -1528,7 +1534,7 @@ async function MenuReportsTrendsGo() {
         MTP.Column = 5; MTP.Title = 'YTD ' + year; MTP.isSortable = 2; MTP.Width = '12%'; MTP.Format = useFormat; MTP.ShowPercentShade = false;
         if(getCookie('MT_TrendHidePer1',true) != true) {MTP.ShowPercent = 2;}
         MF_QueueAddTitle(MTP);
-        await BuildTrendData('cp',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj.filter);
+        await BuildTrendData('cp',MTFlex.Button1,'year',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
 
         // last year
         year-=1;
@@ -1541,7 +1547,7 @@ async function MenuReportsTrendsGo() {
         MTP.Column = 6; MTP.Title = 'Difference'; MTP.Format = useFormat; MTP.Width = '12%';MTP.ShowPercentShade = true;
         if(getCookie('MT_TrendHidePer2',true) != true) {MTP.ShowPercent = 1;}
         MF_QueueAddTitle(MTP);
-        await BuildTrendData('lp',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj.filter);
+        await BuildTrendData('lp',MTFlex.Button1,'year',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
 
         // This Period
         let useTitle = '';
@@ -1568,7 +1574,7 @@ async function MenuReportsTrendsGo() {
         MTP.Column = 2; MTP.Title = useTitle; MTP.isSortable = 2; MTP.Width = '12%'; MTP.Format = useFormat; MTP.ShowPercentShade = false;
         if(getCookie('MT_TrendHidePer1',true) != true) {MTP.ShowPercent = 2;}
         MF_QueueAddTitle(MTP);
-        await BuildTrendData('cm',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj.filter);
+        await BuildTrendData('cm',MTFlex.Button1,'year',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
 
         // Last Period
         let forceEOM = false;
@@ -1621,7 +1627,7 @@ async function MenuReportsTrendsGo() {
         MTP.Column = 3; MTP.Title = 'Difference'; MTP.isSortable = 2; MTP.Format = useFormat; MTP.Width = '12%'; MTP.ShowPercentShade = true;
         if(getCookie('MT_TrendHidePer2',true) != true) {MTP.ShowPercent = 1;}
         MF_QueueAddTitle(MTP);
-        await BuildTrendData('lm',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj.filter);
+        await BuildTrendData('lm',MTFlex.Button1,'year',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
         // future month
         lowerDate = getDates('d_StartofNextMonthLY',MTFlexDate2);
         higherDate = getDates('d_EndofNextMonthLY',MTFlexDate2);
@@ -1629,7 +1635,7 @@ async function MenuReportsTrendsGo() {
         MTP.Column = 7; MTP.Title = getDates('s_MidDate',lowerDate); MTP.Width = '11%';MTP.isSortable = 2;MTP.Format = useFormat; MTP.ShowPercentShade = false;
         if(getCookie('MT_TrendHideNextMonth',true) == true) {MTP.isHidden = true;}
         MF_QueueAddTitle(MTP);
-        await BuildTrendData('fu',MTFlex.Button1,'year',lowerDate,higherDate,'',CurrentFilterObj.filter);
+        await BuildTrendData('fu',MTFlex.Button1,'year',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
         await WriteCompareData();
     }
     MTSpawnProcess = 1;
@@ -1880,9 +1886,8 @@ function MenuTrendsHistory(inType,inID) {
     let lowerDate = new Date("2023-01-01"),higherDate = new Date();
     let retGroups = rtnCategoryGroup(inID),inGroup = 1,useURL = '',useURLText = '';
     let ExpandItems = false;
-    setCurrentFilterObj();
     let useTitle = 'Monthly Summary';
-    if(CurrentFilterObj.name) {useTitle = useTitle + ' - ' + CurrentFilterObj.name;}
+    if(MTFlexAccountFilter.name) {useTitle = useTitle + ' - ' + MTFlexAccountFilter.name;}
     if(inType == 'category-groups') {ExpandItems = true;}
     if(retGroups.TYPE == 'expense') {useURL = '#|spending|';} else {useURL = '#|income|';}
     if(inType == 'category-groups') {
@@ -1896,7 +1901,7 @@ function MenuTrendsHistory(inType,inID) {
 
     MF_SidePanelOpen(inType,retGroups.TYPE,ExpandItems,useTitle, retGroups.TYPE,useURLText,useURL);
     TrendQueue2 = [];
-    BuildTrendData('hs',inGroup,'month',lowerDate,higherDate,inID,CurrentFilterObj.filter);
+    BuildTrendData('hs',inGroup,'month',lowerDate,higherDate,inID,MTFlexAccountFilter.filter);
 }
 
 function MenuTrendsHistoryDraw() {
@@ -1975,17 +1980,31 @@ function MenuTrendsHistoryDraw() {
         }
         MTHistoryTotals('Total','margin-bottom: 10px;');
         MTHistoryPending();
-        MTHistoryTotals('Average','');
-        MTHistoryTotals('Highest','');
-        MTHistoryTotals('Lowest','');
-        div = cec('div','MTSideDrawerHeader',topDiv);
-        div2 = cec('div','MTPanelLink',div,'Download CSV','','padding: 0px; display:block; text-align:center;');
     }
 
-    function MTHistoryPending() {
-        let ld = getDates('d_LastMonth'),hd = getDates('d_Today');
-        ld = formatQueryDate(ld);hd = formatQueryDate(hd);
-        const snapshotData4 = getTransactions(ld,hd,0,true,CurrentFilterObj.filter);
+    async function MTHistoryPending() {
+        const topDiv = document.querySelector('div.MTSideDrawerMotion');
+        if(topDiv) {
+            const groupIDs = topDiv.getAttribute('groupid');
+            let ld = getDates('d_StartofLastMonth'),hd = getDates('d_Today');
+            ld = formatQueryDate(ld);hd = formatQueryDate(hd);
+            const snapshotData4 = await getTransactions(ld,hd,0,true,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(groupIDs,true));
+            const [pendingAmt,pendingTx] = rtnPendingBalance(snapshotData4);
+            if(pendingTx != 0) {
+                div2 = cec('div','MTSideDrawerItem',div);
+                cec('span','MTSideDrawerDetail',div2,'Pending','',os);
+                if(skiprow == false) {cec('span','MTSideDrawerDetailS',div2);}
+                cec('span','MTSideDrawerDetailS',div2)
+                cec('span','MTSideDrawerDetailS',div2,getDollarValue(pendingAmt),'','','data','pending');
+                cec('span','MTSideDrawerDetail3',div2);
+                cec('span','MTSideDrawerDetail',div2);
+            }
+            MTHistoryTotals('Average','');
+            MTHistoryTotals('Highest','');
+            MTHistoryTotals('Lowest','');
+            div = cec('div','MTSideDrawerHeader',topDiv);
+            div2 = cec('div','MTPanelLink',div,'Download CSV','','padding: 0px; display:block; text-align:center;');
+        }
     }
 
     function MTHistoryTotals(inTitle,inStyle) {
@@ -2170,8 +2189,8 @@ async function MenuPlanRefresh() {
             }
         }
     }
-    const [bPD,bPDtx] = getPendingBalance();
-    LeftToSpend = (bCK-bCC-bPD);
+    const [pendingAmt,pendingTx] = rtnPendingBalance(snapshotData4);
+    LeftToSpend = (bCK-bCC-pendingAmt);
     if(getCookie('MT_PlanLTBIR',true) == 0) {budgetI[3] = budgetI[0];budgetE[3]=budgetE[0];} else {
         budgetI[3] = budgetI[1]-budgetI[2];budgetE[3]=budgetE[1]-budgetE[2];}
 
@@ -2181,8 +2200,8 @@ async function MenuPlanRefresh() {
 
     writePlan('Total in Checking',getDollarValue(bCK,true),'','');
     writePlan('Total in Credit Cards',getDollarValue(bCC,true),'','');
-    writePlan('Total Pending (' + bPDtx + ')',getDollarValue(bPD,true),'/transactions?isPending=true','');
-    writePlan('Total Available',getDollarValue(bCK-bCC-bPD,true),'','font-weight: 500;');
+    writePlan('Total Pending (' + pendingTx + ')',getDollarValue(pendingAmt,true),'/transactions?isPending=true','');
+    writePlan('Total Available',getDollarValue(bCK-bCC-pendingAmt,true),'','font-weight: 500;');
     if(noBudget == false) {
         writePlan(BRLit,getDollarValue(BudgetRemain,true),'','font-weight: 500;','', true);
         writePlan(LTSLit,getDollarValue(LeftToSpend,true),'','font-weight: 500;',LeftToSpendStyle, true);
@@ -2193,15 +2212,6 @@ async function MenuPlanRefresh() {
         let div2 = cec('div','',div,'','',isSpace == true ? 'margin-top: 10px;' : '');
         cec(inHref != '' ? 'a' : 'span','MTBudget1',div2,inDesc,inHref,inStyle);
         cec('span','MTBudget2 fs-exclude',div2,inValue,'',inStyle + inStyle2);
-    }
-
-    function getPendingBalance() {
-        let amt = 0,cnt = 0;
-        for (let j = 0; j < snapshotData4.allTransactions.results.length; j += 1) {
-            if(snapshotData4.allTransactions.results[j].amount != 1) {
-                amt = amt + snapshotData4.allTransactions.results[j].amount;cnt+=1;}
-        }
-        amt = amt * -1;return [amt,cnt];
     }
 }
 // [ Budget Plan Reorder ]
@@ -2579,7 +2589,7 @@ window.onclick = function(event) {
 
     let cn = event.target.className;
     if(typeof cn === 'string') {
-        if(debug == 1) console.log(cn,event.target);
+        if(debug == 1) console.log('MM-Tweaks',cn,event.target);
         cn = getStringPart(cn,' ','left');
         switch (cn) {
             case '':
@@ -2729,23 +2739,29 @@ async function onClickExpandHistory(useTarget) {
     if(useTarget.className == 'MTSideDrawerSummaryTag') {
         useTarget.classList.replace('MTSideDrawerSummaryTag','MTSideDrawerDetailS');return;
     }
-    const dataRow = useTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupid');
-    if(dataRow == undefined) return;
+    const groupIDs = useTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupid');
+    if(groupIDs == undefined) return;
     const dataType = useTarget?.parentNode?.parentNode?.parentNode?.getAttribute('groupsubtype');
     const data = useTarget.getAttribute('data');
     const dataYear = data.split('|')[0];
     const dataMonth = data.split('|')[1];
     const pn = useTarget.parentNode;
-    const ld = dataYear + '-' + dataMonth + '-01';
-    const hd = dataYear + '-' + dataMonth + '-' + String(daysInMonth((Number(dataMonth)-1),dataYear)).padStart(2, '0');
     const oldDiv = document.querySelector('span.MTSideDrawerSummaryTag');
     if(oldDiv) oldDiv.classList.replace('MTSideDrawerSummaryTag','MTSideDrawerDetailS');
     useTarget.classList.replace('MTSideDrawerDetailS', 'MTSideDrawerSummaryTag');
     let newDiv = document.createElement('div');
     newDiv.className = 'MTSideDrawerSummary';
     newDiv = pn.insertAdjacentElement('afterend', newDiv);
-
-    const snapshotData4 = await getTransactions(ld,hd,0,false,CurrentFilterObj.filter,null,null,null,rtnCategoryGroupList(dataRow,true));
+    let snapshotData4 = null;
+    if(data == 'pending') {
+        const ld = formatQueryDate(getDates('d_StartofLastMonth'));
+        const hd = formatQueryDate(getDates('d_Today'));
+        snapshotData4 = await getTransactions(ld,hd,0,true,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(groupIDs,true));
+    } else {
+        const ld = dataYear + '-' + dataMonth + '-01';
+        const hd = dataYear + '-' + dataMonth + '-' + String(daysInMonth((Number(dataMonth)-1),dataYear)).padStart(2, '0');
+        snapshotData4 = await getTransactions(ld,hd,0,false,MTFlexAccountFilter.filter,null,null,null,rtnCategoryGroupList(groupIDs,true));
+    }
     newDiv = cec('table','MTSideDrawerSummaryTable',newDiv);
     let newRow = cec('tr','MTSideDrawerSummaryTableTH',newDiv);
     let td = cec('td','MTSortTableByColumn MTSideDrawerSummaryData',newRow,'Date ▲','','width: 88px;','datatype','date');
@@ -3331,7 +3347,7 @@ async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccou
      });
     return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => { if(debug) console.log('MT-Tweaks','getMonthlySnapshotData2',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => { if(debug) console.log('MM-Tweaks','getMonthlySnapshotData2',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccounts, inCat) {
@@ -3343,7 +3359,7 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
     });
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => {if(debug) console.log('MT-Tweaks','getMonthlySnapshotData',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(debug) console.log('MM-Tweaks','getMonthlySnapshotData',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function getTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
@@ -3357,7 +3373,7 @@ async function getTransactions(startDate,endDate, offset, isPending, inAccounts,
     });
     return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => {return data.data;}).catch((error) => { console.error(version,error);});
+        .then((data) => {if(debug) console.log('MM-Tweaks','getTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(version,error);});
 }
 
 async function getTransactionNotes(startDate,endDate) {
@@ -3384,7 +3400,7 @@ async function getDisplayBalanceAtDateData(date) {
           query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"});
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => {if(debug) console.log('MT-Tweaks','getDisplayBalanceAtDateData',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(debug) console.log('MM-Tweaks','getDisplayBalanceAtDateData',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function getAccountsData() {
@@ -3424,6 +3440,17 @@ async function buildCategoryGroups() {
     }
 }
 
+function rtnPendingBalance(inData) {
+    let amt = 0,cnt = 0;
+    inData.allTransactions.results.forEach(transaction => {
+        if (transaction.amount !== 1) {
+            if(transaction.category.group.type == 'expense') {amt = amt + (transaction.amount * -1)} else {amt += transaction.amount;}
+            cnt++;
+        }
+    });
+    return [amt, cnt];
+}
+
 async function rtnNoteTagList() {
     const snapshotData = await getTransactionNotes(formatQueryDate(getDates('d_Minus2Years')),formatQueryDate(getDates('d_Today')));
     let rv = [], useTag = '';
@@ -3436,15 +3463,6 @@ async function rtnNoteTagList() {
     }
     rv.sort();
     return rv;
-}
-
-function setCurrentFilterObj() {
-
-    CurrentFilterObj.name = ''; CurrentFilterObj.filter = [];
-    if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
-        CurrentFilterObj.name = getAccountGroupFilter();
-        CurrentFilterObj.filter = getAccountGroupInfo(CurrentFilterObj.name);
-    }
 }
 
 function rtnCategoryGroupList(InId, InAsArray) {
