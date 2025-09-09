@@ -4,7 +4,7 @@
 
 * ENHANCEMENT: History detail side panel opening more efficient / faster.
 
-* CHANGE: A lot of clean up under the covers and some visual quirks fixed.
+* CHANGE: Tons of clean up under the hood and visual improvements.
 
 **Version 3.51:**
 
