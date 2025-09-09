@@ -1,10 +1,10 @@
-**Version 3.52:**
+**Version 3.52-3.53 (beta):**
 
 * NEW: History detail side panel drill-down (Reports / Trends / >) to show Monthly & Pending transactions.
 
 * ENHANCEMENT: History detail side panel opening more efficient / faster.
 
-* CHANGE: A lot of clean up under the covers.
+* CHANGE: A lot of clean up under the covers and some visual quirks fixed.
 
 **Version 3.51:**
 
