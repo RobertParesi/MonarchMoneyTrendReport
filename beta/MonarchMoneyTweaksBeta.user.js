@@ -51,7 +51,7 @@ function MM_Init() {
     addStyle('.MTBub {margin-bottom: 12px;}');
     addStyle('.MTBub1 {cursor: pointer; float: right; margin-left: 12px;font-size: 13px; margin-bottom: 10px; padding: 2px; ' + bdr + bs + ' 4px; width: 150px; text-align: center;font-weight: 500;}');
     addStyle('.MTWait {width: 40%; margin-left: auto; margin-top: 100px;margin-right: auto;justify-content: center; align-items: center;}');
-    addStyle('.MTWait2 {font-size: 16px; color:' + accentColor + 'font-weight: 500; font: "Oracle", sans-serif; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
+    addStyle('.MTWait2 {font-size: 17px; color:' + accentColor + 'font-weight: 500; font: "Oracle", sans-serif; ' + panelBackground + ' padding: 20px; ' + bs + ' 8px; text-align: center;}');
     addStyle('.MTWait2 p {' + standardText + 'font-family:  MonarchIcons, sans-serif, "Oracle" !important; font-size: 15px; font-weight: 200;}');
     addStyle('.MTPanelLink, .MTBudget a {background-color: transparent; font-weight: 500; font-size: 14px; cursor: pointer; color: rgb(50, 170, 240)}');
     addStyle('.MTCheckboxClass, .MTFlexCheckbox, .MTFixedCheckbox, .MTDateCheckbox {width: 19px; height: 19px; margin-right: 10px;float: inline-start; color: #FFFFFF; accent-color: ' + accentColor + '}');
