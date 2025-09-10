@@ -81,7 +81,7 @@ I found there were opportunities to enhance the Monarch Money web application wi
 
 - _If you are a numbers person, you need this extension!_  
 
-# 💻 Installing MONARCH MONEY TWEAKS:
+# 💻 Installing Monarch Money Tweaks:
 
 You can install the script by using the **Tampermonkey** app extension in Chrome, Microsoft Edge, Safari, Firefox and Opera Next.  For the iPad, use the **Safari </> Userscripts** app.
 
