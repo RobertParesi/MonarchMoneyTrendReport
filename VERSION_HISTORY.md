@@ -1,4 +1,4 @@
-**Version 3.52-3.54 (beta):**
+**Version 3.52-3.54:**
 
 * NEW: History detail side panel drill-down (Reports / Trends / >) to show Monthly & Pending transactions.
 
