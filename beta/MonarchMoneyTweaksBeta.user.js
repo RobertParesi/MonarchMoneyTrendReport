@@ -1,18 +1,18 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.53
+// @version      3.54.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.53';
+const version = '3.54.01';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
-let SaveLocationPathName = '',css_reload = false, css_cec = false;
+let SaveLocationPathName = '',css_reload = true, css_cec = false;
 let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=8, debug=false;
 let accountGroups = [],accountsHasFixed = false,TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 
@@ -95,15 +95,12 @@ function MM_Init() {
     addStyle('.MTSideDrawerMotion {display: flex; flex-direction: column; transform:none;}');
     addStyle('.MTInputDesc {padding-bottom: 20px; padding-top: 10px; display: grid;}');
     addStyle('.MTSideDrawerHeader { ' + standardText + ' padding: 8px; }');
-
     addStyle('.MTSideDrawerItem { margin-top: 5px; place-content: stretch space-between; display: flex; ');
     addStyle('.MTSideDrawerItem2 { line-height: 20.5px; place-content: stretch space-between; display: flex;');
-
     addStyle('.MTSideDrawerDetail, .MTSideDrawerDetailS, .MTSideDrawerSummaryTag { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px;' + standardText + ' width: 24%; text-align: right; font-size: 15px; }');
     addStyle('.MTSideDrawerDetail2, .MTSideDrawerDetail4 { ' + standardText + ' width: 24%; text-align: right; font-size: 14px; padding-right: 5px; }');
     addStyle('.MTSideDrawerDetail3 { ' + standardText + ' width: 13px; text-align: center; font-size: 13.5px; font-weight: 600; font-family: MonarchIcons, sans-serif !important; }');
     addStyle('.MTSideDrawerDetailS:hover, .MTGeneralLink:hover, .MTSortTableByColumn:hover {font-weight: 600  !important; cursor: pointer; color: rgb(50, 170, 240) !important;');
-
     addStyle('.MTSideDrawerSummary {' + bs + ' 8px; height: 210px; margin-top: 3px; margin-bottom: 10px; ' + panelBackground + ' overflow:auto;}');
     addStyle('.MTSideDrawerSummaryTag {background-color: ' + accentColor + 'border-right: 4px; border-top-left-radius: 8px;  border-bottom-left-radius: 0px;  border-bottom-right-radius: 0px;  border-top-right-radius: 8px;  color: white;  font-weight: bold;}');
     addStyle('.MTSideDrawerSummaryTable {font-size: 13px;text-align: left;}');
@@ -2124,31 +2121,6 @@ function MenuTrendsHistoryExport() {
     });
     downloadFile('Monarch Trends History ' + getDates('s_FullDate'),csvContent);
 }
-// [ Credit Score ]
-function MenuCreditScore() {
-
-    let el = document.querySelector('div.MTCreditScore');
-    if(el) return;
-
-    el = document.querySelector('[class*="Pill__Root-sc"]');
-    if(!el) { MTSpawnProcess = 3;return;}
-    const cs = el.nextElementSibling.innerText;
-    if(cs) {
-        let ocs = getCookie('MT_CreditScore',false);
-
-        if(cs != ocs) {
-            setCookie('MT_CreditScore',cs);
-            setCookie('MT_CreditScoreOld',ocs);
-            setCookie('MT_CreditScoreDate',getDates('s_ShortDate'));
-        }
-        ocs = getCookie('MT_CreditScoreOld',false);
-        if(ocs != '' && ocs != cs) {
-            let lit = cs > ocs ? 'Up' : 'Down';
-            el = el.parentNode.parentNode.parentNode;
-            cec('div','MTCreditScore',el,lit + ' from ' + getCookie('MT_CreditScoreOld',false) + ' on ' + getCookie('MT_CreditScoreDate',false),'','font-size: 13px;text-align: right; width: 100%;');
-        }
-    }
-}
 
 // [ Budgets ]
 async function MenuPlanRefresh() {
@@ -2572,7 +2544,6 @@ function MenuCheckSpawnProcess() {
             case 3:
                 MenuPlanRefresh();
                 MenuPlanBudgetReorder();
-                MenuCreditScore();
                 break;
             case 4:
                 MenuAccountsSummary();break;
@@ -3303,9 +3274,9 @@ function sortTableByColumn(inEvent) {
 
 // Main Execution Loop
 (function() {
-    MM_MenuFix();MM_Init();
+    MM_MenuFix();
     setInterval(() => {
-        if(css_reload == true) {css_reload = false;MM_Init();}
+        if(css_reload == true) {css_reload = false; MM_Init();}
         if(window.location.pathname != SaveLocationPathName) {
             if(SaveLocationPathName) {MM_MenuRun(false);}
             SaveLocationPathName = window.location.pathname;
