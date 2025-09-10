@@ -1,19 +1,19 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.54.01
+// @version      3.54
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.54.01';
+const version = '3.54';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
 let SaveLocationPathName = '',css_reload = true, css_cec = false;
-let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=8, debug=false;
+let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=8, debug=0;
 let accountGroups = [],accountsHasFixed = false,TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 
 // flex container
@@ -3321,7 +3321,7 @@ async function getMonthlySnapshotData2(startDate, endDate, groupingType, inAccou
      });
     return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => { if(debug) console.log('MM-Tweaks','getMonthlySnapshotData2',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => { if(debug == 1) console.log('MM-Tweaks','getMonthlySnapshotData2',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccounts, inCat) {
@@ -3333,7 +3333,7 @@ async function getMonthlySnapshotData(startDate, endDate, groupingType, inAccoun
     });
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => {if(debug) console.log('MM-Tweaks','getMonthlySnapshotData',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(debug == 1) console.log('MM-Tweaks','getMonthlySnapshotData',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function getTransactions(startDate,endDate, offset, isPending, inAccounts, inHideReports, inNotes, inGoals, inCat) {
@@ -3347,7 +3347,7 @@ async function getTransactions(startDate,endDate, offset, isPending, inAccounts,
     });
     return fetch(graphql, options)
         .then((response) => response.json())
-        .then((data) => {if(debug) console.log('MM-Tweaks','getTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(version,error);});
+        .then((data) => {if(debug == 1) console.log('MM-Tweaks','getTransactions',filters,data.data);return data.data;}).catch((error) => { console.error(version,error);});
 }
 
 async function getTransactionNotes(startDate,endDate) {
@@ -3374,7 +3374,7 @@ async function getDisplayBalanceAtDateData(date) {
           query: "query Common_GetDisplayBalanceAtDate($date: Date!) {\n accounts {\n id\n displayBalance(date: $date)\n type {\n name\n}\n }\n }\n"});
   return fetch(graphql, options)
     .then((response) => response.json())
-    .then((data) => {if(debug) console.log('MM-Tweaks','getDisplayBalanceAtDateData',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
+    .then((data) => {if(debug == 1) console.log('MM-Tweaks','getDisplayBalanceAtDateData',null,data.data);return data.data; }).catch((error) => { console.error(version,error); });
 }
 
 async function getAccountsData() {
