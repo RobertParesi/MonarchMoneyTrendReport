@@ -127,7 +127,7 @@ function MM_Init() {
 function MM_MenuFix() {
     const wbs = ['/advice','/investments','/objectives','/recurring','/plan'];
     const cks = ['MT_Advice','MT_Investments','MT_Goals','MT_Recurring','MT_Budget'];
-    const divs = document.querySelectorAll('[class*="NavLink-sc"]');
+    const divs = document.querySelectorAll('[class*="NavBarLink-sc"]');
     for (const div of divs) {
         let j = startsInList(div.pathname,wbs);
         if(j > 0) { j-=1;getCookie(cks[j],true) == 1 ? div.style.display = 'none' : div.style.display = '';}
@@ -3125,7 +3125,7 @@ function findButton(inName) {
     return null;
 }
 
-function startsInList(v,p) {return inList(v,p,true);}
+function startsInList(v = '',p) {return inList(v,p,true);}
 function inList(v,p,sW) {
     for (let i = 0; i < p.length; ++i) {
         if(sW == true) {
