@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.54
+// @version      3.55
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.54';
+const version = '3.55';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const css_green = 'color: #2a7e3b;',css_red = 'color: #d13415;';
 const graphql = 'https://api.monarchmoney.com/graphql';
@@ -2281,7 +2281,7 @@ function MM_NoteTag() {
     const divs = document.querySelectorAll('[class*="TransactionDrawerFieldRow__StyledFlexContainer-"]');
     if(divs.length == 0) { MTSpawnProcess = 9; return; }
     for (const div of divs) {
-        if(div.innerText == 'Notes') {
+        if(div.innerText.trim() == 'Notes') {
             cec('button','MTNoteTagButton',div.parentNode,'Note Tags ');
             const div2 = div.parentNode.parentNode.children[1];
             const newDiv = document.createElement('div');
@@ -2299,6 +2299,7 @@ function MM_SearchMerchants(inDiv) {
     let merEntry = inDiv.childNodes[0].childNodes[0];
     if(merEntry) {
         let merText = inDiv.childNodes[0].childNodes[1].childNodes[1].innerText;
+        merText = merText.trim();
         if(merText) {
             const ii = merText.indexOf('*');
             if(ii < 16) {merText = getStringPart(merText,'*','right');}
@@ -2574,11 +2575,11 @@ window.onclick = function(event) {
                 MTSpawnProcess=6;return;
             case 'Menu__MenuItem-nvthxu-1':
             case 'Flex-sc-165659u-0':
-                if(event.target.innerText == 'Last') {onClickLastNumber();}
+                if(event.target.innerText.trim() == 'Last') {onClickLastNumber();}
                 if(startsInList(event.target.innerText,['\uf183','\uf13e','Light','Dark', 'System preference'])) {MTSpawnProcess = 5;return;}
                 break;
             case 'Text-qcxgyd-0':
-                if(event.target.innerText == 'Split') { MTSpawnProcess = 7;}
+                if(event.target.innerText.trim() == 'Split') { MTSpawnProcess = 7;}
                 break;
             case 'MTGeneralLink':
                 cn = event.target.getAttribute('link');
@@ -2590,9 +2591,9 @@ window.onclick = function(event) {
                 MM_FixCalendarYears();return;
             case 'Tab__Root-ilk1fo-0':
             case 'Flex-sc-165659u-0':
-                if(event.target.innerText == 'Summary') { MTSpawnProcess = 3;}return;
+                if(event.target.innerText.trim() == 'Summary') { MTSpawnProcess = 3;}return;
             case 'PlanHeader__Tab-sc-19mk9dy-1':
-                if(event.target.innerText == 'Budget') { MTSpawnProcess = 3;} return;
+                if(event.target.innerText.trim() == 'Budget') { MTSpawnProcess = 3;} return;
             case 'MTTrends':
             case 'MTAccounts':
             case 'MTNet_Income':
