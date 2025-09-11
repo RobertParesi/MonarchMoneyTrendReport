@@ -1,3 +1,7 @@
+**Version 3.55 :**
+
+* FIX: Note Tags button would not work on Safari.
+
 **Version 3.52-3.54:**
 
 * NEW: History detail side panel drill-down (Reports / Trends / >) to show Monthly & Pending transactions.
