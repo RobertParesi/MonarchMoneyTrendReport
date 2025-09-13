@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.60.01
+// @version      3.60.02
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.60.01';
+const version = '3.60.02';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarchmoney.com/graphql';
 let css_green = '',css_red = '';
@@ -1235,11 +1235,13 @@ async function MenuReportsAccountsGo() {
                         pastBalance = getAccountBalance(MTP.UID);
                         if(pastBalance == null) {pastBalance = 0;}
                         if(useBalance !=0 || getAccountUsed(MTP.UID) == true || pastBalance != 0) {
-                            let accountName = getAccountPrimaryKey(snapshotData.accounts[i].isAsset,snapshotData.accounts[i].type.display,snapshotData.accounts[i].subtype.display,snapshotData.accounts[i].logoUrl);
+                            const subTypeOverride = getCookie('MTAccountsSub:' + snapshotData.accounts[i].id,false);
+                            if(!subTypeOverride) {subTypeOverride = snapshotData.accounts[i].subtype.display;}
+                            let accountName = getAccountPrimaryKey(snapshotData.accounts[i].isAsset,snapshotData.accounts[i].type.display,subTypeOverride,snapshotData.accounts[i].logoUrl);
                             MF_QueueAddRow(MTP);
                             MTFlexRow[MTFlexCR][MTFields] = snapshotData.accounts[i].displayName;
                             MTFlexRow[MTFlexCR][MTFields+1] = snapshotData.accounts[i].type.display;
-                            MTFlexRow[MTFlexCR][MTFields+2] = snapshotData.accounts[i].subtype.display;
+                            MTFlexRow[MTFlexCR][MTFields+2] = subTypeOverride;
                             MTFlexRow[MTFlexCR][MTFields+3] = accountName;
                             MTFlexRow[MTFlexCR][MTFields+4] = snapshotData.accounts[i].displayLastUpdatedAt.substring(0, 10);
                             MTFlexRow[MTFlexCR][MTFields+9] = useBalance;
@@ -2319,10 +2321,17 @@ function MTUpdateAccountPartner() {
         let li2 = li.childNodes[4];
         let div = document.createElement('div');
         div = li.insertBefore(div, li2);
+
         cec('div','',div,'Account Group [Trends, Net Income, Accounts] - (MM Tweaks)','','font-size: 14px;font-weight: 500;');
-        div = cec('input','MTInputClass',div,'','','margin-bottom: 12px;width: 100%;');
-        const p = SaveLocationPathName.split('/');
-        if(p.length > 2) {div.value = getCookie('MTAccounts:' + p[3],false);}
+        let div3 = cec('input','MTInputClass',div,'','','margin-bottom: 12px;width: 100%;','id','accountGroupID');
+        let p = SaveLocationPathName.split('/');
+        if(p.length > 2) {div3.value = getCookie('MTAccounts:' + p[3],false);}
+
+        cec('div','',div,'Account Subtype free-form override - (MM Tweaks)','','font-size: 14px;font-weight: 500;');
+        div3 = cec('input','MTInputClass',div,'','','margin-bottom: 12px;width: 100%;','id','accountSubGroupID');
+        p = SaveLocationPathName.split('/');
+        if(p.length > 2) {div3.value = getCookie('MTAccountsSub:' + p[3],false);}
+
     }
 }
 // [ Calendar ]
@@ -2774,11 +2783,17 @@ window.onclick = function(event) {
         }
         if(event.target.className.includes('AbstractButton')) {
             if(event.target.className.includes('EditAccountForm__StyledSubmitButton')) {
-                const li = document.querySelector('input.MTInputClass');
+                let li = document.getElementById("accountGroupID");
                 if(li) {
                     let inputValue = li.value;
                     let p = SaveLocationPathName.split('/');
                     if(p) {setCookie('MTAccounts:' + p[3],inputValue.trim());}
+                }
+                li = document.getElementById("accountSubGroupID");
+                if(li) {
+                    let inputValue = li.value;
+                    let p = SaveLocationPathName.split('/');
+                    if(p) {setCookie('MTAccountsSub:' + p[3],inputValue.trim());}
                 }
             }
         }
