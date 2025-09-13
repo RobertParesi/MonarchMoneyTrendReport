@@ -1,6 +1,6 @@
 **Version 3.60 (beta) :**
 
-* NEW: Reports / Accounts [Brokerage Statement[
+* NEW: Reports / Accounts [Brokerage Statement]
 
 * CHANGE: Better Green/Red colors for Dark mode.
   
