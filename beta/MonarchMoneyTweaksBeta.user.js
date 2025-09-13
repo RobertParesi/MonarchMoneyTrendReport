@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.56.01
+// @version      3.60.01
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.56.01';
+const version = '3.60.01';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarchmoney.com/graphql';
 let css_green = '',css_red = '';
