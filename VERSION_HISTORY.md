@@ -2,6 +2,8 @@
 
 * NEW: Reports / Accounts [Brokerage Statement]
 
+* NEW: Reports / Accounts - Many enhancements and clean-up to columns and drop-downs.
+
 * CHANGE: Better Green/Red colors for Dark mode.
   
 * CHANGE: Better naming of Settings checkboxes to help for support.
