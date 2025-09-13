@@ -4,6 +4,8 @@
 
 * CHANGE: Better Green/Red colors for Dark mode.
   
+* CHANGE: Better naming of Settings checkboxes to help for support.
+  
 **Version 3.55 :**
 
 * FIX: Note Tags button would not work on Safari.
