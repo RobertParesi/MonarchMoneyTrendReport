@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.60.03
+// @version      3.60.04
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.60.03';
+const version = '3.60.04';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarchmoney.com/graphql';
 let css_green = '',css_red = '';
@@ -1168,7 +1168,6 @@ async function MenuReportsAccountsGo() {
         let isToday = getDates('isToday',MTFlexDate2);
         let NetWorthLit = 'Net Worth/Totals';
         let useBalance = 0, pastBalance = 0, useAmount = 0,useSubType = '';
-        const skipTxs = getCookie('MT_AccountsBalance',true);
         const incTrans = getCookie('MT_AccountsNetTransfers',true);
 
         if(MTFlex.Button2 == 1) {
@@ -1267,15 +1266,9 @@ async function MenuReportsAccountsGo() {
                                 }
                             }
                             MTFlexRow[MTFlexCR][MTFields+11] = getAccountPendingBalance(snapshotData.accounts[i].id);
-                            if(skipTxs == 1 && (snapshotData.accounts[i].subtype.name == 'checking' || snapshotData.accounts[i].subtype.name == 'credit_card')) {
-                                if(snapshotData.accounts[i].isAsset == true){
-                                    MTFlexRow[MTFlexCR][MTFields+5] = useBalance - MTFlexRow[MTFlexCR][MTFields+6] + MTFlexRow[MTFlexCR][MTFields+7] - MTFlexRow[MTFlexCR][MTFields+8];
-                                } else {
-                                    MTFlexRow[MTFlexCR][MTFields+5] = useBalance - MTFlexRow[MTFlexCR][MTFields+6] - MTFlexRow[MTFlexCR][MTFields+7] + MTFlexRow[MTFlexCR][MTFields+8];
-                                }
-                            } else { MTFlexRow[MTFlexCR][MTFields+5] = pastBalance; }
+                            MTFlexRow[MTFlexCR][MTFields+5] = pastBalance;
                             MTFlexRow[MTFlexCR][MTFields+5] = parseFloat(MTFlexRow[MTFlexCR][MTFields+5].toFixed(2));
-                            if(incTrans == 1 ) {
+                            if(MTFlex.Button2 == 2 && incTrans == 1 ) {
                                 MTFlexRow[MTFlexCR][MTFields+10] = useBalance - (MTFlexRow[MTFlexCR][MTFields+5] + MTFlexRow[MTFlexCR][MTFields+8]);
                             } else {
                                 MTFlexRow[MTFlexCR][MTFields+10] = useBalance - MTFlexRow[MTFlexCR][MTFields+5];
@@ -2541,7 +2534,6 @@ function MenuSettings(OnFocus) {
             MenuDisplay_Input('Hide percentage in Net Change column','MT_AccountsHidePer2','checkbox');
             MenuDisplay_Input('Hide Pending & Projected Balance columns on Standard Report','MT_AccountsHidePending','checkbox');
             MenuDisplay_Input('Hide Pending & Projected Balance columns on Brokerage Statement','MT_AccountsHidePending2','checkbox');
-            MenuDisplay_Input('Use calculated balance (Income, Expenses & Transfers) for Checking & Credit Cards','MT_AccountsBalance','checkbox');
             MenuDisplay_Input('Add Transfers to Net Change amount in Brokerage Statement','MT_AccountsNetTransfers','checkbox');
             MenuDisplay_Input('Summary reports are "Based on end of each month" instead of "Based on beginning of each month"','MT_AccountsEOM','checkbox');
             MenuDisplay_Input('Show total Checking card','MT_AccountsCard0','checkbox');
