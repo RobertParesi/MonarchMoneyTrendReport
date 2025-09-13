@@ -1,3 +1,9 @@
+**Version 3.60 (beta) :**
+
+* NEW: Reports / Accounts [Brokerage Statement[
+
+* CHANGE: Better Green/Red colors for Dark mode.
+  
 **Version 3.55 :**
 
 * FIX: Note Tags button would not work on Safari.
