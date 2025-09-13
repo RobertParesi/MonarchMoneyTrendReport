@@ -1,6 +1,6 @@
 **Version 3.60 (beta) :**
 
-* NEW: Reports / Accounts [Brokerage Statement]
+* NEW: Reports / Accounts [Brokerage Statement] (Settings)
 
 * NEW: Reports / Accounts - Many enhancements and clean-up to columns and drop-downs.
 
