@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.60.02
+// @version      3.60.03
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.60.02';
+const version = '3.60.03';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarchmoney.com/graphql';
 let css_green = '',css_red = '';
@@ -1167,7 +1167,7 @@ async function MenuReportsAccountsGo() {
         let cards = 0,acard=[0,0,0,0,0],cats = [];
         let isToday = getDates('isToday',MTFlexDate2);
         let NetWorthLit = 'Net Worth/Totals';
-        let useBalance = 0, pastBalance = 0, useAmount = 0;
+        let useBalance = 0, pastBalance = 0, useAmount = 0,useSubType = '';
         const skipTxs = getCookie('MT_AccountsBalance',true);
         const incTrans = getCookie('MT_AccountsNetTransfers',true);
 
@@ -1235,13 +1235,13 @@ async function MenuReportsAccountsGo() {
                         pastBalance = getAccountBalance(MTP.UID);
                         if(pastBalance == null) {pastBalance = 0;}
                         if(useBalance !=0 || getAccountUsed(MTP.UID) == true || pastBalance != 0) {
-                            const subTypeOverride = getCookie('MTAccountsSub:' + snapshotData.accounts[i].id,false);
-                            if(!subTypeOverride) {subTypeOverride = snapshotData.accounts[i].subtype.display;}
-                            let accountName = getAccountPrimaryKey(snapshotData.accounts[i].isAsset,snapshotData.accounts[i].type.display,subTypeOverride,snapshotData.accounts[i].logoUrl);
+                            useSubType = getCookie('MTAccountsSub:' + snapshotData.accounts[i].id,false);
+                            if(!useSubType) {useSubType = snapshotData.accounts[i].subtype.display;}
+                            let accountName = getAccountPrimaryKey(snapshotData.accounts[i].isAsset,snapshotData.accounts[i].type.display,useSubType,snapshotData.accounts[i].logoUrl);
                             MF_QueueAddRow(MTP);
                             MTFlexRow[MTFlexCR][MTFields] = snapshotData.accounts[i].displayName;
                             MTFlexRow[MTFlexCR][MTFields+1] = snapshotData.accounts[i].type.display;
-                            MTFlexRow[MTFlexCR][MTFields+2] = subTypeOverride;
+                            MTFlexRow[MTFlexCR][MTFields+2] = useSubType;
                             MTFlexRow[MTFlexCR][MTFields+3] = accountName;
                             MTFlexRow[MTFlexCR][MTFields+4] = snapshotData.accounts[i].displayLastUpdatedAt.substring(0, 10);
                             MTFlexRow[MTFlexCR][MTFields+9] = useBalance;
