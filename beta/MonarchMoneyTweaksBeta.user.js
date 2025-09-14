@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.60.04
+// @version      3.60.05
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.60.04';
+const version = '3.60.05';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarchmoney.com/graphql';
 let css_green = '',css_red = '';
@@ -1186,13 +1186,14 @@ async function MenuReportsAccountsGo() {
         if(getCookie('MT_AccountsHideUpdated',true) == 1) {MTP.isHidden = true;}
         MTP.Column = 4; MTP.Title = 'Updated';MTP.Format = -1;MF_QueueAddTitle(MTP);
         if(MTFlex.Button2 != 1) MTP.isHidden = false;
-        MTP.Column = 5; MTP.Title = 'Beg Balance'; MTP.isSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];MF_QueueAddTitle(MTP);
+        MTP.Column = 5; MTP.Title = 'Beg Balance'; MTP.isSortable = 2; MTP.Format = [1,2][getCookie('MT_AccountsNoDecimals',true)];if(MTFlex.Button2 == 2) {MTP.ShowPercent = 2;};MF_QueueAddTitle(MTP);
         if(MTFlex.Button2 == 2) {MTP.isHidden = true;}
+        MTP.ShowPercent = 0;
         MTP.Column = 6; MTP.Title = 'Income'; MF_QueueAddTitle(MTP);
         MTP.Column = 7; MTP.Title = 'Expenses'; MF_QueueAddTitle(MTP);
         if(MTFlex.Button2 == 2) {MTP.isHidden = false;}
         MTP.Column = 8; MTP.Title = 'Transfers'; MF_QueueAddTitle(MTP);
-        MTP.Column = 9; MTP.Title = 'Balance';MTP.isHidden = false;MF_QueueAddTitle(MTP);
+        MTP.Column = 9; MTP.Title = 'Balance';MTP.isHidden = false;if(MTFlex.Button2 == 2) {MTP.ShowPercent = 2};MF_QueueAddTitle(MTP);
         if(MTFlex.Button2 != 1) {
             if(MTFlex.Button2 == 2) {
                 if(incTrans == 1) {MTP.ShowPercent = 4;} else {MTP.ShowPercent = 3;}
