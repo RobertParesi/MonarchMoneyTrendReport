@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.60.08
+// @version      3.60.09
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.60.08';
+const version = '3.60.09';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarchmoney.com/graphql';
 let css_green = '',css_red = '';
@@ -444,6 +444,7 @@ function MT_GridDrawExpand() {
 
 function MT_GridGroupByPK() {
 
+    console.log(MTFlexRow);
     MTFlexRow.sort((a, b) => a.PK.localeCompare(b.PK));
 
     const oldLength = MTFlexRow.length;
@@ -1552,6 +1553,8 @@ async function MenuReportsInvestmentsGo() {
     MTP.Format = 11;MF_QueueAddTitle(6,'Price',MTP);
     MTP.Format = 13;MF_QueueAddTitle(7,'Qty',MTP);
     MTP.Format = 1;MF_QueueAddTitle(8,'Value',MTP);
+    MTP.Format = 1;MF_QueueAddTitle(9,'Cost Basis',MTP);
+    MTP.Format = 1;MF_QueueAddTitle(10,'Gain/Loss',MTP);
 
     await BuildInvestmentData();
     MTSpawnProcess = 1;
@@ -1562,7 +1565,7 @@ async function BuildInvestmentData() {
 
     let lowerDate = formatQueryDate(MTFlexDate1);
     let higherDate = formatQueryDate(MTFlexDate2);
-    let useSubType = '';
+    let useSubType = '',useCostBasis=0;
     const snapshotData = await getPortfolio(lowerDate, higherDate);
 
     for (const edge of snapshotData.portfolio.aggregateHoldings.edges) {
@@ -1597,6 +1600,10 @@ async function BuildInvestmentData() {
             MTFlexRow[MTFlexCR][MTFields+6] = holding.closingPrice;
             MTFlexRow[MTFlexCR][MTFields+7] = holding.quantity;
             MTFlexRow[MTFlexCR][MTFields+8] = holding.value;
+            if(holding.type == 'fixed_income') {useCostBasis = holding.costBasis * .01;} else {useCostBasis = holding.costBasis;}
+            MTFlexRow[MTFlexCR][MTFields+9] = useCostBasis;
+            MTFlexRow[MTFlexCR][MTFields+10] = holding.value - useCostBasis;
+
         }
     }
     if(MTFlex.Button2 > 0) {MT_GridGroupByPK();}
@@ -3569,7 +3576,7 @@ async function getGoals() {
 async function getPortfolio(startDate,endDate) {
     const filters = {startDate: startDate, endDate: endDate};
     const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
-          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n icon \n logoUrl \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
+          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n icon \n logoUrl \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
        return fetch(graphql, options)
         .then((response) => response.json())
         .then((data) => { if(debug == 1) console.log('MM-Tweaks','Web_GetPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
