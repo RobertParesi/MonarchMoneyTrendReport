@@ -4,7 +4,9 @@
 
 * NEW: Reports / Accounts - Many enhancements and clean-up to columns and drop-downs.
 
-* NEW: Abilty to override Monarch's Asset Subtype drop-down to be free form (Long Term, Short Term, Bonds, Treasuries, etc etc.)
+* NEW: Reports / Trends - Enhanced next month to be Remaining this Month & Next Month for better visability.
+
+* NEW: Abilty to override Monarch's Account Subtype drop-down to be free form (Long Term, Short Term, Bonds, Treasuries, etc etc.)
 
 * CHANGE: Better Green/Red colors for Dark mode.
   
