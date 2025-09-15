@@ -2,6 +2,8 @@
 
 * NEW: Reports / Accounts [Brokerage Statement] (Settings)
 
+* NEW: Reports / Investments (Work in Progress)
+
 * NEW: Reports / Accounts - Many enhancements and clean-up to columns and drop-downs.
 
 * NEW: Reports / Trends - Enhanced next month to be Remaining this Month & Next Month for better visability.
