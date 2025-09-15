@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.60.07
+// @version      3.60.08
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
 
-const version = '3.60.07';
+const version = '3.60.08';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarchmoney.com/graphql';
 let css_green = '',css_red = '';
@@ -17,8 +17,7 @@ let r_headStyle = null, r_FlexButtonActive = false, MTSpawnProcess=8, debug=0;
 let accountGroups = [],accountsHasFixed = false,TrendQueue = [], TrendQueue2 = [], TrendPending = [0,0];
 
 // flex container
-// const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
-const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts'];
+const FlexOptions = ['MTTrends','MTNet_Income','MTAccounts', 'MTInvestments'];
 const MTFields = 13;
 let MTFlex = [], MTFlexTitle = [], MTFlexRow = [], MTFlexCard = [];
 let MTFlexAccountFilter = {name: '', filter: []};
@@ -70,7 +69,7 @@ function MM_Init() {
     addStyle('.MTFlexGrid th, td { padding-right: 4px; padding-left: 4px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
     addStyle('.MTFlexGridTitleRow { font-size: 16px; font-weight: 600; height: 56px; position: sticky; top: 0; ' + panelBackground + '}');
-    addStyle('.MTFlexGridTitleCell, .MTFlexGridTitleCell2 { ' + bdrb + '}');
+  //  addStyle('.MTFlexGridTitleCell, .MTFlexGridTitleCell2 { ' + bdrb + '}');
     addStyle('.MTFlexGridTitleCell2 { text-align: right;}');
     addStyle('.MTFlexGridTitleInd {display: inline-block; width: 10px;height: 10px; margin-right: 8px;border-radius:100%;}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
@@ -187,6 +186,7 @@ async function MF_GridInit(inName, inDesc) {
 
     MTFlex = [];MTFlexTitle = [];MTFlexRow = []; MTFlexCR = 0;MTFlexCard = [];
     MTFlexAccountFilter.name = ''; MTFlexAccountFilter.filter = [];
+    MTFlex.SmallCanvas = '';
     document.body.style.cursor = "wait";
     let topDiv = document.querySelector('[class*="Scroll__Root-sc"]');
     if(topDiv) {
@@ -252,7 +252,7 @@ function MT_GridDrawDetails() {
     function MT_GridDrawTitles() {
         Header = cec('table','MTFlexGrid',MTFlexDetails,'','',FontFamily);
         if(MTFlex.HideDetails == true) return;
-        el = cec('tr','MTFlexGridTitleRow',Header);
+        el = cec('tr','MTFlexGridTitleRow',Header,'','',MTFlex.SmallCanvas);
         for (RowI = 0; RowI < MTFlexTitle.length; RowI++) {
             if(MTFlexTitle[RowI].isHidden != true) {
                 if(MTFlexTitle[RowI].Format > 0) {useStyle = 'MTFlexGridTitleCell2'; } else {useStyle = 'MTFlexGridTitleCell'; }
@@ -294,7 +294,7 @@ function MT_GridDrawDetails() {
             } else {
                 if(MTFlex.HideDetails == true) css_cec = true;
                 MT_DrawLine();
-                el = cec('tr','MTFlexGridItem',Header,'','','','MTsection',useRow.Section);
+                el = cec('tr','MTFlexGridItem',Header,'','',MTFlex.SmallCanvas,'MTsection',useRow.Section);
                 useStyle = 'MTFlexGridDCell';
                 if(useRow.Icon) {useDesc = useRow.Icon + ' ' + useDesc;}
             }
@@ -316,7 +316,7 @@ function MT_GridDrawDetails() {
                 if(MTFlexTitle[j].FormatExtended.length == 2) { MT_GridDrawRowSub(j,MTFlexTitle[j].FormatExtended[0],MTFlexTitle[j].FormatExtended[1]); }
             }
             MT_DrawLine();
-            el = cec('tr','MTFlexGridItem',Header,'','','','MTsection',useRow.Section);
+            el = cec('tr','MTFlexGridItem',Header,'','',MTFlex.SmallCanvas,'MTsection',useRow.Section);
             if(useRow.PKHRef) {
                 elx = cec('td','MTFlexGridSCell',el);
                 elx = cec('a','MTFlexGridDCell',elx,useDesc,useRow.PKHRef);
@@ -332,13 +332,19 @@ function MT_GridDrawDetails() {
             if(thisTitle.isHidden != true) {
                 useValue = useRow[j + MTFields];
                 let aE = '';
+                // -1 Date, 1=Decimals, 2=No Decimals
                 switch(thisTitle.Format) {
                     case -1:
                         useValue2 = getMonthName(useValue,2);break;
                     case 1:
+                    case 11:
                         useValue2 = getDollarValue(useValue,false);aE = ' fs-exclude';break;
                     case 2:
+                    case 12:
                         useValue2 = getDollarValue(useValue,true);aE = ' fs-exclude';break;
+                    case 3:
+                    case 13:
+                        useValue2 = useValue.toLocaleString('en-US');break;
                     default:
                         useValue2 = useValue;
                 }
@@ -434,6 +440,28 @@ function MT_GridDrawExpand() {
             }
         }
     });
+}
+
+function MT_GridGroupByPK() {
+
+    MTFlexRow.sort((a, b) => a.PK.localeCompare(b.PK));
+
+    const oldLength = MTFlexRow.length;
+    let useSec = 0,p=[];
+
+    for (let i = 0; i < oldLength; i++) {
+        if(i == 0 || MTFlexRow[i].PK != MTFlexRow[i-1].PK) {
+            useSec = useSec + 2;
+        }
+        MTFlexRow[i].BasedOn = useSec -1;
+        MTFlexRow[i].isHeader = false;
+        MTFlexRow[i].Section = useSec;
+    }
+    let i = 2
+    for (i = 2; i < useSec; i+=2) {
+        MF_GridRollup(i-1,i,i);
+    }
+    MF_GridRollup(i-1,i,i);
 }
 
 function MT_GridDrawSort() {
@@ -670,17 +698,19 @@ function MF_GridUpdateUID(inUID,inCol,inValue,addMissing) {
 
 function MF_GridRollup(inSection,inRoll,inBasedOn,inName) {
     if(MTFlexRow.length == 0) {return;}
-    let Subtotals = [];
+    let Subtotals = [],useName ='';
     for (let i = 0; i < MTFlexTitle.length; i++) {Subtotals[i] = 0;}
     for (let i = 0; i < MTFlexRow.length; i++) {
          if(MTFlexRow[i].Section == inRoll) {
-             for (let j = 1; j < MTFlexTitle.length; j++) { if(MTFlexTitle[j].Format > 0) {Subtotals[j] += MTFlexRow[i][MTFields + j];} }
+             useName = MTFlexRow[i].PK;
+             for (let j = 1; j < MTFlexTitle.length; j++) { if(MTFlexTitle[j].Format == 1 || MTFlexTitle[j].Format == 2) {Subtotals[j] += MTFlexRow[i][MTFields + j];} }
     }}
     MTP = [];
     MTP.isHeader = true; MTP.IgnoreShade = true;MTP.Section = inSection;MTP.BasedOn = inBasedOn;MF_QueueAddRow(MTP);
+    if(!inName) inName = useName;
     MTFlexRow[MTFlexCR][MTFields] = inName;
     for (let j = 1; j < MTFlexTitle.length; j++) {
-        if(MTFlexTitle[j].Format > 0) {MTFlexRow[MTFlexCR][MTFields+j] = Subtotals[j];} else {MTFlexRow[MTFlexCR][MTFields+j] = '';}
+        if(MTFlexTitle[j].Format == 1 || MTFlexTitle[j].Format == 2) {MTFlexRow[MTFlexCR][MTFields+j] = Subtotals[j];} else {MTFlexRow[MTFlexCR][MTFields+j] = '';}
     }
 }
 
@@ -1414,6 +1444,12 @@ function getAccountGroupInfo(inName,inDelete) {
     return items;
 }
 
+function getAccountSubGroupInfo(inId,inName) {
+    const getSub = getCookie('MTAccountsSub:' + inId,false);
+    if(getSub) return getSub;
+    return inName;
+}
+
 function getAccountGroupFilter() {
     if(MTFlex.Button4Options.length > 1 && MTFlex.Button4 > 0) {
         const p = getAccountGroupInfo();
@@ -1494,19 +1530,28 @@ async function MenuReportsInvestmentsGo() {
 
     TrendQueue = [];
     await MF_GridInit('MTInvestments', 'Investments');
-
+    MTFlex.SmallCanvas = 'height: 20px;';
     MTFlex.TriggerEvent = 0;
     MTFlex.TriggerEvents = false;
-    MF_GridOptions(1,['by Account Group']);
-    MF_GridOptions(2,['Portfolio Summary']);
+    //MF_GridOptions(1,['by Account Group']);
+    MF_GridOptions(2,['No Grouping','Group by Institution','Group by Account','Group by Account Subtype','Group by Stock Type']);
     MF_GridOptions(4,getAccountGroupInfo());
- //   MTFlex.SortSeq = ['1','1','1','2','2','2','2','2','2','2'];
- //   if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
+    MTFlex.SortSeq = ['1','2','3','4'];
+    //   if(MTFlex.Button1 == 2) {MTFlex.Subtotals = true;}
     MTFlex.Title1 = 'Investments Report';
 
     MTP = [];
     MTP.isSortable = 1; MTP.Format = 0;
-    MF_QueueAddTitle(0,'Account',MTP);
+    MF_QueueAddTitle(0,'Institution',MTP);
+    MF_QueueAddTitle(1,'Account',MTP);
+    MF_QueueAddTitle(2,'Subtype',MTP);
+    MF_QueueAddTitle(3,'Type',MTP);
+    MF_QueueAddTitle(4,'Ticker',MTP);
+    MF_QueueAddTitle(5,'Name',MTP);
+    MTP.isSortable = 2;
+    MTP.Format = 11;MF_QueueAddTitle(6,'Price',MTP);
+    MTP.Format = 13;MF_QueueAddTitle(7,'Qty',MTP);
+    MTP.Format = 1;MF_QueueAddTitle(8,'Value',MTP);
 
     await BuildInvestmentData();
     MTSpawnProcess = 1;
@@ -1515,16 +1560,46 @@ async function MenuReportsInvestmentsGo() {
 
 async function BuildInvestmentData() {
 
-    let lowerDate = new Date(MTFlexDate1);
-    let higherDate = new Date(MTFlexDate2);
-    const snapshotData = getPortfolio(lowerDate,higherDate);
-    for (const ss of snapshotData.portfolio.aggregateHoldings.edges) {
-        for (const holding of ss.node.holdings) {
-            MTP.isHeader = false;
-            MTP.UID = holding.node.id;
+    let lowerDate = formatQueryDate(MTFlexDate1);
+    let higherDate = formatQueryDate(MTFlexDate2);
+    let useSubType = '';
+    const snapshotData = await getPortfolio(lowerDate, higherDate);
+
+    for (const edge of snapshotData.portfolio.aggregateHoldings.edges) {
+        const holdings = edge.node.holdings;
+        for (const holding of holdings) {
+            MTP = [];
+            MTP.UID = holding.id;
+            MTP.BasedOn = 0;
+            useSubType = getAccountSubGroupInfo(holding.account.id,holding.account.subtype.display);
+            switch(Number(MTFlex.Button2)) {
+                case 1:
+                    MTP.PK = holding.account.institution.name;
+                    break;
+                case 2:
+                    MTP.PK = holding.account.displayName;
+                    break;
+                case 3:
+                    MTP.PK = useSubType;
+                    break;
+                case 4:
+                    MTP.PK = holding.typeDisplay;
+                    break;
+                default:MTP.PK = MTP.BasedOn.toString();
+            }
             MF_QueueAddRow(MTP);
+            MTFlexRow[MTFlexCR][MTFields] = holding.account.institution.name;
+            MTFlexRow[MTFlexCR][MTFields+1] = holding.account.displayName;
+            MTFlexRow[MTFlexCR][MTFields+2] = useSubType;
+            MTFlexRow[MTFlexCR][MTFields+3] = holding.typeDisplay;
+            if (holding.ticker == null) {MTFlexRow[MTFlexCR][MTFields + 4] = '';} else {MTFlexRow[MTFlexCR][MTFields + 4] = holding.ticker;}
+            MTFlexRow[MTFlexCR][MTFields+5] = holding.name;
+            MTFlexRow[MTFlexCR][MTFields+6] = holding.closingPrice;
+            MTFlexRow[MTFlexCR][MTFields+7] = holding.quantity;
+            MTFlexRow[MTFlexCR][MTFields+8] = holding.value;
         }
     }
+    if(MTFlex.Button2 > 0) {MT_GridGroupByPK();}
 }
 
 
@@ -3494,7 +3569,7 @@ async function getGoals() {
 async function getPortfolio(startDate,endDate) {
     const filters = {startDate: startDate, endDate: endDate};
     const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
-          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
+          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n icon \n logoUrl \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
        return fetch(graphql, options)
         .then((response) => response.json())
         .then((data) => { if(debug == 1) console.log('MM-Tweaks','Web_GetPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
