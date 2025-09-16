@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.60.10
+// @version      3.60.11
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
-const version = '3.60.10';
+const version = '3.60.11';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarchmoney.com/graphql';
 let css_green = '',css_red = '';
@@ -68,7 +68,6 @@ function MM_Init() {
     addStyle('.MTFlexGrid th, td { padding-right: 4px; padding-left: 4px;}');
     addStyle('.MTFlexTitle2 {display: flex; flex-flow: column;}');
     addStyle('.MTFlexGridTitleRow { font-size: 16px; font-weight: 600; height: 56px; position: sticky; top: 0; ' + panelBackground + '}');
-  //  addStyle('.MTFlexGridTitleCell, .MTFlexGridTitleCell2 { ' + bdrb + '}');
     addStyle('.MTFlexGridTitleCell2 { text-align: right;}');
     addStyle('.MTFlexGridTitleInd {display: inline-block; width: 10px;height: 10px; margin-right: 8px;border-radius:100%;}');
     addStyle('.MTFlexGridTitleCell:hover, .MTFlexGridTitleCell2:hover, .MTFlexGridDCell:hover, .MTFlexGridSCell:hover, .MThRefClass2:hover, .MThRefClass:hover, .MTSideDrawerDetail4:hover {cursor:pointer; color: rgb(50, 170, 240);}');
@@ -827,10 +826,7 @@ function MenuReportsSetFilter(inType,inCategory,inGroup,inHidden) {
     let reportsObj = localStorage.getItem('persist:reports');
     let startDate = formatQueryDate(getDates('d_Minus3Years'));
     let endDate = formatQueryDate(getDates('d_Today'));
-    if(MTFlex.Name == 'MTNet_Income') {
-        startDate = formatQueryDate(MTFlexDate1);
-        endDate = formatQueryDate(MTFlexDate2);
-    }
+    if(MTFlex.Name == 'MTNet_Income') {startDate = formatQueryDate(MTFlexDate1); endDate = formatQueryDate(MTFlexDate2);}
     let useCats = '';
     let useHidden = '';
     if(inHidden) {useHidden = ',\\"hideFromReports\\":' + inHidden;}
@@ -856,9 +852,10 @@ function MenuReportsCustom() {
     if(div) {
         const mItems = div.childNodes.length;
         let useClass = div.childNodes[0].className;
+        for (let i = 0; i < 3; i++) {div.childNodes[i].style = 'margin-right: 14px;';}
         useClass = useClass.replace(' tab-nav-item-active','');
-        for (let i = 0; i < FlexOptions.length; i += 1) {
-            if(mItems == 3) { cec('a',FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' ').slice(2));}
+        for (let i = 0; i < FlexOptions.length; i++) {
+            if(mItems == 3) { cec('a',FlexOptions[i] + ' ' + useClass,div,FlexOptions[i].replace('_',' ').slice(2),'','margin-right: 14px;');}
             else {div.childNodes[i + 3].className = FlexOptions[i] + ' ' + useClass;}
         }
     }
@@ -866,7 +863,7 @@ function MenuReportsCustom() {
 
 function MenuReportsCustomUpdate(inValue) {
     let div = document.querySelector('[class*="ReportsHeaderTabs__Root"]');
-    for (let i = 0; i < FlexOptions.length + 3; i += 1) {
+    for (let i = 0; i < FlexOptions.length + 3; i++) {
         let useClass = div.childNodes[i].className;
         if(inValue == i) {
             if(!useClass.includes(' tab-nav-item-active')) {useClass = useClass + ' tab-nav-item-active';}
