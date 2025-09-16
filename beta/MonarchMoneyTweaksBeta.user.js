@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
-// @version      3.60.11
+// @version      3.60.12
 // @description  Monarch Tweaks
 // @author       Robert P
 // @match        https://app.monarchmoney.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=monarchmoney.com
 // ==/UserScript==
-const version = '3.60.11';
+const version = '3.60.12';
 const css_currency = 'USD',CRLF = String.fromCharCode(13,10);
 const graphql = 'https://api.monarchmoney.com/graphql';
 let css_green = '',css_red = '';
@@ -449,7 +449,6 @@ function MT_GridDrawExpand() {
 
 function MT_GridGroupByPK() {
 
-    console.log(MTFlexRow);
     MTFlexRow.sort((a, b) => a.PK.localeCompare(b.PK));
 
     const oldLength = MTFlexRow.length;
@@ -1531,7 +1530,6 @@ async function MenuAccountsSummary() {
 
 async function MenuReportsInvestmentsGo() {
 
-
     TrendQueue = [];
     await MF_GridInit('MTInvestments', 'Investments');
     MTFlex.SmallCanvas = 'height: 20px;';
@@ -1567,49 +1565,89 @@ async function BuildInvestmentData() {
     let lowerDate = formatQueryDate(MTFlexDate1);
     let higherDate = formatQueryDate(MTFlexDate2);
     let useSubType = '',useCostBasis=0, useTitle = '';
+    let accQueue = [];
     const snapshotData = await getPortfolio(lowerDate, higherDate);
+    await BuildInvestmentHoldings();
+    await BuildInvestmentCash();
+    if(MTFlex.Button2 > 0) {MT_GridGroupByPK();}
 
-    for (const edge of snapshotData.portfolio.aggregateHoldings.edges) {
-        const holdings = edge.node.holdings;
-        for (const holding of holdings) {
-            MTP = [];
-            MTP.UID = holding.id;
-            MTP.BasedOn = 0;
-            useSubType = getAccountSubGroupInfo(holding.account.id,holding.account.subtype.display);
-            switch(MTFlex.Button2) {
-                case 1:
-                    MTP.PK = holding.account.institution.name;
-                    break;
-                case 2:
-                    MTP.PK = holding.account.displayName;
-                    break;
-                case 3:
-                    MTP.PK = useSubType;
-                    break;
-                case 4:
-                    MTP.PK = holding.typeDisplay;
-                    break;
-                default:MTP.PK = MTP.BasedOn.toString();
+    async function BuildInvestmentCash() {
+        let wrkValue = 0.00;
+        for (const acc of accQueue) {
+            wrkValue = acc.portfolioBalance - acc.holdingBalance;
+            if(wrkValue != 0) {
+                MTP = [];
+                MTP.UID = acc.id;
+                MTP.BasedOn = 0;
+                MTP.PK = getInvestmentPK(acc.institutionName,acc.accountName,acc.accountSubtype,'Cash',0)
+                MF_QueueAddRow(MTP);
+                MTFlexRow[MTFlexCR][MTFields] = 'CASH & MONEY MARKET';
+                MTFlexRow[MTFlexCR][MTFields+1] = acc.institutionName.trim();
+                MTFlexRow[MTFlexCR][MTFields+2] = acc.accountName.trim();
+                MTFlexRow[MTFlexCR][MTFields+3] = acc.accountSubtype;
+                MTFlexRow[MTFlexCR][MTFields+4] = 'Cash';
+                MTFlexRow[MTFlexCR][MTFields+5] = 0;
+                MTFlexRow[MTFlexCR][MTFields+6] = 0;
+                MTFlexRow[MTFlexCR][MTFields+7] = wrkValue;
+                MTFlexRow[MTFlexCR][MTFields+8] = 0;
+                MTFlexRow[MTFlexCR][MTFields+9] = 0;
             }
-            MF_QueueAddRow(MTP);
-            if (holding.ticker == null) {useTitle = '';} else {useTitle = holding.ticker + ' \u2022 ';}
-            useTitle += holding.name;
-            if (useTitle.length > 50) {useTitle = useTitle.slice(0, 50) + ' ...'};
-            MTFlexRow[MTFlexCR][MTFields] = useTitle;
-            MTFlexRow[MTFlexCR][MTFields+1] = holding.account.institution.name;
-            MTFlexRow[MTFlexCR][MTFields+2] = holding.account.displayName;
-            MTFlexRow[MTFlexCR][MTFields+3] = useSubType;
-            MTFlexRow[MTFlexCR][MTFields+4] = holding.typeDisplay;
-            MTFlexRow[MTFlexCR][MTFields+5] = holding.closingPrice;
-            MTFlexRow[MTFlexCR][MTFields+6] = holding.quantity;
-            MTFlexRow[MTFlexCR][MTFields+7] = holding.value;
-            if(holding.type == 'fixed_income') {useCostBasis = holding.costBasis * .01;} else {useCostBasis = holding.costBasis;}
-            MTFlexRow[MTFlexCR][MTFields+8] = useCostBasis;
-            MTFlexRow[MTFlexCR][MTFields+9] = holding.value - useCostBasis;
-
         }
     }
-    if(MTFlex.Button2 > 0) {MT_GridGroupByPK();}
+
+    async function BuildInvestmentHoldings() {
+
+        for (const edge of snapshotData.portfolio.aggregateHoldings.edges) {
+            const holdings = edge.node.holdings;
+            for (const holding of holdings) {
+                MTP = [];
+                MTP.UID = holding.id;
+                MTP.BasedOn = 0;
+                useSubType = getAccountSubGroupInfo(holding.account.id,holding.account.subtype.display);
+                MTP.PK = getInvestmentPK(holding.account.institution.name,holding.account.displayName, useSubType,holding.typeDisplay,0)
+                MF_QueueAddRow(MTP);
+                if (holding.ticker == null) {useTitle = '';} else {useTitle = holding.ticker + ' \u2022 ';}
+                useTitle += holding.name;
+                if (useTitle.length > 50) {useTitle = useTitle.slice(0, 50) + ' ...'};
+                MTFlexRow[MTFlexCR][MTFields] = useTitle;
+                MTFlexRow[MTFlexCR][MTFields+1] = holding.account.institution.name.trim();
+                MTFlexRow[MTFlexCR][MTFields+2] = holding.account.displayName.trim();
+                MTFlexRow[MTFlexCR][MTFields+3] = useSubType;
+                MTFlexRow[MTFlexCR][MTFields+4] = holding.typeDisplay;
+                MTFlexRow[MTFlexCR][MTFields+5] = holding.closingPrice;
+                MTFlexRow[MTFlexCR][MTFields+6] = holding.quantity;
+                MTFlexRow[MTFlexCR][MTFields+7] = holding.value;
+                if(holding.type == 'fixed_income') {useCostBasis = holding.costBasis * .01;} else {useCostBasis = holding.costBasis;}
+                MTFlexRow[MTFlexCR][MTFields+8] = useCostBasis;
+                MTFlexRow[MTFlexCR][MTFields+9] = holding.value - useCostBasis;
+                const account = accQueue.find(acc => acc.id === holding.account.id);
+                if (account) { account.holdingBalance += Number(holding.value);} else {
+                    accQueue.push({"id": holding.account.id,
+                                   "holdingBalance": Number(holding.value),
+                                   "portfolioBalance": Number(holding.account.displayBalance),
+                                   "institutionName": holding.account.institution.name.trim(),
+                                   "accountName": holding.account.displayName.trim(),
+                                   "accountSubtype": useSubType,
+                                  });
+                }
+            }
+        }
+    }
+
+    function getInvestmentPK(inIns,inAcc,inSub,inType,inBased) {
+        switch(MTFlex.Button2) {
+            case 1:
+                return inIns;
+            case 2:
+                return inAcc;
+            case 3:
+                return inSub;
+            case 4:
+                return inType;
+            default:
+                return inBased.toString();
+        }
+    }
 }
 
 
@@ -1665,17 +1703,17 @@ async function MenuReportsTrendsGo() {
             }
         } else if (MTFlex.Button2 > 7) {
             lowerDate.setFullYear(year - 12);
-            for (let i = year - 11; i <= year; i += 1) {
+            for (let i = year - 11; i <= year; i++) {
                 MF_QueueAddTitle(newCol,i,toString(),MTP);
                 newCol+=1;
             }
         } else if (MTFlex.Button2 == 5) {
             if(getCookie('MT_TrendIgnoreCurrent',true) == 1) { MTFlex.Title3 = '* Average ignores Current Month'; }
-            for (let i = month2 + 1; i < 12; i += 1) {
+            for (let i = month2 + 1; i < 12; i++) {
                 MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);
                 newCol+=1;
             }
-            for (let i = 0; i <= month2; i += 1) {
+            for (let i = 0; i <= month2; i++) {
                 MF_QueueAddTitle(newCol,getMonthName(i,true),MTP);
                 newCol+=1;
             }
@@ -1691,7 +1729,7 @@ async function MenuReportsTrendsGo() {
         if(MTFlex.Button2 == 8) {
             await BuildTrendData('oy',MTFlex.Button1,'year',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
         } else if (MTFlex.Button2 == 9) {
-            for (let i = year - 11; i <= year; i += 1) {
+            for (let i = year - 11; i <= year; i++) {
                 lowerDate.setFullYear(i,0,1);
                 higherDate.setFullYear(i,month2,day2);
                 await BuildTrendData('oy',MTFlex.Button1,'year',lowerDate,higherDate,'',MTFlexAccountFilter.filter);
@@ -1824,7 +1862,7 @@ async function MenuReportsTrendsGo() {
 async function WriteByMonthData() {
 
     let useDesc = '',lowestMonth = 13,useURL = '';
-    for (let i = 0; i < MTFlexRow.length; i += 1) {
+    for (let i = 0; i < MTFlexRow.length; i++) {
         let retGroup = await rtnCategoryGroup(MTFlexRow[i].UID);
         if(retGroup.TYPE == 'transfer') {
             MTFlexRow[i].UID = '';
@@ -1901,7 +1939,7 @@ async function WriteCompareData() {
     let useFormat = false;
     if(getCookie('MT_NoDecimals',true) == 1) {useFormat = true;}
 
-    for (let i = 0; i < TrendQueue.length; i += 1) {
+    for (let i = 0; i < TrendQueue.length; i++) {
         MTP = [];
         let retGroup = await rtnCategoryGroup(TrendQueue[i].ID);
         if(retGroup.TYPE == 'expense' || retGroup.TYPE == 'income') {
@@ -3581,7 +3619,7 @@ async function getGoals() {
 async function getPortfolio(startDate,endDate) {
     const filters = {startDate: startDate, endDate: endDate};
     const options = callGraphQL({"operationName":"Web_GetPortfolio","variables":{"portfolioInput": filters},
-          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n icon \n logoUrl \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
+          query: "query Web_GetPortfolio($portfolioInput: PortfolioInput) {  portfolio(input: $portfolioInput) { \n aggregateHoldings { \n edges { \n node {\n id \n quantity \n basis \n totalValue \n securityPriceChangeDollars \n securityPriceChangePercent \n lastSyncedAt \n holdings { \n id \n type \n typeDisplay \n name \n ticker \n costBasis \n closingPrice \n closingPriceUpdatedAt \n quantity \n value \n account {\n id \n displayName \n displayBalance \n icon \n logoUrl \n institution { \n id \n name } type {\n name \n display } \n subtype { \n name \n display}} }}}}}}\n"});
        return fetch(graphql, options)
         .then((response) => response.json())
         .then((data) => { if(debug == 1) console.log('MM-Tweaks','Web_GetPortfolio',filters,data.data);return data.data; }).catch((error) => { console.error(version,error); });
