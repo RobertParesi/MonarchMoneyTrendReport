@@ -1,4 +1,4 @@
-// ==UserScript==
+ // ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
 // @version      3.55
@@ -3459,3 +3459,432 @@ function rtnCategoryGroup(InId) {
     for (let i = 0; i < accountGroups.length; i++) {if(accountGroups[i].ID == InId || accountGroups[i].GROUP == InId) {return accountGroups[i];}}
     return [null];
 }
+
+// [ MT: Obfuscate Dollar Amounts — scoped to /dashboard, /accounts, /transactions ]
+(function MTM_Obfuscation_InitCSS(){
+    if (document.getElementById('mtm-obf-css')) return;
+    const css = '\n.mtm-amount-wrap{position:relative;display:inline-block;margin-right:.25em}\nbody.mt-obfuscate-on .fs-mask .recharts-text tspan{opacity:0}\n.mtm-nav-eye-btn{display:flex;align-items:center;gap:12px;cursor:pointer;color:inherit;background:transparent;border:0;width:100%;padding:8px 10px;border-radius:8px;text-align:left}\n.mtm-nav-eye-btn:hover{background:rgba(255,255,255,.06)}\n.mtm-nav-eye-btn .mtm-iconwrap{display:flex;align-items:center;justify-content:center;width:40px;height:40px}\n.mtm-nav-eye-btn .mtm-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px}\n.mtm-nav-eye-btn .mtm-icon svg{width:20px;height:20px;display:block}\n.mtm-eye-icon{width:16px;height:16px;display:block}\n.mtm-nav-eye-btn .mtm-label{font-size:12px;white-space:nowrap}\n.mtm-nav-collapsed .mtm-label{display:none}\n#mtm-obf-master{position:sticky;bottom:8px;transition:none!important}\n.sidebar-collapsed #mtm-obf-master{height:40px!important;padding-top:0!important;padding-bottom:0!important;transition:none!important}\n.sidebar-collapsed #mtm-obf-master .NavBarLink__Title-sc-1xv1ifc-2{display:none!important}\n.sidebar-collapsed #mtm-obf-master .LinkIcon-sc-1qcij8x-0{width:40px!important;height:40px!important;margin:0 auto!important}\n';
+    const style = document.createElement('style');
+    style.id = 'mtm-obf-css';
+    style.textContent = css;
+    document.head.appendChild(style);
+})();
+
+const MTM_OBF_CFG = {
+    routeAllow: [/^\/dashboard(?:\/|$)/, /^\/accounts(?:\/|$)/, /^\/transactions(?:\/|$)/],
+    containerAllow: [
+        'main',
+        '[data-rbd-droppable-id="accountGroups"]',
+        '[class*="AccountNetWorthCharts__Root"]',
+        '.AccountNetWorthCharts__Root-sc-14tj3z2-0',
+        '[class*="DashboardWidget__Root-"]',
+        '[class*="GoalDashboardRow__Root-"]',
+        '[class*="RecurringTransactionsDashboardWidget__Item-"]',
+        '[class*="AccountSummaryCardGroup__"]',
+        '[class*="AccountGroupCard__Content-"]',
+        '[class*="AccountBalanceIndicator__Root-"]'
+    ],
+    skipSelectors: [
+        '.MTFlexContainer','.MTSideDrawerRoot',
+        '[class*="SideBar__"]','[class*="NavBarLink__"]',
+        '[id="side-drawer-root"]','[class*="FooterButtonContainer__"]',
+        'button','input','textarea','select','[contenteditable="true"]',
+        // Skip highly dynamic charting/SVG areas to avoid DOM races
+        'svg', '[class*="recharts-"]', '.recharts-wrapper',
+        '[class*="MultipleLineChart__"]', '[class*="NetWorthPerformanceChart__"]',
+        '[class*="CashFlowDashboardWidgetGraph__"]'
+    ],
+};
+
+function MTM_isRouteAllowed() {
+    const p = window.location.pathname;
+    return MTM_OBF_CFG.routeAllow.some(rx => rx.test(p));
+}
+function MTM_isObfEnabled() { return getCookie('MT_HideSensitiveInfo', true) == 1; }
+function MTM_findScopes() {
+    const roots = MTM_OBF_CFG.containerAllow.map(sel => Array.from(document.querySelectorAll(sel))).flat();
+    return roots.length ? roots : [document];
+}
+function MTM_maskMoneyValue(s){
+    const moneyRegex = /\$\s*[\d,.]+|\(\$\s*[\d,.]+\)|-\$\s*[\d,.]+/g;
+    return String(s).replace(moneyRegex, function(m){
+        // Standardize to $*,***.** while keeping sign and parentheses
+        var isNeg = m.trim().startsWith('-$');
+        var isParen = /^\(\$/.test(m.trim());
+        var masked = '$*,***.**';
+        if(isNeg) masked = '-'+masked;
+        if(isParen) masked = '('+masked+')';
+        return masked;
+    });
+}
+
+function MTM_applyState(){
+    const on = MTM_isObfEnabled();
+    document.body.classList.toggle('mt-obfuscate-on', on);
+    document.querySelectorAll('.mtm-amount').forEach(function(span){
+        const orig = span.dataset.originalText || span.textContent;
+        if(!span.dataset.originalText) span.dataset.originalText = orig;
+        span.textContent = on ? MTM_maskMoneyValue(orig) : orig;
+    });
+}
+// Wrap the first $ amount found within the given element. Returns true if wrapped.
+function MTM_wrapFirstAmount(el){
+    if(!el) return false;
+    if(MTM_OBF_CFG.skipSelectors.some(function(sel){ return el.matches(sel) || el.closest(sel); })) return false;
+
+    // Fast path: direct text node containing the amount
+    var tn = null, match = null;
+    for (var i=0;i<el.childNodes.length;i++) {
+        var n = el.childNodes[i];
+        if(n.nodeType === Node.TEXT_NODE){
+            var m = n.nodeValue && n.nodeValue.match(/\$\s*[\d,.]+/);
+            if(m){ tn = n; match = m; break; }
+        }
+    }
+
+    if(tn && match){
+        // Guard against races with dynamic content updates
+        if(!tn.parentNode || !el.contains(tn) || !tn.isConnected || !el.isConnected) return false;
+        // Re-read current text to avoid stale indices
+        var current = tn.nodeValue || '';
+        var liveMatch = current.match(/\$\s*[\d,.]+/);
+        if(!liveMatch) return false;
+        var before = current.slice(0, liveMatch.index);
+        var amountText = liveMatch[0];
+        var after = current.slice(liveMatch.index + liveMatch[0].length);
+        if(after && !/^\s/.test(after)) { after = ' ' + after; }
+
+        const wrap = document.createElement('span');
+        wrap.className = 'mtm-amount-wrap';
+        const amt = document.createElement('span');
+        amt.className = 'mtm-amount';
+        amt.dataset.originalText = amountText;
+        amt.textContent = MTM_isObfEnabled() ? MTM_maskMoneyValue(amountText) : amountText;
+        wrap.appendChild(amt);
+        wrap.appendChild(document.createTextNode(' '));
+        var frag = document.createDocumentFragment();
+        if(before) frag.appendChild(document.createTextNode(before));
+        frag.appendChild(wrap);
+        if(after) frag.appendChild(document.createTextNode(after));
+        try {
+            // Ensure node still attached just before replace
+            if(!tn.parentNode || !el.contains(tn)) return false;
+            tn.replaceWith(frag);
+            return true;
+        } catch{
+            return false;
+        }
+    }
+
+    // Fallback: if amount spans multiple descendants, use a Range selection
+    var text = el.textContent || '';
+    var m2 = text.match(/\$\s*[\d,.]+/);
+    if(!m2) return false;
+    var startIndex = m2.index;
+    var endIndex = startIndex + m2[0].length;
+    var idx = 0, startNode = null, startOffset = 0, endNode = null, endOffset = 0;
+    (function walk(node){
+        if(endNode) return;
+        if(node.nodeType === Node.TEXT_NODE){
+            var nextIdx = idx + node.nodeValue.length;
+            if(!startNode && startIndex >= idx && startIndex <= nextIdx){ startNode = node; startOffset = startIndex - idx; }
+            if(startNode && endIndex >= idx && endIndex <= nextIdx){ endNode = node; endOffset = endIndex - idx; }
+            idx = nextIdx;
+        } else if(node.nodeType === Node.ELEMENT_NODE){
+            for(var j=0;j<node.childNodes.length;j++) walk(node.childNodes[j]);
+        }
+    })(el);
+    if(!startNode || !endNode) return false;
+    try {
+        var range = document.createRange();
+        // Guard against races
+        if(!startNode.isConnected || !endNode.isConnected || !el.isConnected || !el.contains(startNode) || !el.contains(endNode)) return false;
+        range.setStart(startNode, startOffset);
+        range.setEnd(endNode, endOffset);
+        var selected = range.extractContents();
+        var selectedText = selected.textContent;
+        const wrap = document.createElement('span');
+        wrap.className = 'mtm-amount-wrap';
+        const amt = document.createElement('span');
+        amt.className = 'mtm-amount';
+        amt.dataset.originalText = selectedText;
+        amt.textContent = MTM_isObfEnabled() ? MTM_maskMoneyValue(selectedText) : selectedText;
+        wrap.appendChild(amt);
+        // Ensure trailing spacing regardless of following node
+        wrap.appendChild(document.createTextNode(' '));
+        // no eye; we will reveal on hover/focus
+        range.insertNode(wrap);
+        // If the next text starts immediately with a letter, insert a space
+        var ns = wrap.nextSibling;
+        if(ns && ns.nodeType === Node.TEXT_NODE){
+            if(ns.nodeValue && !/^\s/.test(ns.nodeValue)){
+                ns.nodeValue = ' ' + ns.nodeValue;
+            }
+        }
+        return true;
+    } catch{
+        return false;
+    }
+}
+function MTM_scanAndWrap(root){
+    if (!MTM_isRouteAllowed()) return;
+    const scopes = root ? [root] : MTM_findScopes();
+    scopes.forEach(function(scope){
+        var candidates = Array.from(scope.querySelectorAll('.fs-exclude'));
+        candidates.forEach(function(el){
+            // Avoid wrapping inside .fs-exclude twice (e.g., author nests content)
+            if(el.querySelector('.mtm-amount')) return;
+            MTM_wrapFirstAmount(el);
+        });
+        // Fallback for account details pages where amounts may not be marked fs-exclude
+        var path = window.location.pathname || '';
+        if(/^\/accounts(?:\/|$)/.test(path)){
+            var extra = Array.from(scope.querySelectorAll('[class*="Card__CardRoot-"] .Text-qcxgyd-0, [class*="Card__CardRoot-"] .Summary__SummaryValue, [class*="AccountSummaryCardGroup__"] .fs-exclude, [class*="AccountGroupCard__Content-"] .fs-exclude, [class*="AccountBalanceIndicator__Root-"] .fs-exclude'))
+                .filter(function(el){ return /\$/.test(el.textContent || '') && !el.querySelector('.mtm-amount') && !el.closest('.mtm-amount-wrap'); });
+            for (var i=0;i<extra.length && i<300; i++) { MTM_wrapFirstAmount(extra[i]); }
+        }
+        if(/^\/dashboard(?:\/|$)/.test(path)){
+            var dashCandidates = Array.from(scope.querySelectorAll('[class*="CardTitle-"], [class*="DashboardWidget__Title-"], [class*="DashboardWidget__Description-"], [class*="GoalDashboardRow__Balance-"], [class*="RecurringTransactionsDashboardWidget__Amount-"], [class*="InvestmentsDashboardWidgetTopMoverRow__CurrentPriceText-"]'));
+            var dash = dashCandidates.filter(function(el){
+                if(el.querySelector('.fs-exclude')) return false; // let fs-exclude path handle it
+                if(el.querySelector('.mtm-amount')) return false;  // already processed inside
+                return /\$/.test(el.textContent || '') && !el.closest('.mtm-amount-wrap');
+            });
+            for (var di=0; di<dash.length && di<300; di++) { MTM_wrapFirstAmount(dash[di]); }
+        }
+    });
+}
+(function MTM_Observer(){
+    if (window.MTM_OBF_OBSERVER_API_WIRED) return;
+    window.MTM_OBF_OBSERVER_API_WIRED = true;
+
+    window.MTM_startObserver = function(){
+        window.MTM_stopObserver();
+        if(!MTM_isObfEnabled() || !MTM_isRouteAllowed()) return;
+
+        var scopes = MTM_findScopes();
+        window.MTM_OBF_OBSERVERS = [];
+
+        scopes.forEach(function(scope){
+            var observer = new MutationObserver(function(mutations){
+                var processed = 0;
+                for (var i=0; i<mutations.length; i++){
+                    var m = mutations[i];
+                    if(m.type === 'childList'){
+                        for (var j=0; j<m.addedNodes.length; j++){
+                            var node = m.addedNodes[j];
+                            if(!(node instanceof Element)) continue;
+                            if(node.matches && node.matches('.fs-exclude')){
+                                if(!node.querySelector('.mtm-amount') && MTM_wrapFirstAmount(node)) processed++;
+                            }
+                            if(node.querySelectorAll){
+                                var list = node.querySelectorAll('.fs-exclude');
+                                for(var k=0; k<list.length; k++){
+                                    if(!list[k].querySelector('.mtm-amount') && MTM_wrapFirstAmount(list[k])) processed++;
+                                    if(processed > 300) break;
+                                }
+                            }
+                            // Also handle dashboard non-fs-exclude currency nodes that load late
+                            if(/^\/dashboard(?:\/|$)/.test(window.location.pathname)){
+                                var dashSel = '[class*="CardTitle-"], [class*="DashboardWidget__Title-"], [class*="DashboardWidget__Description-"], [class*="GoalDashboardRow__Balance-"], [class*="RecurringTransactionsDashboardWidget__Amount-"], [class*="InvestmentsDashboardWidgetTopMoverRow__CurrentPriceText-"]';
+                                if(node.matches && node.matches(dashSel)){
+                                    if(!node.querySelector('.mtm-amount') && /\$/.test(node.textContent || '')){
+                                        if(MTM_wrapFirstAmount(node)) processed++;
+                                    }
+                                }
+                                if(node.querySelectorAll){
+                                    var dqs = node.querySelectorAll(dashSel);
+                                    for(var dk=0; dk<dqs.length; dk++){
+                                        var dqn = dqs[dk];
+                                        if(!dqn.querySelector('.mtm-amount') && /\$/.test(dqn.textContent || '')){
+                                            if(MTM_wrapFirstAmount(dqn)) processed++;
+                                        }
+                                        if(processed > 300) break;
+                                    }
+                                }
+                            }
+                            if(processed > 300) break;
+                        }
+                    } else if(m.type === 'characterData'){
+                        var p = m.target && m.target.parentElement;
+                        if(p){
+                            var host = p.matches('.fs-exclude') ? p : p.closest('.fs-exclude');
+                            if(host && !host.querySelector('.mtm-amount')){ if(MTM_wrapFirstAmount(host)) processed++; }
+                            // Dashboard text nodes updating in place
+                            if(!host && /^\/dashboard(?:\/|$)/.test(window.location.pathname)){
+                                var dashHost = p.matches('[class*="CardTitle-"], [class*="DashboardWidget__Title-"], [class*="DashboardWidget__Description-"], [class*="GoalDashboardRow__Balance-"], [class*="RecurringTransactionsDashboardWidget__Amount-"], [class*="InvestmentsDashboardWidgetTopMoverRow__CurrentPriceText-"]') ? p : p.closest('[class*="CardTitle-"], [class*="DashboardWidget__Title-"], [class*="DashboardWidget__Description-"], [class*="GoalDashboardRow__Balance-"], [class*="RecurringTransactionsDashboardWidget__Amount-"], [class*="InvestmentsDashboardWidgetTopMoverRow__CurrentPriceText-"]');
+                                if(dashHost && !dashHost.querySelector('.mtm-amount') && /\$/.test(dashHost.textContent || '')){
+                                    if(MTM_wrapFirstAmount(dashHost)) processed++;
+                                }
+                            }
+                        }
+                    }
+                    if(processed > 300) break;
+                }
+            });
+
+            observer.observe(scope, { childList: true, subtree: true, characterData: true, characterDataOldValue: false });
+            window.MTM_OBF_OBSERVERS.push(observer);
+        });
+    };
+    window.MTM_stopObserver = function(){
+        if(window.MTM_OBF_OBSERVERS){
+            window.MTM_OBF_OBSERVERS.forEach(function(o){ try{o.disconnect();}catch{ /* ignore */ } });
+        }
+        window.MTM_OBF_OBSERVERS = [];
+    };
+    window.MTM_restartObserver = function(){
+        window.MTM_stopObserver();
+        window.MTM_startObserver();
+    };
+})();
+(function MTM_wireHoverReveal(){
+    if (window.MTM_OBF_HOVER_WIRED) return;
+    window.MTM_OBF_HOVER_WIRED = true;
+
+    function reveal(amt){ if(!amt) return; amt.textContent = amt.dataset.originalText || amt.textContent; }
+    function remask(amt){ if(!amt) return; if(MTM_isObfEnabled()) amt.textContent = MTM_maskMoneyValue(amt.dataset.originalText || amt.textContent); }
+
+    document.addEventListener('mouseenter', function(e){
+        var t = e.target;
+        if(!(t instanceof Element)) return;
+        if(!t.classList.contains('mtm-amount')) return;
+        reveal(t);
+    }, true);
+    document.addEventListener('mouseleave', function(e){
+        var t = e.target;
+        if(!(t instanceof Element)) return;
+        if(!t.classList.contains('mtm-amount')) return;
+        remask(t);
+    }, true);
+
+    // Keep settings change handler
+    document.addEventListener('change', function(e){
+        var t = e.target;
+        if(!(t instanceof Element)) return;
+        if(t.id === 'MT_HideSensitiveInfo'){
+            MTM_applyState();
+            MTM_scanAndWrap();
+            if(MTM_isObfEnabled()) { window.MTM_restartObserver(); } else { window.MTM_stopObserver(); }
+        }
+    });
+})();
+
+(function MTM_wireLifecycle(){
+    if (window.MTM_OBF_LIFE_WIRED) return;
+    window.MTM_OBF_LIFE_WIRED = true;
+
+    function run(){ MTM_scanAndWrap(); MTM_applyState(); }
+    function runBurst(){
+        run();
+        [50,200,600,1200].forEach(function(d){ setTimeout(run, d); });
+        if(MTM_isObfEnabled()){
+            window.MTM_restartObserver();
+            setTimeout(window.MTM_restartObserver, 200);
+            setTimeout(window.MTM_restartObserver, 600);
+        } else {
+            window.MTM_stopObserver();
+        }
+    }
+    function bootstrap(){
+        runBurst();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootstrap);
+    } else {
+        bootstrap();
+    }
+
+    var _ps = history.pushState;
+    history.pushState = function(){
+        var r = _ps.apply(this, arguments);
+        setTimeout(runBurst, 0);
+        return r;
+    };
+    var _rs = history.replaceState;
+    history.replaceState = function(){
+        var r = _rs.apply(this, arguments);
+        setTimeout(runBurst, 0);
+        return r;
+    };
+    window.addEventListener('popstate', function(){ setTimeout(runBurst, 0); });
+    window.addEventListener('load', function(){ setTimeout(runBurst, 0); });
+
+    var scrollTimer = null;
+    window.addEventListener('scroll', function(){
+        if(!MTM_isObfEnabled()) return;
+        if(scrollTimer) clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function(){ MTM_scanAndWrap(); }, 250);
+    }, {passive:true});
+})();
+
+// Side-nav master toggle injection
+(function MTM_SideNavToggle(){
+    if (window.MTM_OBF_SIDENAV_WIRED) return;
+    window.MTM_OBF_SIDENAV_WIRED = true;
+
+    function ensure(){
+        // Insert as a native nav item at the end of the primary list
+        var firstLink = document.querySelector('.SideBar__Content-sc-161w9oi-4 .NavBarLink__Container-sc-1xv1ifc-3, .SideBar__Content .NavBarLink__Container-sc-1xv1ifc-3, .NavBarLink__Container-sc-1xv1ifc-3');
+        if(!firstLink) return;
+        var navList = firstLink.closest('.FlexItem-sc-1p0zueu-0');
+        if(!navList) return;
+        if(document.getElementById('mtm-obf-master')) return;
+
+        var link = document.createElement('a');
+        link.id = 'mtm-obf-master';
+        link.href = '#';
+        link.setAttribute('role','button');
+        link.className = 'NavLink-sc-1bdi3x9-0 jwNjNr NavBarLink__Container-sc-1xv1ifc-3 dFxBOe NavBarLink-sc-1xv1ifc-4 gmbciN';
+        link.setAttribute('data-state','closed');
+        // Always keep as last item of the primary group
+        link.style.order = '9999';
+
+        var iconWrap = document.createElement('div');
+        iconWrap.className = 'Flex-sc-165659u-0 LinkIcon-sc-1qcij8x-0 tRmOx jfWCtJ';
+        var iconSpan = document.createElement('span');
+        iconSpan.className = 'Icon__MonarchIcon-sc-1ja3cr5-0 hyumnu mtm-eye-icon';
+        function setIcon(on){
+            iconSpan.innerHTML = on
+                ? '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="2"/><path d="M22 2 2 22" stroke="currentColor" stroke-width="2"/></svg>'
+                : '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>';
+        }
+        setIcon(MTM_isObfEnabled());
+        iconWrap.appendChild(iconSpan);
+
+        var title = document.createElement('span');
+        title.className = 'NavBarLink__Title-sc-1xv1ifc-2';
+        title.textContent = 'Obfuscate Balances';
+
+        link.appendChild(iconWrap);
+        link.appendChild(title);
+        link.addEventListener('click', function(e){
+            e.preventDefault();
+            flipCookie('MT_HideSensitiveInfo');
+            MTM_applyState();
+            MTM_scanAndWrap();
+            if(MTM_isObfEnabled()) window.MTM_restartObserver(); else window.MTM_stopObserver();
+            setIcon(MTM_isObfEnabled());
+        });
+
+        navList.appendChild(link);
+        // Guard against reordering on collapse/expand by re-appending if needed
+        if(window.MTM_SIDENAV_ORDER_OBS) { try{ window.MTM_SIDENAV_ORDER_OBS.disconnect(); }catch{ /* ignore */ } }
+        var mo = new MutationObserver(function(){
+            if(!document.getElementById('mtm-obf-master')) return;
+            var last = navList.lastElementChild;
+            if(last && last.id !== 'mtm-obf-master') { navList.appendChild(link); }
+            // Toggle collapsed style based on sidebar class
+            var collapsed = !!(document.querySelector('.SideBar__Root-sc-161w9oi-0.sidebar-collapsed') || document.querySelector('[class*="SideBar__Root-"].sidebar-collapsed'));
+            link.classList.toggle('mtm-nav-collapsed', collapsed);
+        });
+        mo.observe(document.body, {attributes:true,subtree:true,attributeFilter:['class']});
+        window.MTM_SIDENAV_ORDER_OBS = mo;
+    }
+
+    // Try multiple times as sidebar mounts
+    var tries = 0; var intv = setInterval(function(){
+        tries++; ensure(); if(document.getElementById('mtm-obf-master') || tries > 20) clearInterval(intv);
+    }, 500);
+})();
