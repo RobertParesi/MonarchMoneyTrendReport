@@ -1,4 +1,4 @@
- // ==UserScript==
+// ==UserScript==
 // @name         Monarch Money Tweaks
 // @namespace    http://tampermonkey.net/
 // @version      3.55
