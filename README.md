@@ -162,6 +162,14 @@ Enjoy!
 **Monarch Tweaks Household Breakdown on Accounts**
 ![Settings](/images/MT_V3_13.png)
 
+## Usage License and Restrictions
+
+* You are permitted to view and use the code for personal, non-commercial purposes.
+* You do not have the right to distribute, publish, or make any money from the code.
+* All rights to the code remain fully with the owner (myself).
+* Any use beyond personal use requires explicit permission.
+* If this agreement is breached and damages cannot be reasonably determined or made whole, you agree to pay damages in the amount of $100,000 (in US Funds).
+
 ## Contributions:
 
 This GitHub repository is currently not set up for contributions, but I welcome your ideas and feedback. Please feel free to reach out via private message or email to discuss any thoughts you may have.
