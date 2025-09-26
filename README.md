@@ -1,6 +1,6 @@
 # We've moved!
 
-[For the new Monarch Money GitHub, go here!](https://github.com/RobertParesi/Monarch-Money-Tweaks)
+[For the new Monarch Money Tweaks, go here!](https://github.com/RobertParesi/Monarch-Money-Tweaks)
 
 > [!WARNING]  
 >  **Current Monarch Money Tweaks with Tampermonkey extension user?**
